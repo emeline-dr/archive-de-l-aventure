@@ -1,68 +1,91 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@theme {
+    --color-text: #353B3B;
+    --color-background: #FFF9F3;
+    --color-primary: #F4E4C2;
+    --color-secondary: #EDD282;
+    --color-accent: #4FE2A5;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+    --color-text-75: rgba(53, 59, 59, .75);
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+    --color-background-75: rgba(255, 249, 243, .75);
+
+    --color-accent-85: rgba(79, 226, 165, .85);
+
+    --font-crimson-text: "Crimson Text", serif;
+    --font-uncial-antiqua: "Uncial Antiqua", system-ui;
+    --font-vampiro-one: "Vampiro One", system-ui;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+@font-face {
+    font-family: 'Crimson Text';
+    src: url('./assets/fonts/Crimson_Text/CrimsonText-Regular.ttf') format('truetype');
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+@font-face {
+    font-family: 'Uncial Antiqua';
+    src: url('./assets/fonts/Uncial_Antiqua/UncialAntiqua-Regular.ttf') format('truetype');
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+@font-face {
+    font-family: 'Vampiro One';
+    src: url('./assets/fonts/Vampiro_One/VampiroOne-Regular.ttf') format('truetype');
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+
+.btn {
+    height: fit-content;
+    padding: 16px 40px;
+    border-radius: 5px;
+    font-family: var(--font-uncial-antiqua);
+    font-size: 24px;
+    letter-spacing: 10%;
+    cursor: pointer;
+}
+
+.btn-accent {
+    background: var(--color-accent);
+    color: var(--color-text)
+}
+
+.btn-accent:hover {
+    background: var(--color-text);
+    color: var(--color-accent);
+    outline: 3px solid var(--color-accent);
+}
+
+.btn-text {
+    background: var(--color-text);
+    color: var(--color-accent);
+}
+
+.btn-text:hover {
+    background: var(--color-accent);
+    color: var(--color-text);
+    outline: 3px solid var(--color-text);
+}
+
+.linear-home {
+    background: linear-gradient(180deg, rgba(255, 249, 243, 0) 0%, rgba(255, 249, 243, 1) 100%);
+}
+
+.scotch {
+    position: absolute;
+    width: 330px;
+    height: 65px;
+    margin-top: -32px;
+    margin-left: 54px;
+    border-radius: 3px;
+    background: rgba(244, 228, 194, .80);
+}
+
+.diceBg {
+    height: 260px;
+    background-image: url('./assets/images/dice.png');
+    background-color: var(--color-background);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-blend-mode: difference;
 }
