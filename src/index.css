@@ -68,6 +68,13 @@
 
 /*#endregion*/
 
+/*#region sidebar*/
+.sidebar {
+    min-height: calc(100vh - 124px);
+}
+
+/*#endregion*/
+
 /*#region Accueil*/
 .linear-home {
     background: linear-gradient(180deg, rgba(255, 249, 243, 0) 0%, rgba(255, 249, 243, 1) 100%);
@@ -96,6 +103,7 @@
 /*#endregion*/
 
 /*#region S'inscrire & Se connecter*/
+
 .registerBlock,
 .loginBlock {
     height: calc(100vh - 124px);
@@ -125,5 +133,9 @@
     background: linear-gradient(-90deg, rgba(79, 226, 165, 1) 0%, rgba(79, 226, 165, 0) 100%);
     opacity: .5;
 }
+
+/*#endregion*/
+
+/*#region Index*/
 
 /*#endregion*/

@@ -10,7 +10,7 @@ import { Route as RootRoute } from './routes/__root';
 
 import { homeRoute } from './routes/home';
 import { loginRoute } from './routes/login';
-import { signInRoute } from './routes/signin';
+import { signInRoute } from './routes/signIn';
 import { indexRoute } from './routes';
 import { myCharactersRoute } from './routes/myCharacters';
 import { registersRoute } from './routes/registers';
