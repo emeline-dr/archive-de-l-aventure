@@ -24,6 +24,19 @@ function Navbar() {
                             <button className="btn btn-accent">S'inscrire</button>
                         </Link>
                     }
+                    {!location.pathname.includes('login') && !location.pathname.includes('register') &&
+                        <div className="self-center">
+                            <Link to="/index" className="font-uncial-antiqua text-2xl tracking-[5%] text-accent h-fit hover:underline">
+                                Accueil
+                            </Link>
+                            <Link to="/my-characters" className="font-uncial-antiqua text-2xl tracking-[5%] text-accent h-fit mx-[16px] hover:underline">
+                                Mes aventuriers
+                            </Link>
+                            <Link to="/list-sheets" className="font-uncial-antiqua text-2xl tracking-[5%] text-accent h-fit hover:underline">
+                                Les registres
+                            </Link>
+                        </div>
+                    }
                 </nav>
             }
         </>

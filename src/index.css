@@ -33,7 +33,7 @@
     src: url('./assets/fonts/Vampiro_One/VampiroOne-Regular.ttf') format('truetype');
 }
 
-
+/*#region Réutilisables*/
 .btn {
     height: fit-content;
     padding: 16px 40px;
@@ -66,6 +66,9 @@
     outline: 3px solid var(--color-text);
 }
 
+/*#endregion*/
+
+/*#region Accueil*/
 .linear-home {
     background: linear-gradient(180deg, rgba(255, 249, 243, 0) 0%, rgba(255, 249, 243, 1) 100%);
 }
@@ -89,3 +92,38 @@
     background-position: center;
     background-blend-mode: difference;
 }
+
+/*#endregion*/
+
+/*#region S'inscrire & Se connecter*/
+.registerBlock,
+.loginBlock {
+    height: calc(100vh - 124px);
+}
+
+.registerImg,
+.loginImg {
+    background-color: var(--color-background);
+    background-size: cover;
+    background-blend-mode: luminosity;
+}
+
+.registerImg {
+    background-image: url('assets/images/register.jpg');
+}
+
+.loginImg {
+    background-image: url('assets/images/login.jpg');
+}
+
+.registerGradient {
+    background: linear-gradient(90deg, rgba(79, 226, 165, 1) 0%, rgba(79, 226, 165, 0) 100%);
+    opacity: .5;
+}
+
+.loginGradient {
+    background: linear-gradient(-90deg, rgba(79, 226, 165, 1) 0%, rgba(79, 226, 165, 0) 100%);
+    opacity: .5;
+}
+
+/*#endregion*/

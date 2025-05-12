@@ -2,8 +2,8 @@ import { createRoute } from '@tanstack/react-router';
 import { Route as RootRoute } from './__root';
 
 
-export const indexRoute = createRoute({
-    path: '/index',
+export const listSheetsRoute = createRoute({
+    path: '/list-sheets',
     getParentRoute: () => RootRoute,
-    component: () => <h2>Index</h2>
+    component: () => <h2>Les registres</h2>
 });

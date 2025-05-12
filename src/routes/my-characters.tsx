@@ -2,8 +2,8 @@ import { createRoute } from '@tanstack/react-router';
 import { Route as RootRoute } from './__root';
 
 
-export const indexRoute = createRoute({
-    path: '/index',
+export const myCharactersRoute = createRoute({
+    path: '/my-characters',
     getParentRoute: () => RootRoute,
-    component: () => <h2>Index</h2>
+    component: () => <h2>Mes aventuriers</h2>
 });
