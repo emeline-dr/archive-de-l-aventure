@@ -7,20 +7,21 @@ import {
 } from '@tanstack/react-router';
 
 import { Route as RootRoute } from './routes/__root';
+
 import { homeRoute } from './routes/home';
 import { loginRoute } from './routes/login';
-import { registerRoute } from './routes/register';
+import { signInRoute } from './routes/signin';
 import { indexRoute } from './routes';
-import { myCharactersRoute } from './routes/my-characters';
-import { listSheetsRoute } from './routes/list-sheets';
+import { myCharactersRoute } from './routes/myCharacters';
+import { registersRoute } from './routes/registers';
 
 const routeTree = RootRoute.addChildren([
   homeRoute,
   loginRoute,
-  registerRoute,
+  signInRoute,
   indexRoute,
   myCharactersRoute,
-  listSheetsRoute
+  registersRoute,
 ]);
 
 const router = createRouter({ routeTree });

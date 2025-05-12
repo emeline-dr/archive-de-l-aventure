@@ -28,7 +28,7 @@ export const homeRoute = createRoute({
                         <br />
                         Du médiéval aux galaxies lointaines — vos aventures commencent ici.
                     </p>
-                    <Link to="/register" className='h-fit relative z-1 mt-[40px] mx-auto'>
+                    <Link to="/signIn" className='h-fit relative z-1 mt-[40px] mx-auto'>
                         <button className='btn btn-accent'>
                             Rejoignez-nous !
                         </button>
