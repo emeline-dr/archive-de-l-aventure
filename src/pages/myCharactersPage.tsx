@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from '@tanstack/react-router';
 
 import Sidebar from '../components/sidebar';
 import SheetSnippet from '../components/sheetSnippet';
@@ -65,7 +66,9 @@ export function MyCharactersComponent() {
             <Sidebar></Sidebar>
             <div className='flex-1 z-1 mx-[16px] sm:mx-[80px] my-[40px]'>
                 <div className="flex justify-end gap-4">
-                    <button className="btn btn-text">Créer un nouvel aventurier</button>
+                    <Link to="/myCharacters/newSheet">
+                        <button className="btn btn-text">Créer un nouvel aventurier</button>
+                    </Link>
                 </div>
                 <div className="flex flex-wrap justify-between">
                     <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px]'>Mes aventuriers</h2>

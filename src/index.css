@@ -66,6 +66,19 @@
     outline: 3px solid var(--color-text);
 }
 
+.breadcrumb {
+    --s: 20px;
+
+    line-height: 1.8;
+    padding-inline: calc(var(--s) + .3em);
+    clip-path: polygon(0 0, calc(100% - var(--s)) 0, 100% 50%, calc(100% - var(--s)) 100%, 0 100%, var(--s) 50%);
+    background: var(--color-text);
+    font-family: var(--font-uncial-antiqua);
+    width: fit-content;
+    padding: 8px 80px;
+    font-size: 16px;
+}
+
 /*#endregion*/
 
 /*#region Accueil*/
