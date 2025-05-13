@@ -3,6 +3,7 @@ import { Route as RootRoute } from './__root';
 
 import Sidebar from '../components/sidebar';
 import SheetSnippet from '../components/sheetSnippet';
+import BackgroundIcon from '../components/backgroundIcon';
 
 import avatarOne from '../assets/images/icons-avatar-1.jpg';
 import avatarTwo from '../assets/images/icons-avatar-3.jpg';
@@ -21,7 +22,7 @@ export const indexRoute = createRoute({
     getParentRoute: () => RootRoute,
     component: () => <div className='pageContenant flex flex-wrap h-full'>
         <Sidebar></Sidebar>
-        <div className='flex-1 mx-[16px] sm:mx-[80px] my-[40px]'>
+        <div className='flex-1 z-1 mx-[16px] sm:mx-[80px] my-[40px]'>
             <div className="flex justify-end">
                 <button className="btn btn-text">Créer un nouvel aventurier</button>
             </div>
@@ -38,5 +39,7 @@ export const indexRoute = createRoute({
                 <SheetSnippet authorId={4} myId={1} authorName="Taliesin Jaffe" isLiked={true} name="Percival de Rolo" img={avatarTen} info="Occultiste (Fiélon)" system={DnD} lvl="01"></SheetSnippet>
             </div>
         </div>
+
+        <BackgroundIcon></BackgroundIcon>
     </div>
 });
