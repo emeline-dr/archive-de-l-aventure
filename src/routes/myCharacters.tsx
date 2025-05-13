@@ -1,18 +1,10 @@
 import { createRoute } from '@tanstack/react-router';
 import { Route as RootRoute } from './__root';
 
-import Sidebar from '../components/sidebar';
+import { MyCharactersComponent } from '../pages/myCharactersPage';
 
 export const myCharactersRoute = createRoute({
     path: '/myCharacters',
     getParentRoute: () => RootRoute,
-    component: () => <div className='indexBlock flex flex-wrap h-[200vh]'>
-        <Sidebar></Sidebar>
-        <div className='flex-1 mx-[80px] my-[40px]'>
-            <div className="flex justify-end">
-                <button className="btn btn-text">Créer un nouvel aventurier</button>
-            </div>
-            <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px]'>Mes aventuriers</h2>
-        </div>
-    </div>
+    component: MyCharactersComponent,
 });

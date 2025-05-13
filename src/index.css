@@ -68,13 +68,6 @@
 
 /*#endregion*/
 
-/*#region sidebar*/
-.sidebar {
-    min-height: calc(100vh - 124px);
-}
-
-/*#endregion*/
-
 /*#region Accueil*/
 .linear-home {
     background: linear-gradient(180deg, rgba(255, 249, 243, 0) 0%, rgba(255, 249, 243, 1) 100%);
