@@ -19,7 +19,7 @@ import L5R from "../assets/images/bg-lcinqa.webp";
 export const indexRoute = createRoute({
     path: '/index',
     getParentRoute: () => RootRoute,
-    component: () => <div className='flex flex-wrap h-full'>
+    component: () => <div className='pageContenant flex flex-wrap h-full'>
         <Sidebar></Sidebar>
         <div className='flex-1 mx-[16px] sm:mx-[80px] my-[40px]'>
             <div className="flex justify-end">

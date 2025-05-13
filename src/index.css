@@ -129,6 +129,6 @@
 
 /*#endregion*/
 
-/*#region Index*/
-
-/*#endregion*/
+.pageContenant {
+    min-height: calc(100vh - 124px);
+}

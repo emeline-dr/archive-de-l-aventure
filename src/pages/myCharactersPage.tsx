@@ -60,7 +60,7 @@ export function MyCharactersComponent() {
     const uniqueSystems = Array.from(new Set(sheets.map(s => s.system)));
 
     return (
-        <div className='flex flex-wrap h-[200vh]'>
+        <div className='pageContenant flex flex-wrap h-full'>
             <Sidebar></Sidebar>
             <div className='flex-1 mx-[16px] sm:mx-[80px] my-[40px]'>
                 <div className="flex justify-end gap-4">

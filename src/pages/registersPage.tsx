@@ -151,7 +151,7 @@ export function RegistersPage() {
     const uniqueSystems = Array.from(new Set(sheets.map(s => s.system)));
 
     return (
-        <div className='flex flex-wrap h-full'>
+        <div className='pageContenant flex flex-wrap h-full'>
             <Sidebar></Sidebar>
             <div className='flex-1 mx-[16px] sm:mx-[80px] my-[40px]'>
                 <div className="flex flex-wrap justify-between">
