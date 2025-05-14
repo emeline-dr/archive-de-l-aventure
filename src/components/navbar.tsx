@@ -6,11 +6,17 @@ import logo from "../assets/images/logo.png"
 function Navbar() {
     const location = useLocation();
 
+    let iconLink = '/index';
+
+    if (location.pathname.includes('signIn') || location.pathname.includes('login')) {
+        iconLink = '/';
+    }
+
     return (
         <>
             {location.pathname !== '/' &&
                 <nav className='bg-text justify-center md:justify-between flex flex-wrap px-[40px] py-[12px]'>
-                    <Link to="/" className="flex flex-wrap text-background font-uncial-antiqua md:ms-[40px]">
+                    <Link to={iconLink} className="flex flex-wrap text-background font-uncial-antiqua md:ms-[40px]">
                         <img src={logo} alt="" className="h-[100px] object-cover" />
                         <h1 className="h-fit self-center ms-[24px] text-4xl">Les AdA</h1>
                     </Link>

@@ -12,7 +12,7 @@ export const NewSheetRoute = createRoute({
         <div className='pageContenant flex flex-wrap h-full'>
             <Sidebar></Sidebar>
             <div className='flex-1 z-1 mx-[16px] sm:mx-[80px] my-[40px]'>
-                <div className='flex flex-wrap start'>
+                <div className='flex flex-wrap start gap-y-[8px]'>
                     <div className="breadcrumb pe-[16px] underline text-accent">
                         <Link to="/myCharacters">Mes aventuriers</Link>
                     </div>
