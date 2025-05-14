@@ -563,7 +563,7 @@ export function DndFormComponent() {
                                 <form.Field name={`weapons[${index}].bonus`}>
                                     {(field) => (
                                         <input
-                                            type="number"
+                                            type="text"
                                             name={field.name}
                                             id={field.name}
                                             value={field.state.value ?? ''}
