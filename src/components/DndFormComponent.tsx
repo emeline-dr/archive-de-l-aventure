@@ -435,7 +435,7 @@ export function DndFormComponent() {
                 {/* Choix des sorts mineurs */}
                 <form.Field name="minorSpell">
                     {(field) => (
-                        <div className='w-[550px]'>
+                        <div className='w-[250px] sm:w-[550px]'>
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
                                 Sorts mineurs
                             </label>
@@ -453,7 +453,7 @@ export function DndFormComponent() {
                 {/* Choix des sorts de niveau 1 */}
                 <form.Field name="lvlOneSpell">
                     {(field) => (
-                        <div className='w-[550px]'>
+                        <div className='w-[250px] sm:w-[550px]'>
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
                                 Sorts de niveau 1
                             </label>
