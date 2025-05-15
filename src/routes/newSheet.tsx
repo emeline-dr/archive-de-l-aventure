@@ -18,7 +18,7 @@ export const NewSheetRoute = createRoute({
                     </div>
                     <div className="breadcrumb text-background">Nouvelle fiche</div>
                 </div>
-                <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px]'>Création d'une nouvelle fiche</h2>
+                <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px] leading-none'>Création d'une nouvelle fiche</h2>
 
                 <NewSheetPage></NewSheetPage>
 

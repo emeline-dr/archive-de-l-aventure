@@ -5,6 +5,9 @@ export function DndFormComponent() {
     const form = useForm({
         defaultValues: {
             avatar: '',
+            firstName: '',
+            lastName: '',
+            alignment: '',
             race: '',
             classDnd: '',
             subClass: '',
@@ -80,6 +83,65 @@ export function DndFormComponent() {
                     </div>
                 )}
             </form.Field>
+
+            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]'>
+                {/* Choix du prénom */}
+                <form.Field name="firstName">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Prénom
+                            </label>
+                            <input
+                                type="text"
+                                name={field.name}
+                                id={field.name}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre prénom"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix du nom de famille */}
+                <form.Field name="lastName">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Nom de famille <i className='font-crimson-text text-sm'>(facultatif)</i>
+                            </label>
+                            <input
+                                type="text"
+                                name={field.name}
+                                id={field.name}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre nom de famille"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix de l'alignement */}
+                <form.Field name="alignment">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Alignement
+                            </label>
+                            <input
+                                type="text"
+                                name={field.name}
+                                id={field.name}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre alignement"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
 
             {/* Champ race */}
             <form.Field name="race">
