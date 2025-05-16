@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { DndFormComponent } from "../components/DndFormComponent";
-import { L5rFormComponent } from "../components/L5RFormComponent";
-import { CthulhuFormComponent } from "../components/CoCFormComponent";
+import { DndFormComponent } from "../components/formComponent/DndFormComponent";
+import { L5rFormComponent } from "../components/formComponent/L5RFormComponent";
+import { CthulhuFormComponent } from "../components/formComponent/CoCFormComponent";
 
 export function NewSheetPage() {
     const systems = [

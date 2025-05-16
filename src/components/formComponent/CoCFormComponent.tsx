@@ -1,6 +1,6 @@
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
-import { useSkillCoCFiltered } from '../api/CoC/skillCoCApi'
+import { useSkillCoCFiltered } from '../../api/CoC/skillCoCApi'
 
 export function CthulhuFormComponent() {
     const skillCoC = useSkillCoCFiltered();
@@ -62,7 +62,7 @@ export function CthulhuFormComponent() {
 
     const [exportStatInt, setExportStatInt] = useState(0);
     const [, setSkillsCount] = useState(0);
-    const [, setWeaponVersion] = useState(0);
+    const [, setWeaponCount] = useState(0);
     const [, setFellowInvestigators] = useState(0);
 
     if (skillCoC.isLoading) return <p>Chargement des compétences...</p>;
@@ -440,6 +440,20 @@ export function CthulhuFormComponent() {
                                     />
                                 )}
                             </form.Field>
+
+                            {/* Supprimer une compétence */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const updatedSkills = [...form.state.values.skills]
+                                    updatedSkills.splice(index, 1)
+                                    form.setFieldValue('skills', updatedSkills)
+                                    setSkillsCount((c) => c - 1)
+                                }}
+                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
                         </div>
                     ))}
 
@@ -456,9 +470,9 @@ export function CthulhuFormComponent() {
                             ])
                             setSkillsCount((s) => s + 1)
                         }}
-                        className="size-[40px] bg-text rounded flex justify-center items-center cursor-pointer"
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
                     >
-                        <i className="fa-solid fa-plus text-background text-2xl"></i>
+                        <i className="fa-solid fa-plus text-2xl"></i>
                     </button>
                 </div>
             </div>
@@ -545,6 +559,20 @@ export function CthulhuFormComponent() {
                                         />
                                     )}
                                 </form.Field>
+
+                                {/* Supprimer une arme */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updatedWeapons = [...form.state.values.weapons]
+                                        updatedWeapons.splice(index, 1)
+                                        form.setFieldValue('weapons', updatedWeapons)
+                                        setWeaponCount((c) => c - 1)
+                                    }}
+                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                                >
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     ))}
@@ -564,11 +592,11 @@ export function CthulhuFormComponent() {
                                     notes: '',
                                 },
                             ])
-                            setWeaponVersion((w) => w + 1)
+                            setWeaponCount((w) => w + 1)
                         }}
-                        className="size-[40px] bg-text rounded flex justify-center items-center cursor-pointer"
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
                     >
-                        <i className="fa-solid fa-plus text-background text-2xl"></i>
+                        <i className="fa-solid fa-plus text-2xl"></i>
                     </button>
                 </div>
             </div>
@@ -801,6 +829,20 @@ export function CthulhuFormComponent() {
                                     />
                                 )}
                             </form.Field>
+
+                            {/* Supprimer un ami investigateur */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const updatedFellowInvestigators = [...form.state.values.fellowInvestigators]
+                                    updatedFellowInvestigators.splice(index, 1)
+                                    form.setFieldValue('fellowInvestigators', updatedFellowInvestigators)
+                                    setFellowInvestigators((c) => c - 1)
+                                }}
+                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
                         </div>
                     ))}
 
@@ -817,9 +859,9 @@ export function CthulhuFormComponent() {
                             ])
                             setFellowInvestigators((i) => i + 1)
                         }}
-                        className="size-[40px] bg-text rounded flex justify-center items-center cursor-pointer"
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
                     >
-                        <i className="fa-solid fa-plus text-background text-2xl"></i>
+                        <i className="fa-solid fa-plus text-2xl"></i>
                     </button>
                 </div>
             </div>

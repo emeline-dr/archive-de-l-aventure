@@ -1,10 +1,10 @@
 import { useState } from "react"
 import { useForm } from "@tanstack/react-form"
 
-import { useClan } from "../api/L5R/clanL5RApi"
-import { useFamily } from "../api/L5R/familyL5RApi"
-import { useSchool } from "../api/L5R/schoolL5RApi"
-import { useSkillL5RFiltered } from "../api/L5R/skillL5RApi"
+import { useClan } from "../../api/L5R/clanL5RApi"
+import { useFamily } from "../../api/L5R/familyL5RApi"
+import { useSchool } from "../../api/L5R/schoolL5RApi"
+import { useSkillL5RFiltered } from "../../api/L5R/skillL5RApi"
 
 export function L5rFormComponent() {
     const form = useForm({
@@ -64,7 +64,7 @@ export function L5rFormComponent() {
 
     const [, setSkillsCount] = useState(0);
     const [armorCount, setArmorCount] = useState(1);
-    const [, setWeaponVersion] = useState(0)
+    const [, setWeaponCount] = useState(0)
 
     const clansL5R = useClan();
     const familiesL5R = useFamily();
@@ -611,6 +611,20 @@ export function L5rFormComponent() {
                                     />
                                 )}
                             </form.Field>
+
+                            {/* Supprimer une compétence */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const updatedSkills = [...form.state.values.skills]
+                                    updatedSkills.splice(index, 1)
+                                    form.setFieldValue('skills', updatedSkills)
+                                    setSkillsCount((c) => c - 1)
+                                }}
+                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
                         </div>
                     ))}
 
@@ -627,9 +641,9 @@ export function L5rFormComponent() {
                             ])
                             setSkillsCount((s) => s + 1)
                         }}
-                        className="size-[40px] bg-text rounded flex justify-center items-center cursor-pointer"
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
                     >
-                        <i className="fa-solid fa-plus text-background text-2xl"></i>
+                        <i className="fa-solid fa-plus text-2xl"></i>
                     </button>
                 </div>
             </div>
@@ -757,19 +771,35 @@ export function L5rFormComponent() {
                 <div className="w-full flex flex-wrap justify-start gap-8">
                     {/* Choix d'une/de plusieurs armure(s) */}
                     {[...Array(armorCount)].map((_, index) => (
-                        <form.Field key={index} name={`armors[${index}]`}>
-                            {(field) => (
-                                <input
-                                    type="text"
-                                    name={field.name}
-                                    id={field.name}
-                                    value={field.state.value ?? ''}
-                                    onChange={(e) => field.handleChange(e.target.value)}
-                                    className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
-                                    placeholder={`Entrez le nom de l'armure ${index + 1}`}
-                                />
-                            )}
-                        </form.Field>
+                        <div className='flex flex-wrap w-[240px] justify-between gap-[8px]'>
+                            <form.Field key={index} name={`armors[${index}]`}>
+                                {(field) => (
+                                    <input
+                                        type="text"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className="flex-1 p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder={`Entrez le nom de l'armure ${index + 1}`}
+                                    />
+                                )}
+                            </form.Field>
+
+                            {/* Supprimer une armure */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const updatedArmors = [...form.state.values.armors]
+                                    updatedArmors.splice(index, 1)
+                                    form.setFieldValue('armors', updatedArmors)
+                                    setArmorCount((c) => c - 1)
+                                }}
+                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
                     ))}
 
                     {/* Ajouter un champ d’armure */}
@@ -780,9 +810,9 @@ export function L5rFormComponent() {
                             form.setFieldValue('armors', [...currentArmors, ''])
                             setArmorCount((c) => c + 1)
                         }}
-                        className="size-[40px] bg-text rounded flex justify-center items-center cursor-pointer"
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
                     >
-                        <i className="fa-solid fa-plus text-background text-2xl"></i>
+                        <i className="fa-solid fa-plus text-2xl"></i>
                     </button>
                 </div>
             </div>
@@ -853,6 +883,20 @@ export function L5rFormComponent() {
                                         />
                                     )}
                                 </form.Field>
+
+                                {/* Supprimer une arme */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updatedWeapons = [...form.state.values.weapons]
+                                        updatedWeapons.splice(index, 1)
+                                        form.setFieldValue('weapons', updatedWeapons)
+                                        setWeaponCount((c) => c - 1)
+                                    }}
+                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                                >
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     ))}
@@ -871,11 +915,11 @@ export function L5rFormComponent() {
                                     notes: '',
                                 },
                             ])
-                            setWeaponVersion((w) => w + 1)
+                            setWeaponCount((w) => w + 1)
                         }}
-                        className="size-[40px] bg-text rounded flex justify-center items-center cursor-pointer"
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
                     >
-                        <i className="fa-solid fa-plus text-background text-2xl"></i>
+                        <i className="fa-solid fa-plus text-2xl"></i>
                     </button>
                 </div>
             </div>

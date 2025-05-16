@@ -1,11 +1,11 @@
 import { useForm } from '@tanstack/react-form'
 import { useEffect, useState } from 'react'
 
-import { useSpecies } from '../api/DnD/speciesDnDApi'
-import { useClass, useSubClass } from '../api/DnD/classDnDApi'
-import { useOrigin } from '../api/DnD/originDnDApi'
-import { useLanguage } from '../api/DnD/languageDnDApi'
-import { useSkillDnDFiltered } from '../api/DnD/skillDnDApi'
+import { useSpecies } from '../../api/DnD/speciesDnDApi'
+import { useClass, useSubClass } from '../../api/DnD/classDnDApi'
+import { useOrigin } from '../../api/DnD/originDnDApi'
+import { useLanguage } from '../../api/DnD/languageDnDApi'
+import { useSkillDnDFiltered } from '../../api/DnD/skillDnDApi'
 
 export function DndFormComponent() {
     const form = useForm({
@@ -65,7 +65,7 @@ export function DndFormComponent() {
     }, [form, form.state.values.classDnd])
 
     const [armorCount, setArmorCount] = useState(1);
-    const [, setWeaponVersion] = useState(0);
+    const [, setWeaponCount] = useState(0);
     const [languageCount, setLanguageCount] = useState(1);
     const [, setSkillsCount] = useState(0);
 
@@ -261,7 +261,7 @@ export function DndFormComponent() {
                 }
             </form.Field>
 
-            {/* Champ classe */}
+            {/* Champ classe + sous-classe */}
             <form.Field name="classDnd">
                 {(classField) => {
                     const selectedClass = classDnD.data.find(cls => cls.id.toString() === classField.state.value);
@@ -390,31 +390,47 @@ export function DndFormComponent() {
 
                 {/* Choix des langues */}
                 <div className='w-fit'>
-                    <label className="block text-xl font-uncial-antiqua mb-[8px]">
+                    <label className="block w-[240px] text-xl font-uncial-antiqua mb-[8px]">
                         Langues
                     </label>
 
                     <div className="w-full flex flex-wrap flex-col justify-start gap-[8px]">
                         {/* Choix d'une/de plusieurs langue(s) */}
                         {[...Array(languageCount)].map((_, index) => (
-                            <form.Field key={index} name={`language[${index}]`}>
-                                {(field) => (
-                                    <select
-                                        name={field.name}
-                                        id={field.name}
-                                        value={field.state.value ?? ''}
-                                        onChange={(e) => field.handleChange(e.target.value)}
-                                        className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
-                                    >
-                                        <option value="">Sélectionner une langue</option>
-                                        {languageDnD.data.map((language) => (
-                                            <option key={language.id} value={language.label}>
-                                                {language.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                )}
-                            </form.Field>
+                            <div className='flex flex-wrap w-[240px] justify-between gap-[8px]'>
+                                <form.Field key={index} name={`language[${index}]`}>
+                                    {(field) => (
+                                        <select
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="flex-1 p-[8px] bg-primary rounded-lg border border-secondary"
+                                        >
+                                            <option value="">Sélectionner une langue</option>
+                                            {languageDnD.data.map((language) => (
+                                                <option key={language.id} value={language.label}>
+                                                    {language.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </form.Field>
+
+                                {/* Supprimer une langue */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updatedLanguage = [...form.state.values.language]
+                                        updatedLanguage.splice(index, 1)
+                                        form.setFieldValue('language', updatedLanguage)
+                                        setLanguageCount((c) => c - 1)
+                                    }}
+                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                                >
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
                         ))}
 
                         {/* Ajouter un champ de langue */}
@@ -425,9 +441,9 @@ export function DndFormComponent() {
                                 form.setFieldValue('armors', [...currentLanguages, ''])
                                 setLanguageCount((l) => l + 1)
                             }}
-                            className="size-[40px] bg-text rounded flex justify-center items-center cursor-pointer"
+                            className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
                         >
-                            <i className="fa-solid fa-plus text-background text-2xl"></i>
+                            <i className="fa-solid fa-plus text-2xl"></i>
                         </button>
                     </div>
                 </div>
@@ -615,6 +631,20 @@ export function DndFormComponent() {
                                     />
                                 )}
                             </form.Field>
+
+                            {/* Supprimer une compétence */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const updatedSkill = [...form.state.values.skills]
+                                    updatedSkill.splice(index, 1)
+                                    form.setFieldValue('skills', updatedSkill)
+                                    setSkillsCount((s) => s - 1)
+                                }}
+                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
                         </div>
                     ))}
 
@@ -631,9 +661,9 @@ export function DndFormComponent() {
                             ])
                             setSkillsCount((s) => s + 1)
                         }}
-                        className="size-[40px] bg-text rounded flex justify-center items-center cursor-pointer"
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
                     >
-                        <i className="fa-solid fa-plus text-background text-2xl"></i>
+                        <i className="fa-solid fa-plus text-2xl"></i>
                     </button>
                 </div>
             </div>
@@ -684,19 +714,35 @@ export function DndFormComponent() {
                 <div className="w-full flex flex-wrap justify-start gap-8">
                     {/* Choix d'une/de plusieurs armure(s) */}
                     {[...Array(armorCount)].map((_, index) => (
-                        <form.Field key={index} name={`armors[${index}]`}>
-                            {(field) => (
-                                <input
-                                    type="text"
-                                    name={field.name}
-                                    id={field.name}
-                                    value={field.state.value ?? ''}
-                                    onChange={(e) => field.handleChange(e.target.value)}
-                                    className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
-                                    placeholder={`Entrez le nom de l'armure ${index + 1}`}
-                                />
-                            )}
-                        </form.Field>
+                        <div className='flex flex-wrap w-[240px] justify-between gap-[8px]'>
+                            <form.Field key={index} name={`armors[${index}]`}>
+                                {(field) => (
+                                    <input
+                                        type="text"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className="flex-1 p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder={`Entrez le nom de l'armure ${index + 1}`}
+                                    />
+                                )}
+                            </form.Field>
+
+                            {/* Supprimer une armure */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const updatedArmors = [...form.state.values.armors]
+                                    updatedArmors.splice(index, 1)
+                                    form.setFieldValue('armors', updatedArmors)
+                                    setArmorCount((c) => c - 1)
+                                }}
+                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
                     ))}
 
                     {/* Ajouter un champ d’armure */}
@@ -707,9 +753,9 @@ export function DndFormComponent() {
                             form.setFieldValue('armors', [...currentArmors, ''])
                             setArmorCount((c) => c + 1)
                         }}
-                        className="size-[40px] bg-text rounded flex justify-center items-center cursor-pointer"
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
                     >
-                        <i className="fa-solid fa-plus text-background text-2xl"></i>
+                        <i className="fa-solid fa-plus text-2xl"></i>
                     </button>
                 </div>
             </div>
@@ -825,6 +871,20 @@ export function DndFormComponent() {
                                         />
                                     )}
                                 </form.Field>
+
+                                {/* Supprimer une arme */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updatedWeapons = [...form.state.values.weapons]
+                                        updatedWeapons.splice(index, 1)
+                                        form.setFieldValue('weapons', updatedWeapons)
+                                        setWeaponCount((c) => c - 1)
+                                    }}
+                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                                >
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     ))}
@@ -846,11 +906,11 @@ export function DndFormComponent() {
                                     notes: '',
                                 },
                             ])
-                            setWeaponVersion((w) => w + 1)
+                            setWeaponCount((w) => w + 1)
                         }}
-                        className="size-[40px] bg-text rounded flex justify-center items-center cursor-pointer"
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
                     >
-                        <i className="fa-solid fa-plus text-background text-2xl"></i>
+                        <i className="fa-solid fa-plus text-2xl"></i>
                     </button>
                 </div>
             </div>
