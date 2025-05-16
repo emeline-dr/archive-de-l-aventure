@@ -1,6 +1,9 @@
 import './index.css'
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+const queryClient = new QueryClient();
+
 import {
   createRouter,
   RouterProvider,
@@ -10,10 +13,14 @@ import { Route as RootRoute } from './routes/__root';
 
 import { homeRoute } from './routes/home';
 import { loginRoute } from './routes/login';
-import { signInRoute } from './routes/signin';
+import { signInRoute } from './routes/signIn';
 import { indexRoute } from './routes';
 import { myCharactersRoute } from './routes/myCharacters';
 import { registersRoute } from './routes/registers';
+import { NewSheetRoute } from './routes/newSheet';
+import { CharactersOwnedRoute } from './routes/charactersOwned';
+import { OthersCharactersRoute } from './routes/othersCharacters';
+import { UpdateSheetRoute } from './routes/updateSheets';
 
 const routeTree = RootRoute.addChildren([
   homeRoute,
@@ -21,7 +28,11 @@ const routeTree = RootRoute.addChildren([
   signInRoute,
   indexRoute,
   myCharactersRoute,
+  CharactersOwnedRoute,
   registersRoute,
+  OthersCharactersRoute,
+  NewSheetRoute,
+  UpdateSheetRoute
 ]);
 
 const router = createRouter({ routeTree });
@@ -34,6 +45,8 @@ declare module '@tanstack/react-router' {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </React.StrictMode>
 );

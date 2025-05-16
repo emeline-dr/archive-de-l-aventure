@@ -1,9 +1,8 @@
 import { createRoute } from '@tanstack/react-router';
 import { Route as RootRoute } from './__root';
-import { LoginForm } from '../pages/loginForm';
 
-export const loginRoute = createRoute({
-    path: '/login',
+export const OthersCharactersRoute = createRoute({
+    path: '/registers/1',
     getParentRoute: () => RootRoute,
-    component: LoginForm,
+    component: () => <h2>Les fiches aux autres</h2>,
 });

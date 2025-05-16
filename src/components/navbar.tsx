@@ -6,11 +6,17 @@ import logo from "../assets/images/logo.png"
 function Navbar() {
     const location = useLocation();
 
+    let iconLink = '/index';
+
+    if (location.pathname.includes('signIn') || location.pathname.includes('login')) {
+        iconLink = '/';
+    }
+
     return (
         <>
             {location.pathname !== '/' &&
                 <nav className='bg-text justify-center md:justify-between flex flex-wrap px-[40px] py-[12px]'>
-                    <Link to="/" className="flex flex-wrap text-background font-uncial-antiqua md:ms-[40px]">
+                    <Link to={iconLink} className="flex flex-wrap text-background font-uncial-antiqua md:ms-[40px]">
                         <img src={logo} alt="" className="h-[100px] object-cover" />
                         <h1 className="h-fit self-center ms-[24px] text-4xl">Les AdA</h1>
                     </Link>
@@ -25,14 +31,14 @@ function Navbar() {
                         </Link>
                     }
                     {!location.pathname.includes('login') && !location.pathname.includes('signIn') &&
-                        <div className="self-center">
-                            <Link to="/index" className="font-uncial-antiqua text-2xl tracking-[5%] text-accent h-fit hover:underline">
+                        <div className="self-center text-center">
+                            <Link to="/index" activeProps={{ className: 'underline' }} className="font-uncial-antiqua block lg:inline-block text-2xl tracking-[5%] text-accent h-fit hover:underline">
                                 Accueil
                             </Link>
-                            <Link to="/myCharacters" className="font-uncial-antiqua text-2xl tracking-[5%] text-accent h-fit mx-[16px] hover:underline">
+                            <Link to="/myCharacters" activeProps={{ className: 'underline' }} className="font-uncial-antiqua block lg:inline-block text-2xl tracking-[5%] text-accent h-fit mx-[16px] hover:underline">
                                 Mes aventuriers
                             </Link>
-                            <Link to="/registers" className="font-uncial-antiqua text-2xl tracking-[5%] text-accent h-fit hover:underline">
+                            <Link to="/registers" activeProps={{ className: 'underline' }} className="font-uncial-antiqua block lg:inline-block text-2xl tracking-[5%] text-accent h-fit hover:underline">
                                 Les registres
                             </Link>
                         </div>
