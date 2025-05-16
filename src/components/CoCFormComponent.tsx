@@ -1,7 +1,10 @@
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
+import { useSkillCoCFiltered } from '../api/CoC/skillCoCApi'
 
 export function CthulhuFormComponent() {
+    const skillCoC = useSkillCoCFiltered();
+
     const form = useForm({
         defaultValues: {
             avatar: '',
@@ -22,7 +25,7 @@ export function CthulhuFormComponent() {
             statInt: '',
             skills: [
                 {
-                    name: '',
+                    label: '',
                     value: ''
                 },
             ],
@@ -61,6 +64,10 @@ export function CthulhuFormComponent() {
     const [, setSkillsCount] = useState(0);
     const [, setWeaponVersion] = useState(0);
     const [, setFellowInvestigators] = useState(0);
+
+    if (skillCoC.isLoading) return <p>Chargement des compétences...</p>;
+    if (skillCoC.error) return <p>Erreur : {skillCoC.error.message}</p>;
+    if (!skillCoC.data) return null;
 
     return (
         <form
@@ -400,17 +407,22 @@ export function CthulhuFormComponent() {
                     {form.state.values.skills.map((_, index) => (
                         <div key={index} className="flex flex-wrap gap-[8px]">
                             {/* Nom */}
-                            <form.Field name={`skills[${index}].name`}>
+                            <form.Field name={`skills[${index}].label`}>
                                 {(field) => (
-                                    <input
-                                        type="text"
+                                    <select
                                         name={field.name}
                                         id={field.name}
                                         value={field.state.value ?? ''}
                                         onChange={(e) => field.handleChange(e.target.value)}
                                         className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
-                                        placeholder={`Nom de la compétence ${index + 1}`}
-                                    />
+                                    >
+                                        <option value="">Sélectionner une compétence</option>
+                                        {skillCoC.data.map((skill) => (
+                                            <option key={skill.id} value={skill.label}>
+                                                {skill.label}
+                                            </option>
+                                        ))}
+                                    </select>
                                 )}
                             </form.Field>
 
@@ -438,7 +450,7 @@ export function CthulhuFormComponent() {
                             form.setFieldValue('skills', [
                                 ...current,
                                 {
-                                    name: '',
+                                    label: '',
                                     value: '',
                                 }
                             ])
