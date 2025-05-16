@@ -18,6 +18,8 @@ import { indexRoute } from './routes';
 import { myCharactersRoute } from './routes/myCharacters';
 import { registersRoute } from './routes/registers';
 import { NewSheetRoute } from './routes/newSheet';
+import { CharactersOwnedRoute } from './routes/charactersOwned';
+import { OthersCharactersRoute } from './routes/othersCharacters';
 
 const routeTree = RootRoute.addChildren([
   homeRoute,
@@ -25,7 +27,9 @@ const routeTree = RootRoute.addChildren([
   signInRoute,
   indexRoute,
   myCharactersRoute,
+  CharactersOwnedRoute,
   registersRoute,
+  OthersCharactersRoute,
   NewSheetRoute
 ]);
 
