@@ -79,7 +79,7 @@ export function MyCharactersComponent() {
                             onChange={(e) => setSelectedSystem(e.target.value)}
                             className="p-[8px] bg-primary rounded-lg border border-secondary"
                         >
-                            <option value="all">Tous les jeux</option>
+                            <option value="all">Tous les univers</option>
                             {uniqueSystems.map(system => (
                                 <option key={system} value={system}>{system}</option>
                             ))}
