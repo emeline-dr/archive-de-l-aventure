@@ -1,8 +1,10 @@
 import { createRoute } from '@tanstack/react-router';
 import { Route as RootRoute } from './__root';
 
+import { CharactersOwnedPage } from '../pages/charactersOwnedPage';
+
 export const CharactersOwnedRoute = createRoute({
     path: '/myCharacters/1',
     getParentRoute: () => RootRoute,
-    component: () => <h2>Ses fiches à soi</h2>,
+    component: CharactersOwnedPage,
 });
