@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 export type SkillCoC = {
     id: number;
     label: string;
-    systemId: number;
+    system_id: number;
 };
 
 export async function fetchSkillCoC(): Promise<SkillCoC[]> {
@@ -20,6 +20,6 @@ export function useSkillCoCFiltered() {
     return useQuery({
         queryKey: ['skills-coc'],
         queryFn: fetchSkillCoC,
-        select: (data) => data.filter(skill => skill.systemId === 3),
+        select: (data) => data.filter(skill => skill.system_id === 3),
     });
 }

@@ -8,9 +8,11 @@
     --color-accent: #4FE2A5;
 
     --color-text-75: rgba(53, 59, 59, .75);
+    --color-text-95: rgba(53, 59, 59, .95);
 
     --color-background-75: rgba(255, 249, 243, .75);
 
+    --color-accent-25: rgba(79, 226, 165, .25);
     --color-accent-85: rgba(79, 226, 165, .85);
 
     --font-crimson-text: "Crimson Text", serif;

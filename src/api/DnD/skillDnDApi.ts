@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 export type SkillDnD = {
     id: number;
     label: string;
-    systemId: number;
+    system_id: number;
 };
 
 export async function fetchSkillDnD(): Promise<SkillDnD[]> {
@@ -20,6 +20,6 @@ export function useSkillDnDFiltered() {
     return useQuery({
         queryKey: ['skills-dnd'],
         queryFn: fetchSkillDnD,
-        select: (data) => data.filter(skill => skill.systemId === 2),
+        select: (data) => data.filter(skill => skill.system_id === 2),
     });
 }
