@@ -33,7 +33,7 @@ export function NewSheetPage() {
                 <select
                     value={selectedSystem}
                     onChange={(e) => setSelectedSystem(e.target.value)}
-                    className="p-[8px] bg-primary rounded-lg border border-secondary"
+                    className="p-[8px] bg-text rounded-lg text-accent"
                 >
                     <option>Choisir un univers</option>
                     {systems.map(system => (
