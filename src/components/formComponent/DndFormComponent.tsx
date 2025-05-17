@@ -1,7 +1,7 @@
 import { useForm } from '@tanstack/react-form'
 import { useEffect, useState } from 'react'
 
-import { useSpecies } from '../../api/DnD/speciesDnDApi'
+import { useSpecies, useSubSpecies } from '../../api/DnD/speciesDnDApi'
 import { useClass, useSubClass } from '../../api/DnD/classDnDApi'
 import { useOrigin } from '../../api/DnD/originDnDApi'
 import { useLanguage } from '../../api/DnD/languageDnDApi'
@@ -70,6 +70,7 @@ export function DndFormComponent() {
     const [, setSkillsCount] = useState(0);
 
     const speciesDnD = useSpecies();
+    const subSpeciesDnD = useSubSpecies();
     const classDnD = useClass();
     const subClassDnD = useSubClass();
     const originDnD = useOrigin();
@@ -77,6 +78,7 @@ export function DndFormComponent() {
     const skillDnD = useSkillDnDFiltered();
 
     if (speciesDnD.isLoading
+        || subSpeciesDnD.isLoading
         || classDnD.isLoading
         || subClassDnD.isLoading
         || originDnD.isLoading
@@ -85,6 +87,7 @@ export function DndFormComponent() {
     ) return <p>Chargement...</p>;
 
     if (speciesDnD.error
+        || subSpeciesDnD.error
         || classDnD.error
         || subClassDnD.error
         || originDnD.error
@@ -93,15 +96,13 @@ export function DndFormComponent() {
     ) return <p>Erreur</p>;
 
     if (!speciesDnD.data
+        || !subSpeciesDnD.data
         || !classDnD.data
         || !subClassDnD.data
         || !originDnD.data
         || !languageDnD.data
         || !skillDnD.data
     ) return null;
-
-    const uniqueSpecies = speciesDnD.data.uniqueSpecies;
-    const Species = speciesDnD.data.Species;
 
     return (
         <form
@@ -193,12 +194,14 @@ export function DndFormComponent() {
             {/* Champ race + sous-race */}
             <form.Field name="race">
                 {(field) => {
-                    const selectedRace = Species.find(race => race.id.toString() === field.state.value);
+                    const selectedRace = speciesDnD.data.find(race => race.id.toString() === field.state.value);
+                    const availableSubSpecies = subSpeciesDnD.data.filter(race => race.species_id === selectedRace?.id);
+
                     return (
                         <div className="w-full">
                             <label className="block text-xl font-uncial-antiqua mt-[40px] mb-[8px]">Race</label>
                             <fieldset className="flex flex-wrap justify-start gap-[8px] bg-primary rounded-[3px] p-[8px]">
-                                {uniqueSpecies.map((race) => (
+                                {speciesDnD.data.map((race) => (
                                     <div key={race.id}>
                                         <label className="flex items-center gap-2 w-[150px]">
                                             <input
@@ -218,34 +221,32 @@ export function DndFormComponent() {
                                     </div>
                                 ))}
                             </fieldset>
-                            {selectedRace?.subspecies &&
+                            {availableSubSpecies && availableSubSpecies.length > 0 &&
                                 <form.Field name="subRace">
                                     {(field) => {
                                         return (
                                             <div className="w-full">
                                                 <label className="block text-xl font-uncial-antiqua mt-[40px] mb-[8px]">Sous-race</label>
                                                 <fieldset className="flex flex-wrap justify-start gap-[8px] bg-primary rounded-[3px] p-[8px]">
-                                                    {Species.map((race) => (
+                                                    {availableSubSpecies.map((race) => (
                                                         <>
-                                                            {selectedRace?.label === race.label &&
-                                                                <div key={race.id}>
-                                                                    <label className="flex items-center gap-2">
-                                                                        <input
-                                                                            type="radio"
-                                                                            value={race.id}
-                                                                            checked={field.state.value === race.id.toString()}
-                                                                            onChange={() => field.handleChange(race.id.toString())}
-                                                                            className="hidden"
-                                                                        />
-                                                                        <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
-                                                                            {field.state.value === race.id.toString() && (
-                                                                                <i className="fa-solid fa-check text-accent"></i>
-                                                                            )}
-                                                                        </span>
-                                                                        {race.subspecies}
-                                                                    </label>
-                                                                </div>
-                                                            }
+                                                            <div key={race.id}>
+                                                                <label className="flex items-center gap-2">
+                                                                    <input
+                                                                        type="radio"
+                                                                        value={race.id}
+                                                                        checked={field.state.value === race.id.toString()}
+                                                                        onChange={() => field.handleChange(race.id.toString())}
+                                                                        className="hidden"
+                                                                    />
+                                                                    <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                                                        {field.state.value === race.id.toString() && (
+                                                                            <i className="fa-solid fa-check text-accent"></i>
+                                                                        )}
+                                                                    </span>
+                                                                    {race.label}
+                                                                </label>
+                                                            </div>
                                                         </>
                                                     ))}
                                                 </fieldset>
