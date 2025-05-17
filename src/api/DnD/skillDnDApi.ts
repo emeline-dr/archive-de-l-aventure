@@ -7,7 +7,7 @@ export type SkillDnD = {
 };
 
 export async function fetchSkillDnD(): Promise<SkillDnD[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/skill');
+    const res = await fetch('https://apidnd.up.railway.app/api/skill/system/2');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des compétences de DnD');
@@ -19,7 +19,6 @@ export async function fetchSkillDnD(): Promise<SkillDnD[]> {
 export function useSkillDnDFiltered() {
     return useQuery({
         queryKey: ['skills-dnd'],
-        queryFn: fetchSkillDnD,
-        select: (data) => data.filter(skill => skill.system_id === 2),
+        queryFn: fetchSkillDnD
     });
 }

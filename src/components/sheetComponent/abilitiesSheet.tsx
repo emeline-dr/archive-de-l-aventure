@@ -1,4 +1,6 @@
-import { useAbilities } from "../../api/abilitiesApi";
+import { useAbilitiesCoC } from '../../api/CoC/abilitiesCoC';
+import { useAbilitiesDnD } from '../../api/DnD/abilitiesDnDApi';
+import { useAbilitiesL5R } from '../../api/L5R/abilitiesL5RApi';
 
 import bgAbility from '../../assets/images/fondSheetCarac.png'
 
@@ -19,23 +21,21 @@ function AbilitiesSheet(props: AbilitiesSheetProps) {
         { abilityId: 10, value: 1, modifier: +8, sheet_id: 2 },
     ];
 
-    const abilitiesAll = useAbilities();
+    const abilitiesMap = {
+        1: useAbilitiesL5R(),
+        2: useAbilitiesDnD(),
+        3: useAbilitiesCoC(),
+    };
 
-    if (abilitiesAll.isLoading) return <p>Chargement en cours...</p>
-    if (abilitiesAll.error) return <p>Erreur.</p>
-    if (!abilitiesAll.data) return null
+    const abilitiesFiltered = abilitiesMap[props.system_id as 1 | 2 | 3];
 
-    const abilitiesFiltered = abilitiesAll.data
-        .filter((ability: { system_id: number }) => ability.system_id === props.system_id)
-        .sort((a: { id: number }, b: { id: number }) => a.id - b.id);
-
-    if (abilitiesFiltered.length === 0) {
-        return <p>Aucune aptitude disponible pour le système {props.system_id}.</p>;
-    }
+    if (abilitiesFiltered.isLoading) return <p>Chargement en cours...</p>
+    if (abilitiesFiltered.error) return <p>Erreur.</p>
+    if (!abilitiesFiltered.data) return null
 
     return (
         <div className="flex flex-wrap justify-between gap-[8px] bg-primary px-[8px] py-[16px] rounded-[3px]">
-            {abilitiesFiltered.map((ability, index) => {
+            {abilitiesFiltered.data.map((ability, index) => {
                 const localData = fakeAbilityData
                     .find(data => data.abilityId === ability.id && data.sheet_id === props.sheet_id);
 

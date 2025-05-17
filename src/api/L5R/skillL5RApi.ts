@@ -7,7 +7,7 @@ export type SkillL5R = {
 };
 
 export async function fetchSkillL5R(): Promise<SkillL5R[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/skill');
+    const res = await fetch('https://apidnd.up.railway.app/api/skill/system/1');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des compétences de L5R');
@@ -19,7 +19,6 @@ export async function fetchSkillL5R(): Promise<SkillL5R[]> {
 export function useSkillL5RFiltered() {
     return useQuery({
         queryKey: ['skills-l5r'],
-        queryFn: fetchSkillL5R,
-        select: (data) => data.filter(skill => skill.system_id === 1),
+        queryFn: fetchSkillL5R
     });
 }

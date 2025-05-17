@@ -17,7 +17,7 @@ export async function fetchSystems(): Promise<System[]> {
 
 export function useSystems() {
     return useQuery({
-        queryKey: ['users'],
+        queryKey: ['systems'],
         queryFn: fetchSystems,
     });
 }
