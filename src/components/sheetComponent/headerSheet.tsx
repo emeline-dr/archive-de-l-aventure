@@ -17,7 +17,7 @@ type HeaderSheetProps = {
 }
 
 function HeaderSheet(props: HeaderSheetProps) {
-    const backgroundImageStyle = props.system_id === 1
+    const backgroundImageStyle = props.system_id === 2
         ? {
             backgroundImage: `url(${bgDnd})`,
             backgroundSize: 'cover',
@@ -35,10 +35,10 @@ function HeaderSheet(props: HeaderSheetProps) {
             <img
                 src={props.avatar}
                 alt={`Avatar de ${props.firstname} ${props.lastname ? props.lastname : ''}`}
-                className='object-cover z-1 h-[250px] w-[200px] rounded-[3px] border-3 border-secondary'
+                className='object-cover z-1 w-[150px] h-[250px] lg:w-[200px] rounded-[3px] border-3 border-secondary'
             />
 
-            <div className='flex flex-wrap flex-col gap-[16px] z-1 bg-text-95 py-[16px] px-[32px] text-background border-sm'>
+            <div className='flex flex-wrap flex-col w-full lg:w-auto gap-[16px] z-1 bg-text-95 py-[16px] px-[32px] text-background border-sm'>
                 <div><span className='font-uncial-antiqua text-2xl'>Classe :</span> {props.class} ({props.subclass})</div>
                 <div><span className='font-uncial-antiqua text-2xl'>Race :</span> {props.race} {props.lastname ? '(' + props.subrace + ')' : ''}</div>
                 <div><span className='font-uncial-antiqua text-2xl'>Historique :</span> {props.origin}</div>

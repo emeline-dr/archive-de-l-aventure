@@ -3,13 +3,15 @@ import { useState } from 'react';
 
 import Sidebar from "../components/sidebar"
 import HeaderSheet from '../components/sheetComponent/headerSheet';
+import AbilitiesSheet from '../components/sheetComponent/abilitiesSheet';
 
 import avatar from "../assets/images/icons-avatar-1.jpg"
 
 export function CharactersOwnedPage() {
     const arlahneSheet =
     {
-        system_id: 1,
+        sheet_id: 1,
+        system_id: 2,
         avatar: avatar,
         firstname: 'Arlhane',
         lastname: null,
@@ -73,6 +75,11 @@ export function CharactersOwnedPage() {
                         language={arlahneSheet.language}
                         lvl={arlahneSheet.lvl}
                         exp={arlahneSheet.exp}
+                    />
+
+                    <AbilitiesSheet
+                        system_id={arlahneSheet.system_id}
+                        sheet_id={arlahneSheet.sheet_id}
                     />
                 </div>
             </div>
