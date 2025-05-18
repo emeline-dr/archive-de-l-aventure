@@ -11,6 +11,8 @@ import AbilitiesSheet from '../components/sheetComponent/abilitiesSheet';
 import HealthSheet from '../components/sheetComponent/healthSheet';
 import OthersCharactericticsSheet from '../components/sheetComponent/OthersCharactericticsSheet';
 import SkillsSheet from '../components/sheetComponent/skillsSheet';
+import SavingThrowSheet from '../components/sheetComponent/savingThrowSheet';
+import ProficienciesSheet from '../components/sheetComponent/proficienciesSheet';
 
 import AppLoreCaracRelationsSheet from '../components/sheetComponent/appLoreCaracRelationsSheet';
 
@@ -85,11 +87,23 @@ export function CharactersOwnedPage() {
                         />}
                     </div>
 
-                    <div className='flex flex-wrap w-full justify-between gap-y-[40px]'>
+                    <div className='flex flex-wrap w-full justify-between gap-[40px]'>
                         <SkillsSheet
                             sheet_id={sheet.id}
                             system_id={sheet.system_id}
                         />
+
+                        {sheet.system_id === 2 &&
+                            <SavingThrowSheet />
+                        }
+                    </div>
+
+                    <div className='flex flex-wrap w-full justify-between gap-[40px]'>
+                        {sheet.system_id === 2 &&
+                            <ProficienciesSheet
+                                sheet_id={sheet.id}
+                            />
+                        }
                     </div>
 
 
