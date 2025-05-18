@@ -2,13 +2,15 @@
 
 import { useSheetsL5R } from '../../api/L5R/sheetL5RApi'
 import { useSheetsDnD } from '../../api/DnD/sheetDnDApi'
+import { useSheetsCoC } from '../../api/CoC/sheetCoCApi';
 
 import type { SheetL5R } from '../../api/L5R/sheetL5RApi';
 import type { SheetDnD } from '../../api/DnD/sheetDnDApi';
+import type { SheetCoC } from '../../api/CoC/sheetCoCApi';
 
 import HeaderSheetL5R from './headerSheetComponent/headerSheetL5R'
 import HeaderSheetDnD from './headerSheetComponent/headerSheetDnD'
-/* import HeaderSheetCoC from './headerSheetComponent/headerSheetCoC' */
+import HeaderSheetCoC from './headerSheetComponent/headerSheetCoC'
 
 import bgL5R from '../../assets/images/bg-lcinqa.webp'
 import bgDnd from '../../assets/images/bg-dnd.png'
@@ -33,6 +35,7 @@ function HeaderSheet(props: HeaderSheetProps) {
 
     const l5rSheet = useSheetsL5R();
     const dndSheet = useSheetsDnD();
+    const cocSheet = useSheetsCoC();
 
     let sheet;
     switch (props.system_id) {
@@ -41,6 +44,9 @@ function HeaderSheet(props: HeaderSheetProps) {
             break;
         case 2:
             sheet = dndSheet;
+            break;
+        case 3:
+            sheet = cocSheet;
             break;
         default:
             sheet = { isLoading: false, error: null, data: null };
@@ -80,6 +86,20 @@ function HeaderSheet(props: HeaderSheetProps) {
                     alignment={sheetDnD.alignment}
                     lvl={sheetDnD.lvl}
                     exp={sheetDnD.exp}
+                />
+            );
+        }
+
+        if (props.system_id === 3) {
+            const sheetCoC = selectedSheet as SheetCoC;
+            return (
+                <HeaderSheetCoC
+                    sheet_id={sheetCoC.sheet_id}
+                    occupation={sheetCoC.occupation}
+                    age={sheetCoC.age}
+                    gender={sheetCoC.gender}
+                    residence={sheetCoC.residence}
+                    birthplace={sheetCoC.birthplace}
                 />
             );
         }

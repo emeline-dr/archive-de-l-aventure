@@ -34,7 +34,7 @@ function AbilitiesSheet(props: AbilitiesSheetProps) {
     if (!abilitiesFiltered.data) return null
 
     return (
-        <div className="flex flex-wrap justify-between gap-[8px] bg-primary px-[8px] py-[16px] rounded-[3px]">
+        <div className="flex flex-wrap justify-between gap-[8px] max-w-3/4 bg-primary px-[8px] py-[16px] rounded-[3px]">
             {abilitiesFiltered.data.map((ability, index) => {
                 const localData = fakeAbilityData
                     .find(data => data.abilityId === ability.id && data.sheet_id === props.sheet_id);
@@ -42,7 +42,7 @@ function AbilitiesSheet(props: AbilitiesSheetProps) {
                 const isEvenIndex = index % 2 === 0;
 
                 return (
-                    <div className="h-[200px] w-[140px]">
+                    <div className="w-[140px]">
                         <h3 className="font-uncial-antiqua text-[32px] truncate h-[35px] text-center leading-none">
                             {ability.label}
                         </h3>
