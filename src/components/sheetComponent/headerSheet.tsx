@@ -1,7 +1,12 @@
 /* import { useSheets } from '../../api/sheetApi' */
+
+import { useSheetsL5R } from '../../api/L5R/sheetL5RApi'
 import { useSheetsDnD } from '../../api/DnD/sheetDnDApi'
 
-/* import HeaderSheetL5R from './headerSheetComponent/headerSheetL5R' */
+import type { SheetL5R } from '../../api/L5R/sheetL5RApi';
+import type { SheetDnD } from '../../api/DnD/sheetDnDApi';
+
+import HeaderSheetL5R from './headerSheetComponent/headerSheetL5R'
 import HeaderSheetDnD from './headerSheetComponent/headerSheetDnD'
 /* import HeaderSheetCoC from './headerSheetComponent/headerSheetCoC' */
 
@@ -26,35 +31,57 @@ function HeaderSheet(props: HeaderSheetProps) {
 
     const backgroundImageStyle = () => backgroundImages[props.system_id] || "none";
 
-    const sheet = useSheetsDnD();
+    const l5rSheet = useSheetsL5R();
+    const dndSheet = useSheetsDnD();
 
-    if (sheet.isLoading) return <p>Chargement en cours...</p>
-    if (sheet.error) return <p>Erreur.</p>
-    if (!sheet.data) return null
+    let sheet;
+    switch (props.system_id) {
+        case 1:
+            sheet = l5rSheet;
+            break;
+        case 2:
+            sheet = dndSheet;
+            break;
+        default:
+            sheet = { isLoading: false, error: null, data: null };
+    }
 
-    const dndSheet = sheet.data.find(sheet => sheet.sheet_id === props.sheet_id);
+    if (sheet.isLoading) return <p>Chargement en cours...</p>;
+    if (sheet.error) return <p>Erreur de chargement.</p>;
+    if (!sheet.data) return null;
 
-    if (!dndSheet) return <p>Aucune fiche correspondante trouvée.</p>;
+    const selectedSheet = sheet.data.find(s => s.sheet_id === props.sheet_id);
+    if (!selectedSheet) return <p>Aucune fiche trouvée.</p>;
 
     const renderSheetComponent = () => {
-        switch (props.system_id) {
-            case 1:
-                return 'l5r';
-            case 2:
-                return <HeaderSheetDnD
-                    sheet_id={dndSheet.sheet_id}
-                    class={dndSheet.class}
-                    subClass={dndSheet.subClass}
-                    species={dndSheet.species}
-                    /* subSpecies={dndSheet.subSpecies} */
-                    originDetails={dndSheet.originDetails}
-                    alignment={dndSheet.alignment}
-                    /* language={dndSheet.language} */
-                    lvl={dndSheet.lvl}
-                    exp={dndSheet.exp}
-                />;
-            case 3:
-                return 'coc';
+        if (props.system_id === 1) {
+            const sheetL5R = selectedSheet as SheetL5R;
+            return (
+                <HeaderSheetL5R
+                    sheet_id={sheetL5R.sheet_id}
+                    clan={sheetL5R.clan}
+                    family={sheetL5R.family}
+                    school={sheetL5R.school}
+                    school_rank={sheetL5R.school_rank}
+                    exp_total={sheetL5R.exp_total}
+                />
+            );
+        }
+
+        if (props.system_id === 2) {
+            const sheetDnD = selectedSheet as SheetDnD;
+            return (
+                <HeaderSheetDnD
+                    sheet_id={sheetDnD.sheet_id}
+                    class={sheetDnD.class}
+                    subClass={sheetDnD.subClass}
+                    species={sheetDnD.species}
+                    originDetails={sheetDnD.originDetails}
+                    alignment={sheetDnD.alignment}
+                    lvl={sheetDnD.lvl}
+                    exp={sheetDnD.exp}
+                />
+            );
         }
     };
 
