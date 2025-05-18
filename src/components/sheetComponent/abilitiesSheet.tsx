@@ -46,7 +46,7 @@ function AbilitiesSheet(props: AbilitiesSheetProps) {
                         <h3 className="font-uncial-antiqua text-[32px] truncate h-[35px] text-center leading-none">
                             {ability.label}
                         </h3>
-                        <div className="h-[155px] w-[140px]" key={ability.id}
+                        <div className="h-[155px] w-[140px] mt-[24px]" key={ability.id}
                             style={{
                                 backgroundImage: `url(${bgAbility})`,
                                 backgroundColor: 'var(--color-primary)',

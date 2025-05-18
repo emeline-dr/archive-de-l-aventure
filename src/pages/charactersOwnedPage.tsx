@@ -1,32 +1,30 @@
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
+import { useParams } from '@tanstack/react-router';
+
+import { useSheets } from '../api/sheetApi';
 
 import Sidebar from "../components/sidebar"
+import BackgroundIcon from '../components/backgroundIcon';
 import HeaderSheet from '../components/sheetComponent/headerSheet';
 import AbilitiesSheet from '../components/sheetComponent/abilitiesSheet';
+import HealthSheet from '../components/sheetComponent/healthSheet';
+import OthersCharactericticsSheet from '../components/sheetComponent/OthersCharactericticsSheet';
+import SkillsSheet from '../components/sheetComponent/skillsSheet';
 
-import avatar from "../assets/images/icons-avatar-1.jpg"
+import AppLoreCaracRelationsSheet from '../components/sheetComponent/appLoreCaracRelationsSheet';
 
 export function CharactersOwnedPage() {
-    const arlahneSheet =
-    {
-        sheet_id: 1,
-        system_id: 2,
-        avatar: avatar,
-        firstname: 'Arlhane',
-        lastname: null,
-        class: 'Occultiste',
-        subclass: 'Fiélon',
-        race: 'Demi-elfe',
-        subrace: null,
-        origin: 'Enfant des rues',
-        alignement: 'Chaotique Bon',
-        language: ['Commun', 'Elfique', 'Nain'],
-        lvl: 1,
-        exp: 0,
-    }
+    const { sheetId } = useParams({ from: '/myCharacters/$sheetId' });
+    const { data: sheets, isLoading } = useSheets();
 
     const [shared, setShared] = useState(false);
+
+    if (isLoading) return <div>Chargement…</div>;
+
+    const sheet = sheets?.find((s) => s.id === Number(sheetId));
+
+    if (!sheet) return <div>Fiche non trouvée</div>;
 
     return (
         <div className='pageContenant flex flex-wrap h-full'>
@@ -37,11 +35,11 @@ export function CharactersOwnedPage() {
                     <div className="breadcrumb pe-[16px] underline text-accent">
                         <Link to="/myCharacters">Mes aventuriers</Link>
                     </div>
-                    <div className="breadcrumb text-background">Fiche de {arlahneSheet.firstname} {arlahneSheet.lastname ? arlahneSheet.lastname : ''}</div>
+                    <div className="breadcrumb text-background">Fiche de {sheet.firstname ? sheet.firstname : 'Arlahne'} {sheet.lastname ? sheet.lastname : ''}</div>
                 </div>
 
                 <div className="flex flex-wrap justify-between my-[40px]">
-                    <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline'>Fiche de {arlahneSheet.firstname} {arlahneSheet.lastname ? arlahneSheet.lastname : ''}</h2>
+                    <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline'>Fiche de {sheet.firstname ? sheet.firstname : 'Arlahne'} {sheet.lastname ? sheet.lastname : ''}</h2>
 
                     <div className='flex flex-wrap gap-[16px]'>
                         <button
@@ -62,27 +60,47 @@ export function CharactersOwnedPage() {
                     </div>
 
                     <HeaderSheet
-                        system_id={arlahneSheet.system_id}
-                        avatar={arlahneSheet.avatar}
-                        firstname={arlahneSheet.firstname}
-                        lastname={arlahneSheet.lastname}
-                        class={arlahneSheet.class}
-                        subclass={arlahneSheet.subclass}
-                        race={arlahneSheet.race}
-                        subrace={arlahneSheet.subrace}
-                        origin={arlahneSheet.origin}
-                        alignement={arlahneSheet.alignement}
-                        language={arlahneSheet.language}
-                        lvl={arlahneSheet.lvl}
-                        exp={arlahneSheet.exp}
+                        system_id={sheet.system_id}
+                        sheet_id={sheet.id}
+                        avatar={sheet.avatar_src}
+                        firstname={sheet.firstname}
+                        lastname={sheet.lastname}
                     />
 
-                    <AbilitiesSheet
-                        system_id={arlahneSheet.system_id}
-                        sheet_id={arlahneSheet.sheet_id}
-                    />
+                    <div className='flex flex-wrap w-full justify-between gap-y-[40px]'>
+                        <AbilitiesSheet
+                            system_id={sheet.system_id}
+                            sheet_id={sheet.id}
+                        />
+
+                        <HealthSheet
+                            system_id={sheet.system_id}
+                            sheet_id={sheet.id}
+                        />
+                    </div>
+
+                    <div className="flex flex-wrap w-full justify-center gap-[40px]">
+                        {sheet.system_id === 2 && <OthersCharactericticsSheet
+                            sheet_id={sheet.id}
+                        />}
+                    </div>
+
+                    <div className='flex flex-wrap w-full justify-between gap-y-[40px]'>
+                        <SkillsSheet
+                            sheet_id={sheet.id}
+                            system_id={sheet.system_id}
+                        />
+                    </div>
+
+
+                    {sheet.system_id === 2 &&
+                        <AppLoreCaracRelationsSheet
+                            sheet_id={sheet.id}
+                        />}
                 </div>
             </div>
+
+            <BackgroundIcon></BackgroundIcon>
         </div>
     )
 }
