@@ -18,15 +18,15 @@ import AppLoreCaracRelationsSheet from '../components/sheetComponent/appLoreCara
 
 export function CharactersOwnedPage() {
     const { sheetId } = useParams({ from: '/myCharacters/$sheetId' });
-    const { data: sheets, isLoading } = useSheets();
+    const { data, isLoading } = useSheets(Number(sheetId));
+
 
     const [shared, setShared] = useState(false);
 
     if (isLoading) return <div>Chargement…</div>;
 
-    const sheet = sheets?.find((s) => s.id === Number(sheetId));
-
-    if (!sheet) return <div>Fiche non trouvée</div>;
+    if (!data) return <div>Fiche non trouvée</div>;
+    const { sheet, abilities } = data;
 
     return (
         <div className='pageContenant flex flex-wrap h-full'>
@@ -73,6 +73,7 @@ export function CharactersOwnedPage() {
                         <AbilitiesSheet
                             system_id={sheet.system_id}
                             sheet_id={sheet.id}
+                            abilities={abilities}
                         />
 
                         <HealthSheet

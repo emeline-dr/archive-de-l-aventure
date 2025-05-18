@@ -1,21 +1,14 @@
-type Entity = {
-    id: number;
-    label: string;
-};
-
 export type HeaderSheetDnDProps = {
-    /* language: string[]; */
+    language: string;
     lvl: number;
     exp: number;
-
     sheet_id: number;
     alignment: string;
-
-    class: Entity;
-    subClass: Entity;
-    species: Entity;
-    /* subSpecies: Entity; */
-    originDetails: Entity;
+    class: string;
+    subClass: string;
+    species: string;
+    subSpecies?: string;
+    originDetails: string;
 };
 
 
@@ -23,11 +16,11 @@ export default function HeaderSheetDnD(props: HeaderSheetDnDProps) {
     return (
         <>
             <div className='flex flex-wrap flex-col w-full lg:w-auto gap-[16px] z-1 bg-text-95 py-[16px] px-[32px] text-background border-sm'>
-                <div><span className='font-uncial-antiqua text-2xl'>Classe :</span> {props.class?.label} ({props.subClass?.label})</div>
-                <div><span className='font-uncial-antiqua text-2xl'>Race :</span> {props.species?.label} {/* {props.subrace ? '(' + props.subrace + ')' : ''} */}</div>
-                <div><span className='font-uncial-antiqua text-2xl'>Historique :</span> {props.originDetails?.label}</div>
+                <div><span className='font-uncial-antiqua text-2xl'>Classe :</span> {props.class} ({props.subClass})</div>
+                <div><span className='font-uncial-antiqua text-2xl'>Race :</span> {props.species} {props.subSpecies ? '(' + props.subSpecies + ')' : ''}</div>
+                <div><span className='font-uncial-antiqua text-2xl'>Historique :</span> {props.originDetails}</div>
                 <div><span className='font-uncial-antiqua text-2xl'>Alignement :</span> {props.alignment}</div>
-                <div><span className='font-uncial-antiqua text-2xl'>Langue(s) :</span> En cours. {/* {props.language.join(', ')} */}</div>
+                <div><span className='font-uncial-antiqua text-2xl'>Langue(s) :</span> {props.language}</div>
             </div>
 
             <div className='absolute flex flex-col justify-between end-[40px] w-[150px] h-[250px] z-1'>

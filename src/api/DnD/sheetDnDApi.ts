@@ -1,20 +1,72 @@
 import { useQuery } from "@tanstack/react-query";
 
-type Entity = {
+export type Ability = {
     id: number;
-    label: string;
-};
-
-type Skill = {
-    id: number;
-    label: string;
-};
-
-type SkillSheet = {
-    id: number;
-    skill_id: number;
+    abilities_id: number;
     sheet_id: number;
     value: number;
+    modifier: number;
+    label: string;
+    system_id: number;
+};
+
+export type Spell = {
+    id: number;
+    sheet_id: number;
+    label: string;
+    level: number;
+    school: string | null;
+    casting_time: string | null;
+    range: string | null;
+    components: string | null;
+    duration: string | null;
+    description: string | null;
+    prepared: boolean;
+    known: boolean;
+    isRitual: boolean;
+};
+
+export type Weapon = {
+    id: number;
+    sheet_id: number;
+    label: string;
+    damage: string;
+    damage_type: string;
+    properties: string;
+    bonus: number;
+    notes: string | null;
+};
+
+export type Item = {
+    id: number;
+    sheet_id: number;
+    label: string;
+    quantity: number;
+    weight: number | null;
+    description: string | null;
+};
+
+export type SpellSlot = {
+    id: number;
+    sheet_id: number;
+    slots_1_total: number;
+    slots_1_used: number;
+    slots_2_total: number;
+    slots_2_used: number;
+    slots_3_total: number;
+    slots_3_used: number;
+    slots_4_total: number;
+    slots_4_used: number;
+    slots_5_total: number;
+    slots_5_used: number;
+    slots_6_total: number;
+    slots_6_used: number;
+    slots_7_total: number;
+    slots_7_used: number;
+    slots_8_total: number;
+    slots_8_used: number;
+    slots_9_total: number;
+    slots_9_used: number;
 };
 
 export type SheetDnD = {
@@ -48,75 +100,42 @@ export type SheetDnD = {
     platinum: number;
     dd_spell: number;
     spell_bonus_attack: number;
-    apparence: string;
-    histoire: string;
-    caractere: string;
-    allies: string;
-    ennemies: string;
+    apparence: string | null;
+    histoire: string | null;
+    caractere: string | null;
+    allies: string | null;
+    enemies: string | null;
     lvl: number;
     exp: number;
-
-    class: Entity;
-    species: Entity;
-    subClass: Entity;
-    originDetails: Entity;
+    abilities: Ability[];
+    spells: Spell[];
+    spell_slots: SpellSlot[];
+    weapon: Weapon[];
+    items: Item[];
+    language: { label: string };
+    classeDnD: { label: string };
+    subClasseDnD: { label: string };
+    speciesDnD: { label: string };
+    origineDnD: { label: string };
 };
 
-async function fetchJSON<T>(url: string): Promise<T> {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Échec de chargement depuis ${url}`);
-    return res.json();
+
+export async function fetchSheetsDnDWithDetails(sheet_id: number): Promise<SheetDnD> {
+    const response = await fetch(`https://apidnd.up.railway.app/api/sheet/${sheet_id}`);
+
+    if (!response.ok) {
+        throw new Error('Erreur lors du chargement de la fiche DnD');
+    }
+
+    const data = await response.json();
+
+    return data as SheetDnD;
 }
 
-export async function fetchSheetsDnDWithDetails(): Promise<(SheetDnD & { skills: (SkillSheet & { label: string })[] })[]> {
-    const [sheets, classes, species, subClasses, origins, skillsSheet, skills] = await Promise.all([
-        fetchJSON<SheetDnD[]>('https://apidnd.up.railway.app/api/sheetDnDDetails'),
-        fetchJSON<Entity[]>('https://apidnd.up.railway.app/api/classeDnD'),
-        fetchJSON<Entity[]>('https://apidnd.up.railway.app/api/speciesDnD'),
-        fetchJSON<Entity[]>('https://apidnd.up.railway.app/api/subClasseDnD'),
-        fetchJSON<Entity[]>('https://apidnd.up.railway.app/api/origineDnD'),
-        fetchJSON<SkillSheet[]>('https://apidnd.up.railway.app/api/skillSheet'),
-        fetchJSON<Skill[]>('https://apidnd.up.railway.app/api/skill'),
-    ]);
-
-    const classMap = Object.fromEntries(classes.map(c => [c.id, c]));
-    const speciesMap = Object.fromEntries(species.map(s => [s.id, s]));
-    const subClassMap = Object.fromEntries(subClasses.map(sc => [sc.id, sc]));
-    const originMap = Object.fromEntries(origins.map(o => [o.id, o]));
-    const skillMap = Object.fromEntries(skills.map(s => [s.id, s.label]));
-
-    return sheets.map(sheet => {
-        const classEntity = classMap[sheet.class_id];
-        const speciesEntity = speciesMap[sheet.species_id];
-        const subClassEntity = subClassMap[sheet.subClass_id];
-        const originEntity = originMap[sheet.origin_id];
-
-        if (!classEntity || !speciesEntity || !subClassEntity || !originEntity) {
-            throw new Error(`Entité introuvable pour la feuille avec sheet_id ${sheet.sheet_id}`);
-        }
-
-        const sheetSkills = skillsSheet
-            .filter(ab => ab.sheet_id === sheet.id)
-            .map(ab => ({
-                ...ab,
-                label: skillMap[ab.skill_id] || "Inconnu",
-            }));
-
-        return {
-            ...sheet,
-            class: classEntity,
-            species: speciesEntity,
-            subClass: subClassEntity,
-            origin: originEntity,
-            skills: sheetSkills,
-        };
-    });
-}
-
-
-export function useSheetsDnD() {
+export function useSheetsDnD(sheet_id: number) {
     return useQuery({
-        queryKey: ['sheets-dnd-with-details'],
-        queryFn: fetchSheetsDnDWithDetails,
+        queryKey: ['sheets-dnd-with-details', sheet_id],
+        queryFn: () => fetchSheetsDnDWithDetails(sheet_id),
+        enabled: !!sheet_id,
     });
 }
