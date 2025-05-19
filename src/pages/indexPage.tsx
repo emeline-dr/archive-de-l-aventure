@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 
 import Sidebar from '../components/sidebar';
@@ -8,28 +7,13 @@ import BackgroundIcon from '../components/backgroundIcon';
 import { getDecodedJwt } from '../utils/AuthUtils';
 import { useSheetsByUsers } from '../api/users/userSheetApi';
 
-export function MyCharactersComponent() {
+export default function IndexPage() {
+
     const decodedToken = getDecodedJwt();
 
     const userId = decodedToken?.id ?? 1;
     const userName = decodedToken?.username ?? '';
     const { data, isLoading, isError } = useSheetsByUsers(userId);
-
-    const [selectedSystem, setSelectedSystem] = useState(0);
-
-    const systemNames: { [key: number]: string } = {
-        1: "La légende des 5 anneaux",
-        2: "Donjons et dragons",
-        3: "Call of Cthulhu"
-    };
-
-    if (!data) return <p>Pas de fiche.</p>
-
-    const filteredSheets = selectedSystem === 0
-        ? data
-        : data.filter(data => data.system_id === selectedSystem);
-
-    const uniqueSystems = Array.from(new Set(data.map(s => s.system_id)));
 
     if (isLoading) {
         return <div>Chargement...</div>;
@@ -39,35 +23,37 @@ export function MyCharactersComponent() {
         return <div>Erreur de chargement des données.</div>;
     }
 
+    if (!data) return <p>Pas de fiche.</p>
+
     return (
         <div className='pageContenant flex flex-wrap h-full'>
-            <Sidebar></Sidebar>
+            <Sidebar />
             <div className='flex-1 z-1 mx-[16px] sm:mx-[80px] my-[40px]'>
-                <div className="flex justify-end gap-4">
+                <div className="flex justify-end">
                     <Link to="/myCharacters/newSheet">
                         <button className="btn btn-text">Créer un nouvel aventurier</button>
                     </Link>
                 </div>
-                <div className="flex flex-wrap justify-between">
-                    <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px]'>Mes aventuriers</h2>
-
-                    <div className='h-fit self-center'>
-                        <select
-                            value={selectedSystem}
-                            onChange={(e) => setSelectedSystem(Number(e.target.value))}
-                            className="p-[8px] bg-primary rounded-lg border border-secondary"
-                        >
-                            <option value={0}>Tous les univers</option>
-                            {uniqueSystems.map(systemId => (
-                                <option key={systemId} value={systemId}>
-                                    {systemNames[systemId] || `Système ${systemId}`}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
+                <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px]'>Mes derniers ajouts</h2>
                 <div className='flex flex-wrap justify-between gap-y-4'>
-                    {filteredSheets.map(sheet => (
+                    {data.slice(0, 5).map(sheet => (
+                        <SheetSnippet
+                            id={sheet.id}
+                            key={sheet.id}
+                            authorId={sheet.user_id}
+                            myId={userId}
+                            authorName={userName}
+                            isLiked={sheet.shared}
+                            name={sheet.firstname + ' ' + sheet.lastname}
+                            img={sheet.avatar_src}
+                            system={sheet.system_id}
+                            lvl={sheet.lvl}
+                        />
+                    ))}
+                </div>
+                <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px]'>Mes favoris</h2>
+                <div className='flex flex-wrap justify-between gap-y-4'>
+                    {data.filter(sheet => sheet.shared).map(sheet => (
                         <SheetSnippet
                             id={sheet.id}
                             key={sheet.id}
@@ -84,7 +70,7 @@ export function MyCharactersComponent() {
                 </div>
             </div>
 
-            <BackgroundIcon></BackgroundIcon>
+            <BackgroundIcon />
         </div>
-    )
+    );
 }

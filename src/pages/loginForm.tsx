@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
-import type { AnyFieldApi } from '@tanstack/react-form'
+import type { AnyFieldApi } from '@tanstack/react-form';
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
     return (
@@ -10,24 +10,62 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
             ) : null}
             {field.state.meta.isValidating ? 'Validating...' : null}
         </>
-    )
+    );
 }
 
 export function LoginForm() {
     const [checked, setChecked] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const form = useForm({
         defaultValues: {
-            username: '',
+            email: '',
             password: '',
         },
         onSubmit: async ({ value }) => {
-            console.log('Connexion réussie:', value);
+            console.log('Connexion en cours:', value);
+
+            const API_URL = "https://apidnd.up.railway.app/api/login";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: value.email,
+                        password: value.password,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Échec de la connexion');
+                }
+
+                const data = await response.json();
+                console.log('Connexion réussie:', data);
+
+                if (data.jwt) {
+                    localStorage.setItem('authToken', data.jwt);
+                    console.log("Token JWT stocké:", data.jwt);
+                }
+
+                window.location.href = "/index";
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    console.error('Erreur de connexion:', error);
+                    setErrorMessage('Une erreur s\'est produite');
+                } else {
+                    console.error('Erreur inconnue:', error);
+                    setErrorMessage('Une erreur inconnue s\'est produite');
+                }
+            }
         },
     });
 
     return (
-        <div className="loginBlock flex flex-wrap" >
+        <div className="loginBlock flex flex-wrap">
             <div className="loginImg hidden lg:block w-1/2">
                 <div className="loginGradient h-full"></div>
             </div>
@@ -35,29 +73,29 @@ export function LoginForm() {
                 <div className="w-3/4">
                     <h2 className='font-uncial-antiqua text-[32px] mb-[16px] text-center'>Retrouver vos exploits</h2>
                     <form onSubmit={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        form.handleSubmit()
+                        e.preventDefault();
+                        e.stopPropagation();
+                        form.handleSubmit();
                     }}>
                         <div className='w-full bg-primary rounded-[3px] p-[40px]'>
-                            {/* Pseudo */}
+                            {/* Email */}
                             <form.Field
-                                name="username"
+                                name="email"
                                 children={(field) => {
                                     return (
                                         <>
-                                            <label htmlFor={field.name}>Pseudo</label><br />
+                                            <label htmlFor={field.name}>Adresse mail</label><br />
                                             <input
-                                                type="text"
+                                                type="email"
                                                 className='w-full bg-background rounded-lg mt-[8px] mb-[40px] px-[16px] py-[12px] border border-1 border-secondary'
                                                 id={field.name}
                                                 name={field.name}
-                                                placeholder='Écrivez votre pseudo'
+                                                placeholder='Écrivez votre adresse mail'
                                                 onChange={(e) => field.handleChange(e.target.value)}
                                             />
                                             <FieldInfo field={field} />
                                         </>
-                                    )
+                                    );
                                 }}
                             />
 
@@ -78,9 +116,12 @@ export function LoginForm() {
                                             />
                                             <FieldInfo field={field} />
                                         </>
-                                    )
+                                    );
                                 }}
                             />
+
+                            {/* Message d'erreur */}
+                            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
                             {/* Remember me */}
                             <input
@@ -103,7 +144,7 @@ export function LoginForm() {
                             selector={(state) => [state.canSubmit, state.isSubmitting]}
                             children={([canSubmit, isSubmitting]) => (
                                 <button type="submit" disabled={!canSubmit} className="btn btn-text w-full mt-[40px]">
-                                    {isSubmitting ? '...' : "Se connecter"}
+                                    {isSubmitting ? 'Connexion en cours...' : "Se connecter"}
                                 </button>
                             )}
                         />
