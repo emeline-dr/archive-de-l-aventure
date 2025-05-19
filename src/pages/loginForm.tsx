@@ -49,7 +49,10 @@ export function LoginForm() {
                 const oneHourFromNow = new Date(new Date().getTime() + 60 * 60 * 1000);
 
                 if (data.jwt) {
-                    Cookies.set('authToken', data.jwt, { expires: oneHourFromNow, path: '/' })
+                    Cookies.set('authToken', data.jwt, {
+                        expires: oneHourFromNow, path: '/',
+                        secure: true
+                    })
                     console.log("Token JWT stocké:", data.jwt);
                 }
 
