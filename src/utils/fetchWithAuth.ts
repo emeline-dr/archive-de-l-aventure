@@ -5,7 +5,7 @@ interface FetchOptions extends RequestInit {
 }
 
 export const fetchWithAuth = async (url: string, options: FetchOptions = {}): Promise<Response> => {
-    const token = Cookies.get('jwt');
+    const token = Cookies.get('authToken');
 
     const headers: HeadersInit = {
         ...options.headers,

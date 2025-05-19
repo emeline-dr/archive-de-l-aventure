@@ -48,7 +48,7 @@ export function LoginForm() {
                 const data = await response.json();
 
                 if (data.jwt) {
-                    Cookies.set('authToken', data.jwt, { expires: 7, path: '' })
+                    Cookies.set('authToken', data.jwt, { expires: 7, path: '/' })
                     console.log("Token JWT stocké:", data.jwt);
                 }
 
