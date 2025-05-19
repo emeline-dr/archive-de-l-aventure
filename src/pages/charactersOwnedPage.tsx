@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from '@tanstack/react-router';
 
 import { useSheets } from '../api/sheetApi';
@@ -24,7 +24,13 @@ export function CharactersOwnedPage() {
     const { sheetId } = useParams({ from: '/myCharacters/$sheetId' });
     const { data, isLoading } = useSheets(Number(sheetId));
 
-    const [shared, setShared] = useState(false);
+    const [shared, setShared] = useState<boolean | undefined>(undefined);
+
+    useEffect(() => {
+        if (data) {
+            setShared(data.sheet.shared);
+        }
+    }, [data]);
 
     if (isLoading) return <div>Chargement…</div>;
 
@@ -59,7 +65,7 @@ export function CharactersOwnedPage() {
                             }
                         </button>
 
-                        <Link to="/myCharacters/1/updateSheet">
+                        <Link to={`/myCharacters/${sheet.id}/updateSheet`}>
                             <button className="btn btn-text flex-1">Modifier la fiche</button>
                         </Link>
                     </div>
