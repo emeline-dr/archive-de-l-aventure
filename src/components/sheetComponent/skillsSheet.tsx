@@ -1,31 +1,32 @@
-import { useSheetsDnD } from "../../api/DnD/sheetDnDApi";
+import { useParams } from "@tanstack/react-router";
 
-import SkillsSheetDnD from "./skillsSheetComponent/skillsSheetDnD";
+import { useSheets } from "../../api/sheetApi";
 
+/* import SkillsSheetDnD from "./skillsSheetComponent/skillsSheetDnD";
+ */
 type SkillsSheetProps = {
     sheet_id: number;
     system_id: number;
 }
 
 export default function SkillsSheet(props: SkillsSheetProps) {
-    const sheet = useSheetsDnD();
+    const { sheetId } = useParams({ from: '/myCharacters/$sheetId' });
+    const { data: sheet, isLoading, error } = useSheets(Number(sheetId));
 
-    if (sheet.isLoading) return <p>Chargement en cours...</p>
-    if (sheet.error) return <p>Erreur.</p>
-    if (!sheet.data) return null
-
-    const dndSheet = sheet.data.find(sheet => sheet.sheet_id === props.sheet_id);
-
-    if (!dndSheet) return <p>Aucune fiche correspondante trouvée.</p>;
+    if (isLoading) return <p>Chargement en cours...</p>;
+    if (error) return <p>Erreur de chargement.</p>;
 
     const renderSkillsSheetComponent = () => {
         switch (props.system_id) {
             case 1:
                 return 'l5r';
-            case 2:
-                return <SkillsSheetDnD
-                    skills={dndSheet.skills}
-                />
+            case 2: {
+                const sheetDnD = sheet;
+                if (!sheetDnD) return <p>Fiche DnD introuvable.</p>;
+                return "dnd" /* (<SkillsSheetDnD
+                    skills={sheetDnD.skills}
+                />) */
+            }
             case 3:
                 return 'coc';
         }

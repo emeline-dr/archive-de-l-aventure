@@ -69,6 +69,14 @@ export type SpellSlot = {
     slots_9_used: number;
 };
 
+export type Feat = {
+    id: number;
+    sheet_id: number;
+    label: string;
+    description: string;
+    level_acquired: number;
+}
+
 export type Sheet = {
     id: number;
     user_id: number;
@@ -209,6 +217,7 @@ export type SheetResponse = {
     weapon: Weapon[];
     item: Item[];
     spells_slot: SpellSlot[];
+    feat: Feat[];
     details: Sheet["details"];
     language?: { label: string }[] | { label: string } | null;
     classeDnD?: { label: string };

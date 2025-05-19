@@ -1,4 +1,6 @@
-import { useSheetsDnD } from "../../api/DnD/sheetDnDApi";
+import { useParams } from "@tanstack/react-router";
+
+import { useSheets } from "../../api/sheetApi";
 
 import HealthSheetDnD from "./healthSheetComponent/healthSheetDnd";
 
@@ -8,27 +10,28 @@ type HealthSheetProps = {
 }
 
 export default function HealthSheet(props: HealthSheetProps) {
-    const sheet = useSheetsDnD();
+    const { sheetId } = useParams({ from: '/myCharacters/$sheetId' });
+    const { data: sheet, isLoading, error } = useSheets(Number(sheetId));
 
-    if (sheet.isLoading) return <p>Chargement en cours...</p>
-    if (sheet.error) return <p>Erreur.</p>
-    if (!sheet.data) return null
-
-    const dndSheet = sheet.data.find(sheet => sheet.sheet_id === props.sheet_id);
-
-    if (!dndSheet) return <p>Aucune fiche correspondante trouvée.</p>;
+    if (isLoading) return <p>Chargement en cours...</p>;
+    if (error) return <p>Erreur de chargement.</p>;
 
     const renderHealthSheetComponent = () => {
         switch (props.system_id) {
             case 1:
                 return 'l5r';
-            case 2:
-                return <HealthSheetDnD
-                    sheet_id={dndSheet.sheet_id}
-                    hit_dice={dndSheet.hit_dice}
-                    max_hp={dndSheet.max_hp}
-                    hp={dndSheet.hp}
+            case 2: {
+                const sheetDnD = sheet;
+                if (!sheetDnD) return <p>Fiche DnD introuvable.</p>;
+                return (<HealthSheetDnD
+                    sheet_id={sheetDnD.details.sheet_id}
+                    abilities={sheetDnD.abilities}
+                    hit_dice={sheetDnD.details.hit_dice || ''}
+                    max_hp={sheetDnD.details.max_hp ?? 0}
+                    hp={sheetDnD.details.hp ?? 0}
                 />
+                );
+            }
             case 3:
                 return 'coc';
         }

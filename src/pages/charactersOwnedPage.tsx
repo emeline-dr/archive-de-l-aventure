@@ -13,6 +13,10 @@ import OthersCharactericticsSheet from '../components/sheetComponent/OthersChara
 import SkillsSheet from '../components/sheetComponent/skillsSheet';
 import SavingThrowSheet from '../components/sheetComponent/savingThrowSheet';
 import ProficienciesSheet from '../components/sheetComponent/proficienciesSheet';
+import WeaponsSheet from '../components/sheetComponent/weaponsSheet';
+import ItemsSheet from '../components/sheetComponent/itemsSheet';
+import FeatSheet from '../components/sheetComponent/featSheet';
+import SpellsSheet from '../components/sheetComponent/spellsSheet';
 
 import AppLoreCaracRelationsSheet from '../components/sheetComponent/appLoreCaracRelationsSheet';
 
@@ -20,13 +24,12 @@ export function CharactersOwnedPage() {
     const { sheetId } = useParams({ from: '/myCharacters/$sheetId' });
     const { data, isLoading } = useSheets(Number(sheetId));
 
-
     const [shared, setShared] = useState(false);
 
     if (isLoading) return <div>Chargement…</div>;
 
     if (!data) return <div>Fiche non trouvée</div>;
-    const { sheet, abilities } = data;
+    const { sheet, details, weapon, feat, item, abilities, spells, spells_slot } = data;
 
     return (
         <div className='pageContenant flex flex-wrap h-full'>
@@ -40,10 +43,10 @@ export function CharactersOwnedPage() {
                     <div className="breadcrumb text-background">Fiche de {sheet.firstname ? sheet.firstname : 'Arlahne'} {sheet.lastname ? sheet.lastname : ''}</div>
                 </div>
 
-                <div className="flex flex-wrap justify-between my-[40px]">
-                    <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline'>Fiche de {sheet.firstname ? sheet.firstname : 'Arlahne'} {sheet.lastname ? sheet.lastname : ''}</h2>
+                <div className="flex flex-wrap justify-between mt-[40px]">
+                    <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline mb-[40px]'>Fiche de {sheet.firstname ? sheet.firstname : 'Arlahne'} {sheet.lastname ? sheet.lastname : ''}</h2>
 
-                    <div className='flex flex-wrap gap-[16px]'>
+                    <div className='flex flex-wrap gap-[16px]  mb-[40px]'>
                         <button
                             className='btn btn-text flex-1'
                             onClick={() => setShared(!shared)}
@@ -84,7 +87,14 @@ export function CharactersOwnedPage() {
 
                     <div className="flex flex-wrap w-full justify-center gap-[40px]">
                         {sheet.system_id === 2 && <OthersCharactericticsSheet
-                            sheet_id={sheet.id}
+                            proficiency={details.proficiency ?? 0}
+                            ca={details.ca ?? 0}
+                            initiative={details.speed ?? 0}
+                            speed={details.speed ?? 0}
+                            swim_speed={details.swim_speed ?? 0}
+                            climb_speed={details.climb_speed ?? 0}
+                            fly_speed={details.fly_speed ?? 0}
+                            inspiration={details.inspiration || false}
                         />}
                     </div>
 
@@ -101,16 +111,53 @@ export function CharactersOwnedPage() {
 
                     <div className='flex flex-wrap w-full justify-between gap-[40px]'>
                         {sheet.system_id === 2 &&
-                            <ProficienciesSheet
-                                sheet_id={sheet.id}
-                            />
+                            <>
+                                <ProficienciesSheet
+                                    armor_prof={details.armor_prof || ''}
+                                    weapon_prof={details.weapon_prof || ''}
+                                    tools_prof={details.tools_prof || ''}
+                                />
+
+                                <FeatSheet
+                                    feats={feat}
+                                />
+                            </>
                         }
                     </div>
 
+                    <div className='flex flex-wrap w-full justify-between gap-[40px]'>
+                        <WeaponsSheet
+                            weapons={weapon}
+                        />
+                    </div>
+
+                    <div className='flex flex-wrap w-full justify-between gap-[40px]'>
+                        <ItemsSheet
+                            copper={details.copper ?? 0}
+                            silver={details.silver ?? 0}
+                            electrum={details.electrum ?? 0}
+                            gold={details.gold ?? 0}
+                            platinum={details.platinum ?? 0}
+                            items={item}
+                        />
+                    </div>
+
+                    <div className='flex flex-wrap w-full justify-between gap-[40px]'>
+                        <SpellsSheet
+                            spells={spells}
+                            spells_slots={spells_slot}
+                            dd_spell={details.dd_spell ?? 0}
+                            spell_bonus_attack={details.spell_bonus_attack ?? 0}
+                        />
+                    </div>
 
                     {sheet.system_id === 2 &&
                         <AppLoreCaracRelationsSheet
-                            sheet_id={sheet.id}
+                            apparence={details.apparence || ''}
+                            histoire={details.histoire || ''}
+                            caractere={details.caractere || ''}
+                            allies={details.allies || ''}
+                            enemies={details.enemies || ''}
                         />}
                 </div>
             </div>
