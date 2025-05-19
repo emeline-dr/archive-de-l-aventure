@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import { useLocation } from "@tanstack/react-router"
+import Cookies from "js-cookie";
 
 import logo from "../assets/images/logo.png"
 
@@ -10,6 +11,11 @@ function Navbar() {
 
     if (location.pathname.includes('signIn') || location.pathname.includes('login')) {
         iconLink = '/';
+    }
+
+    const logout = () => {
+        Cookies.remove('authToken');
+        window.location.href = '/login';
     }
 
     return (
@@ -41,6 +47,12 @@ function Navbar() {
                             <Link to="/registers" activeProps={{ className: 'underline' }} className="font-uncial-antiqua block lg:inline-block text-2xl tracking-[5%] text-accent h-fit hover:underline">
                                 Les registres
                             </Link>
+
+                            <button
+                                onClick={logout}
+                                className="btn-accent text-[30px] p-2 rounded-sm ms-[16px] cursor-pointer">
+                                <i className="fa-solid fa-right-from-bracket"></i>
+                            </button>
                         </div>
                     }
                 </nav>

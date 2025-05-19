@@ -15,6 +15,7 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 
 export function RegisterForm() {
     const [checked, setChecked] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const form = useForm({
         defaultValues: {
@@ -22,10 +23,46 @@ export function RegisterForm() {
             password: '',
             passwordBis: '',
             email: '',
+            roles_id: [1],
             conditions: false,
         },
         onSubmit: async ({ value }) => {
-            console.log('Inscription envoyée:', value);
+            console.log('Inscription en cours:', value);
+
+            const API_URL = "https://apidnd.up.railway.app/api/users";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: value.email,
+                        password: value.password,
+                        username: value.username,
+                        confirmPassword: value.passwordBis,
+                        roles_id: value.roles_id
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Échec de l\'inscription');
+                }
+
+                const data = await response.json();
+                console.log('Inscription réussie:', data);
+
+                window.location.href = "/login";
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    console.error('Erreur d\'inscription:', error);
+                    setErrorMessage('Une erreur s\'est produite');
+                } else {
+                    console.error('Erreur inconnue:', error);
+                    setErrorMessage('Une erreur inconnue s\'est produite');
+                }
+            }
         },
     });
 
@@ -124,9 +161,19 @@ export function RegisterForm() {
                                 }}
                             />
 
+                            {/* Message d'erreur */}
+                            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+
                             {/* Checkbox conditions d'utilisations */}
                             <form.Field
                                 name="conditions"
+                                validators={{
+                                    onChange: ({ value }) => {
+                                        if (!value) {
+                                            return 'Vous devez accepter les conditions.';
+                                        }
+                                    },
+                                }}
                                 children={(field) => {
                                     return (
                                         <>

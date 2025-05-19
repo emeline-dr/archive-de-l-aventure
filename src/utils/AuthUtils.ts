@@ -1,13 +1,17 @@
+import Cookies from "js-cookie";
+
 import { jwtDecode } from "jwt-decode";
 import type { JwtPayload } from "jwt-decode";
 
 interface DecodedToken extends JwtPayload {
     id: number;
     username: string;
+    roles: string;
 }
 
 export const getJwtToken = (): string | null => {
-    return localStorage.getItem('authToken');
+    const token = Cookies.get('authToken');
+    return token ?? null;
 };
 
 export const decodeJwt = (token: string): DecodedToken | null => {

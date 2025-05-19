@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router';
-import { useState, useEffect } from 'react';
 import { useParams } from '@tanstack/react-router';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 import { useSheets } from '../api/sheetApi';
+import { updateShared } from '../api/sheetApi';
 
 import Sidebar from "../components/sidebar"
 import BackgroundIcon from '../components/backgroundIcon';
@@ -23,18 +24,21 @@ import AppLoreCaracRelationsSheet from '../components/sheetComponent/appLoreCara
 export function CharactersOwnedPage() {
     const { sheetId } = useParams({ from: '/myCharacters/$sheetId' });
     const { data, isLoading } = useSheets(Number(sheetId));
+    const queryClient = useQueryClient();
 
-    const [shared, setShared] = useState<boolean | undefined>(undefined);
+    const { mutate, isPending } = useMutation({
+        mutationFn: (shared: boolean) => updateShared(Number(sheetId), shared),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['sheets-per-user', Number(sheetId)] });
+        },
+    });
 
-    useEffect(() => {
-        if (data) {
-            setShared(data.sheet.shared);
-        }
-    }, [data]);
+    if (isLoading || !data) return <div>Chargement...</div>;
 
-    if (isLoading) return <div>Chargement…</div>;
+    const handleToggleShared = () => {
+        mutate(!data.sheet.shared);
+    };
 
-    if (!data) return <div>Fiche non trouvée</div>;
     const { sheet, details, weapon, feat, item, abilities, spells, spells_slot } = data;
 
     return (
@@ -55,12 +59,12 @@ export function CharactersOwnedPage() {
                     <div className='flex flex-wrap gap-[16px]  mb-[40px]'>
                         <button
                             className='btn btn-text flex-1'
-                            onClick={() => setShared(!shared)}
+                            onClick={handleToggleShared} disabled={isPending}
                         >
-                            {shared === true &&
+                            {sheet.shared === true &&
                                 <><i className="fa-solid fa-square-check text-lg"></i> Partagée</>
                             }
-                            {shared === false &&
+                            {sheet.shared === false &&
                                 <><i className="fa-solid fa-square text-lg"></i> Pas partagée</>
                             }
                         </button>
