@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import { useFavoritesSheet, AddFavoritesSheetToUser, RemoveFavoritesSheetFromUser } from "../api/favoriteSheetApi";
+import { useUserById } from "../api/users/userApi";
 
 import bgL5R from '../assets/images/bg-lcinqa.webp';
 import bgDnD from '../assets/images/bg-dnd.png';
@@ -12,7 +13,7 @@ type SheetSnippetProps = {
     id: number;
     authorId: number;
     myId: number;
-    username: string;
+    username?: string;
     img: string;
     name: string;
     lvl: number;

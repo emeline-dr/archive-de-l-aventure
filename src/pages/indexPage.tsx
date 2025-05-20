@@ -43,7 +43,6 @@ export default function IndexPage() {
                                 id={sheet.id}
                                 key={sheet.id}
                                 authorId={sheet.user_id}
-                                username={sheet.username}
                                 myId={userId}
                                 name={sheet.firstname + ' ' + sheet.lastname}
                                 img={sheet.avatar_src}
