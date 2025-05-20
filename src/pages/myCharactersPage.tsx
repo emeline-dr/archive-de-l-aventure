@@ -7,32 +7,30 @@ import BackgroundIcon from '../components/backgroundIcon';
 
 import { getDecodedJwt } from '../utils/AuthUtils';
 import { useSheetsByUsers } from '../api/users/userSheetApi';
+import { useSystems } from '../api/systemApi';
 
 export function MyCharactersComponent() {
     const decodedToken = getDecodedJwt();
 
     const userId = decodedToken?.id ?? 1;
-    const userName = decodedToken?.username ?? '';
+    const { data: systems, isLoading: isSystemsLoading, isError: isSystemsError } = useSystems();
     const { data, isLoading, isError } = useSheetsByUsers(userId);
 
     const [selectedSystem, setSelectedSystem] = useState(0);
 
-    const systemNames: { [key: number]: string } = {
-        1: "La légende des 5 anneaux",
-        2: "Donjons et dragons",
-        3: "Call of Cthulhu"
-    };
+    if (isSystemsLoading) return <div>Chargement des systèmes...</div>;
+    if (isSystemsError) return <div>Erreur de chargement des systèmes.</div>;
 
-    if (!data) return <p>Pas de fiche.</p>
+    if (!data) {
+        return <div>Aucune fiche trouvée.</div>;
+    }
 
     const filteredSheets = selectedSystem === 0
         ? data
-        : data.filter(data => data.system_id === selectedSystem);
-
-    const uniqueSystems = Array.from(new Set(data.map(s => s.system_id)));
+        : data.filter(sheet => sheet.system_id === selectedSystem);
 
     if (isLoading) {
-        return <div>Chargement...</div>;
+        return <div>Chargement des fiches...</div>;
     }
 
     if (isError) {
@@ -58,29 +56,31 @@ export function MyCharactersComponent() {
                             className="p-[8px] bg-primary rounded-lg border border-secondary"
                         >
                             <option value={0}>Tous les univers</option>
-                            {uniqueSystems.map(systemId => (
-                                <option key={systemId} value={systemId}>
-                                    {systemNames[systemId] || `Système ${systemId}`}
+                            {systems?.map(system => (
+                                <option key={system.id} value={system.id}>
+                                    {system.label}
                                 </option>
                             ))}
                         </select>
                     </div>
                 </div>
                 <div className='flex flex-wrap justify-between gap-y-4'>
-                    {filteredSheets.map(sheet => (
-                        <SheetSnippet
-                            id={sheet.id}
-                            key={sheet.id}
-                            authorId={sheet.user_id}
-                            myId={userId}
-                            authorName={userName}
-                            isLiked={sheet.shared}
-                            name={sheet.firstname + ' ' + sheet.lastname}
-                            img={sheet.avatar_src}
-                            system={sheet.system_id}
-                            lvl={sheet.lvl}
-                        />
-                    ))}
+                    {filteredSheets.length > 0 ? (
+                        filteredSheets.map(sheet => (
+                            <SheetSnippet
+                                id={sheet.id}
+                                key={sheet.id}
+                                authorId={sheet.user_id}
+                                myId={userId}
+                                name={sheet.firstname + ' ' + sheet.lastname}
+                                img={sheet.avatar_src}
+                                system={sheet.system_id}
+                                lvl={sheet.lvl}
+                            />
+                        ))
+                    ) : (
+                        <p>Aucune fiche trouvée.</p>
+                    )}
                 </div>
             </div>
 

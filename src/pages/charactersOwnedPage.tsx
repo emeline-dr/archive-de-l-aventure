@@ -50,7 +50,7 @@ export function CharactersOwnedPage() {
                     <div className="breadcrumb pe-[16px] underline text-accent">
                         <Link to="/myCharacters">Mes aventuriers</Link>
                     </div>
-                    <div className="breadcrumb text-background">Fiche de {sheet.firstname ? sheet.firstname : 'Arlahne'} {sheet.lastname ? sheet.lastname : ''}</div>
+                    <div className="breadcrumb text-background">Fiche de {sheet.firstname} {sheet.lastname ? sheet.lastname : ''}</div>
                 </div>
 
                 <div className="flex flex-wrap justify-between mt-[40px]">

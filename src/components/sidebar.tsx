@@ -12,10 +12,11 @@ function Sidebar() {
 
     return (
         <aside className="h-auto hidden md:flex flex-wrap justify-center content-start top-0 py-[20px] w-[50px] xl:w-[120px] bg-primary transition-all duration-300">
-            {isLoading && <p className="text-center text-white">Chargement...</p>}
+            {isLoading && <p className="text-center text-text">Chargement...</p>}
             {isError && <p className="text-center text-red-500">Erreur de chargement</p>}
+            {Array.isArray(sheets) && sheets.length === 0 && <p className="text-center text-text w-full">Pas de fiche.</p>}
 
-            {sheets?.map((sheet) => (
+            {Array.isArray(sheets) && sheets.length > 0 && sheets.map((sheet) => (
                 <Link
                     key={sheet.id}
                     to={`/myCharacters/${sheet.id}`}
