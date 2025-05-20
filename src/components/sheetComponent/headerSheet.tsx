@@ -1,5 +1,5 @@
-import { useParams } from '@tanstack/react-router';
 import { useSheets } from '../../api/sheetApi';
+import { useRouter } from '@tanstack/react-router';
 
 import HeaderSheetL5R from './headerSheetComponent/headerSheetL5R';
 import HeaderSheetDnD from './headerSheetComponent/headerSheetDnD';
@@ -26,7 +26,14 @@ function HeaderSheet(props: HeaderSheetProps) {
 
     const backgroundImageStyle = () => backgroundImages[props.system_id] || 'none';
 
-    const { sheetId } = useParams({ from: '/myCharacters/$sheetId' });
+    const router = useRouter();
+
+    const matchWithSheetId = router.state.matches.find(
+        (match) => match.params.sheetId
+    );
+
+    const sheetId = matchWithSheetId?.params?.sheetId;
+
     const { data: sheet, isLoading, error } = useSheets(Number(sheetId));
 
     if (isLoading) return <p>Chargement en cours...</p>;
@@ -80,6 +87,7 @@ function HeaderSheet(props: HeaderSheetProps) {
                         gender={sheetCoC.details?.gender || ''}
                         residence={sheetCoC.details?.residence || ''}
                         birthplace={sheetCoC.details?.birthplace || ''}
+                        lvl={sheetCoC.sheet.lvl}
                     />
                 );
             }
@@ -97,7 +105,7 @@ function HeaderSheet(props: HeaderSheetProps) {
             <div className="absolute z-1 top-0 start-0 w-full h-full bg-accent-25"></div>
             <img
                 src={`/src/assets/images${props.avatar}`}
-                alt={`Avatar de ${props.firstname ? props.firstname : 'Arlahne'} ${props.lastname ? props.lastname : ''}`}
+                alt={`Avatar de ${props.firstname} ${props.lastname ? props.lastname : ''}`}
                 className="object-cover z-1 w-[150px] h-[250px] lg:w-[200px] rounded-[3px] border-3 border-secondary"
             />
 

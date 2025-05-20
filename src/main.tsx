@@ -21,6 +21,7 @@ import { NewSheetRoute } from './routes/newSheet';
 import { CharactersOwnedRoute } from './routes/charactersOwned';
 import { OthersCharactersRoute } from './routes/othersCharacters';
 import { UpdateSheetRoute } from './routes/updateSheets';
+import { CommentsSheetRoute } from './routes/comments';
 
 const routeTree = RootRoute.addChildren([
   homeRoute,
@@ -32,7 +33,8 @@ const routeTree = RootRoute.addChildren([
   registersRoute,
   OthersCharactersRoute,
   NewSheetRoute,
-  UpdateSheetRoute
+  UpdateSheetRoute,
+  CommentsSheetRoute
 ]);
 
 const router = createRouter({ routeTree });

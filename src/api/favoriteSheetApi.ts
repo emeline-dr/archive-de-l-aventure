@@ -46,7 +46,13 @@ export async function FetchFavoritesSheetById(userId: number): Promise<Favorites
 
     const data = await response.json();
 
-    return data as FavoritesSheetById[];
+    if (Array.isArray(data)) {
+        return data;
+    } else if (data) {
+        return [data];
+    } else {
+        return [];
+    }
 }
 
 export const useFavoritesSheetById = (userId: number) => {

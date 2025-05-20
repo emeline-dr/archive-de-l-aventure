@@ -77,6 +77,20 @@ export type Feat = {
     level_acquired: number;
 }
 
+export type SavingThrows = {
+    id: number;
+    value: number;
+    proficient: boolean;
+    label: string;
+}
+
+export type SkillSheet = {
+    id: number;
+    skill_id: number;
+    sheet_id: number;
+    value: number;
+}
+
 export type Sheet = {
     id: number;
     user_id: number;
@@ -219,6 +233,8 @@ export type SheetResponse = {
     spells_slot: SpellSlot[];
     feat: Feat[];
     details: Sheet["details"];
+    saving_throw: SavingThrows[];
+    skills: SkillSheet[];
     language?: { label: string }[] | { label: string } | null;
     classeDnD?: { label: string };
     subClasseDnD?: { label: string };

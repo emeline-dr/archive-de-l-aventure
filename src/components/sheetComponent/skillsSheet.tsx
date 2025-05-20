@@ -1,4 +1,4 @@
-import { useParams } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 
 import { useSheets } from "../../api/sheetApi";
 
@@ -10,7 +10,13 @@ type SkillsSheetProps = {
 }
 
 export default function SkillsSheet(props: SkillsSheetProps) {
-    const { sheetId } = useParams({ from: '/myCharacters/$sheetId' });
+    const router = useRouter();
+
+    const matchWithSheetId = router.state.matches.find(
+        (match) => match.params.sheetId
+    );
+
+    const sheetId = matchWithSheetId?.params?.sheetId;
     const { data: sheet, isLoading, error } = useSheets(Number(sheetId));
 
     if (isLoading) return <p>Chargement en cours...</p>;

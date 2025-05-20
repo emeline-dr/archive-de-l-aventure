@@ -1,17 +1,91 @@
 import { Link, useParams } from "@tanstack/react-router"
+import { useState, useEffect } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { useSheets } from '../api/sheetApi';
+import { useUserById } from "../api/users/userApi";
+import { useFavoritesSheet, useFavoritesSheetById, AddFavoritesSheetToUser, RemoveFavoritesSheetFromUser } from "../api/favoriteSheetApi";
+import { getDecodedJwt } from "../utils/AuthUtils";
 
 import Sidebar from "../components/sidebar"
 import BackgroundIcon from "../components/backgroundIcon"
-
-import { useSheets } from '../api/sheetApi';
+import HeaderSheet from "../components/sheetComponent/headerSheet";
+import AbilitiesSheet from "../components/sheetComponent/abilitiesSheet";
+import HealthSheet from "../components/sheetComponent/healthSheet";
+import OthersCharactericticsSheet from "../components/sheetComponent/OthersCharactericticsSheet";
+import SkillsSheet from "../components/sheetComponent/skillsSheet";
+import SavingThrowSheet from "../components/sheetComponent/savingThrowSheet";
+import ProficienciesSheet from "../components/sheetComponent/proficienciesSheet";
+import FeatSheet from "../components/sheetComponent/featSheet";
+import WeaponsSheet from "../components/sheetComponent/weaponsSheet";
+import ItemsSheet from "../components/sheetComponent/itemsSheet";
+import SpellsSheet from "../components/sheetComponent/spellsSheet";
+import AppLoreCaracRelationsSheet from "../components/sheetComponent/appLoreCaracRelationsSheet";
 
 export function OthersCharactersPage() {
+    const queryClient = useQueryClient();
+    const [isFavorite, setFavorite] = useState(false)
+
+    const decodedToken = getDecodedJwt();
+    const userId = decodedToken?.id ?? 1;
+
     const { sheetId } = useParams({ from: '/registers/$sheetId' });
     const { data, isLoading } = useSheets(Number(sheetId));
 
+    const authorInfos = useUserById(data?.sheet.user_id ?? 1)
+
+    const allFavSheets = useFavoritesSheet()
+    const { data: favSheet } = useFavoritesSheetById(userId)
+    const favoriteSheet = favSheet?.find((sheet) => sheet.sheet_id === data?.sheet.id)
+
+    useEffect(() => {
+        setFavorite(!!favoriteSheet);
+    }, [favoriteSheet]);
+
+
+    const addFavoriteMutation = useMutation({
+        mutationFn: () => {
+            if (!data) {
+                throw new Error("Aucune donnée de favoris disponible");
+            }
+
+            return AddFavoritesSheetToUser(
+                data?.sheet.user_id,
+                Number(sheetId),
+                userId
+            )
+        },
+        onSuccess: () => {
+            setFavorite(true);
+            queryClient.invalidateQueries({ queryKey: ['favorites-sheets-by-users'] });
+        },
+        onError: () => alert("Erreur lors de l'ajout aux favoris"),
+    });
+
+    const removeFavoriteMutation = useMutation({
+        mutationFn: () => {
+            if (!allFavSheets.data || allFavSheets.data.length === 0) {
+                throw new Error("Aucune donnée de favoris disponible");
+            }
+
+            const currentFavorite = allFavSheets?.data.find(fav => fav.user_id === userId && fav.sheet_id === Number(sheetId));
+
+            if (!currentFavorite || !currentFavorite.id) {
+                throw new Error("Favori introuvable ou ID manquant");
+            }
+
+            return RemoveFavoritesSheetFromUser(currentFavorite.id);
+        },
+        onSuccess: () => {
+            setFavorite(false);
+            queryClient.invalidateQueries({ queryKey: ['favorites-sheets-by-users'] });
+        },
+        onError: () => alert("Erreur lors de la suppression des favoris"),
+    });
+
     if (isLoading || !data) return <div>Chargement...</div>;
 
-    const { sheet } = data;
+    const { sheet, details, weapon, feat, item, abilities, saving_throw, spells, spells_slot } = data;
 
     return (
         <div className='pageContenant flex flex-wrap h-full'>
@@ -24,6 +98,142 @@ export function OthersCharactersPage() {
                     </div>
                     <div className="breadcrumb text-background">Fiche de {sheet.firstname} {sheet.lastname ? sheet.lastname : ''}</div>
                 </div>
+
+                <div className="flex flex-wrap justify-between mt-[40px]">
+                    <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline mb-[40px]'>Fiche de {sheet.firstname ? sheet.firstname : 'Arlahne'} {sheet.lastname ? sheet.lastname : ''}</h2>
+
+                    <div className='flex flex-wrap gap-[16px]  mb-[40px]'>
+                        <button
+                            className='btn btn-text'
+                            style={{ padding: '15px 16px' }}
+                            onClick={() => {
+                                if (isFavorite) {
+                                    removeFavoriteMutation.mutate();
+                                } else {
+                                    addFavoriteMutation.mutate();
+                                }
+                            }}
+                        >
+                            {isFavorite === true &&
+                                <i className="fa-solid fa-heart"></i>
+                            }
+                            {isFavorite === false &&
+                                <i className="fa-regular fa-heart"></i>
+                            }
+                        </button>
+
+                        <Link to={`/registers/${sheet.id}/comments`}>
+                            <button className="btn btn-text flex-1"
+                                style={{ padding: '16px' }}>
+                                Commentaires
+                            </button>
+                        </Link>
+                        <button className="btn btn-text"
+                            style={{ padding: '16px', cursor: 'default' }}>
+                            Appartient à : {authorInfos.data?.username}
+                        </button>
+                    </div>
+                </div>
+
+                <HeaderSheet
+                    system_id={sheet.system_id}
+                    sheet_id={sheet.id}
+                    avatar={sheet.avatar_src}
+                    firstname={sheet.firstname}
+                    lastname={sheet.lastname}
+                />
+
+                <div className='flex flex-wrap w-full justify-between gap-y-[40px]'>
+                    <AbilitiesSheet
+                        system_id={sheet.system_id}
+                        sheet_id={sheet.id}
+                        abilities={abilities}
+                    />
+
+                    <HealthSheet
+                        system_id={sheet.system_id}
+                        sheet_id={sheet.id}
+                    />
+                </div>
+
+                <div className="flex flex-wrap w-full justify-center gap-[40px]">
+                    {sheet.system_id === 2 && <OthersCharactericticsSheet
+                        proficiency={details.proficiency ?? 0}
+                        ca={details.ca ?? 0}
+                        initiative={details.speed ?? 0}
+                        speed={details.speed ?? 0}
+                        swim_speed={details.swim_speed ?? 0}
+                        climb_speed={details.climb_speed ?? 0}
+                        fly_speed={details.fly_speed ?? 0}
+                        inspiration={details.inspiration || false}
+                    />}
+                </div>
+
+                <div className='flex flex-wrap w-full justify-between gap-[40px]'>
+                    <SkillsSheet
+                        sheet_id={sheet.id}
+                        system_id={sheet.system_id}
+                    />
+
+                    {sheet.system_id === 2 &&
+                        <SavingThrowSheet
+                            savingThrows={saving_throw}
+                            success={details.death_saves_success ?? 0}
+                            failed={details.death_saves_fail ?? 0}
+                        />
+                    }
+                </div>
+
+                <div className='flex flex-wrap w-full justify-between gap-[40px]'>
+                    {sheet.system_id === 2 &&
+                        <>
+                            <ProficienciesSheet
+                                armor_prof={details.armor_prof || ''}
+                                weapon_prof={details.weapon_prof || ''}
+                                tools_prof={details.tools_prof || ''}
+                            />
+
+                            <FeatSheet
+                                feats={feat}
+                            />
+                        </>
+                    }
+                </div>
+
+                <div className='flex flex-wrap w-full justify-between gap-[40px]'>
+                    <WeaponsSheet
+                        weapons={weapon}
+                    />
+                </div>
+
+                <div className='flex flex-wrap w-full justify-between gap-[40px]'>
+                    <ItemsSheet
+                        copper={details.copper ?? 0}
+                        silver={details.silver ?? 0}
+                        electrum={details.electrum ?? 0}
+                        gold={details.gold ?? 0}
+                        platinum={details.platinum ?? 0}
+                        items={item}
+                    />
+                </div>
+
+                <div className='flex flex-wrap w-full justify-between gap-[40px]'>
+                    <SpellsSheet
+                        spells={spells}
+                        spells_slots={spells_slot}
+                        dd_spell={details.dd_spell ?? 0}
+                        spell_bonus_attack={details.spell_bonus_attack ?? 0}
+                    />
+                </div>
+
+                {sheet.system_id === 2 &&
+                    <AppLoreCaracRelationsSheet
+                        apparence={details.apparence || ''}
+                        histoire={details.histoire || ''}
+                        caractere={details.caractere || ''}
+                        allies={details.allies || ''}
+                        enemies={details.enemies || ''}
+                    />}
             </div>
 
             <BackgroundIcon></BackgroundIcon>
