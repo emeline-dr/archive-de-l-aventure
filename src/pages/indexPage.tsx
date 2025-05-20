@@ -70,6 +70,9 @@ export default function IndexPage() {
                             lvl={sheet.lvl}
                         />
                     ))}
+                    {!favoritesData &&
+                        <p>Aucun favori.</p>
+                    }
                 </div>
 
             </div>

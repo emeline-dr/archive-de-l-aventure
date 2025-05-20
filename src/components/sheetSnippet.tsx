@@ -35,6 +35,8 @@ function SheetSnippet(props: SheetSnippetProps) {
         }
     }, [favoritesSheet.data, props.myId, props.id]);
 
+    const authorInfos = useUserById(props.authorId);
+
     const addFavoriteMutation = useMutation({
         mutationFn: () =>
             AddFavoritesSheetToUser(
@@ -109,7 +111,7 @@ function SheetSnippet(props: SheetSnippetProps) {
                 </span>
                 <span className="w-[150px] md:w-full lg:w-[100px] xl:w-full truncate"></span>
                 {props.authorId != props.myId &&
-                    <span className="w-[150px] md:w-full lg:w-[100px] xl:w-full truncate">Appartient à : {props.username}</span>
+                    <span className="w-[150px] md:w-full lg:w-[100px] xl:w-full truncate">Appartient à : {props.username || authorInfos.data?.username}</span>
                 }
             </div>
             {props.authorId != props.myId &&

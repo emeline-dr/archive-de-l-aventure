@@ -4,8 +4,14 @@ import Cookies from "js-cookie";
 
 import logo from "../assets/images/logo.png"
 
+import { getDecodedJwt } from "../utils/AuthUtils";
+
 function Navbar() {
     const location = useLocation();
+
+    const decodedToken = getDecodedJwt();
+
+    const userName = decodedToken?.username ?? '';
 
     let iconLink = '/index';
 
@@ -50,7 +56,8 @@ function Navbar() {
 
                             <button
                                 onClick={logout}
-                                className="btn-accent text-[30px] p-2 rounded-sm ms-[16px] cursor-pointer">
+                                className="inline-flex btn-accent text-[30px] p-2 rounded-sm ms-[16px] cursor-pointer">
+                                <span className="text-lg me-[8px]">{userName}</span>
                                 <i className="fa-solid fa-right-from-bracket"></i>
                             </button>
                         </div>
