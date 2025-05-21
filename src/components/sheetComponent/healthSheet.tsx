@@ -2,7 +2,9 @@ import { useRouter } from "@tanstack/react-router";
 
 import { useSheets } from "../../api/sheetApi";
 
+import HealthSheetL5R from "./healthSheetComponent/healthSheetL5R";
 import HealthSheetDnD from "./healthSheetComponent/healthSheetDnd";
+import HealthSheetCoC from "./healthSheetComponent/healthSheetCoC";
 
 type HealthSheetProps = {
     sheet_id: number;
@@ -25,8 +27,15 @@ export default function HealthSheet(props: HealthSheetProps) {
 
     const renderHealthSheetComponent = () => {
         switch (props.system_id) {
-            case 1:
-                return 'l5r';
+            case 1: {
+                const sheetL5R = sheet;
+                if (!sheetL5R) return <p>Fiche L5R introuvable.</p>;
+                return (
+                    <HealthSheetL5R
+                        sheet_id={sheetL5R.details.sheet_id}
+                    />
+                )
+            };
             case 2: {
                 const sheetDnD = sheet;
                 if (!sheetDnD) return <p>Fiche DnD introuvable.</p>;
@@ -39,8 +48,20 @@ export default function HealthSheet(props: HealthSheetProps) {
                 />
                 );
             }
-            case 3:
-                return 'coc';
+            case 3: {
+                const sheetCoC = sheet;
+                if (!sheetCoC) return <p>Fiche CoC introuvable.</p>;
+                return (
+                    <HealthSheetCoC
+                        hit_point={sheetCoC.details.hit_point ?? 0}
+                        major_wound={sheetCoC.details.major_wounds ?? 0}
+                        dying={sheetCoC.details.dying ?? false}
+                        unconscious={sheetCoC.details.unconsious ?? false}
+                        magic_points={sheetCoC.details.magic_points ?? 0}
+                        luck={sheetCoC.details.luck ?? 0}
+                    />
+                )
+            };
         }
     };
 

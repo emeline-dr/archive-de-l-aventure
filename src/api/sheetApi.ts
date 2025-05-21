@@ -89,6 +89,15 @@ export type SkillSheet = {
     skill_id: number;
     sheet_id: number;
     value: number;
+    label: string;
+    categories: string;
+}
+
+export type FellowInvestigators = {
+    sheet_id: number;
+    player: string;
+    character: string;
+    id: number;
 }
 
 export type Sheet = {
@@ -234,7 +243,8 @@ export type SheetResponse = {
     feat: Feat[];
     details: Sheet["details"];
     saving_throw: SavingThrows[];
-    skills: SkillSheet[];
+    skill: SkillSheet[];
+    fellowInvestigators: FellowInvestigators[];
     language?: { label: string }[] | { label: string } | null;
     classeDnD?: { label: string };
     subClasseDnD?: { label: string };

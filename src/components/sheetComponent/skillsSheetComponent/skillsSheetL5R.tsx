@@ -1,10 +1,10 @@
 import type { SkillSheet } from "../../../api/sheetApi";
 
-type SkillsSheetDnDProps = {
+type SkillsSheetL5RProps = {
     skills: SkillSheet[];
 };
 
-export default function SkillsSheetDnD(props: SkillsSheetDnDProps) {
+export default function SkillsSheetL5R(props: SkillsSheetL5RProps) {
     return (
         <div className="w-full flex flex-col justify-start gap-[16px] bg-primary rounded-[3px] p-[8px]">
             {props.skills.map((skill, index) => (
