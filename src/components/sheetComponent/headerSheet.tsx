@@ -52,6 +52,8 @@ function HeaderSheet(props: HeaderSheetProps) {
                         school={sheetL5R.schoolL5R?.label || ''}
                         school_rank={sheetL5R.details?.school_rank || 0}
                         exp_total={sheetL5R.details?.exp_total || 0}
+                        exp_saved={sheetL5R.details.exp_saved || 0}
+                        exp_spent={sheetL5R.details.expo_spent || 0}
                     />
                 );
             }

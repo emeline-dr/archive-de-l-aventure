@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import { useFavoritesSheet, AddFavoritesSheetToUser, RemoveFavoritesSheetFromUser } from "../api/favoriteSheetApi";
@@ -25,6 +25,10 @@ function SheetSnippet(props: SheetSnippetProps) {
     const favoritesSheet = useFavoritesSheet();
 
     const [favorite, setFavorite] = useState<boolean | undefined>(undefined);
+
+    const location = useRouterState({ select: (s) => s.location });
+
+    const isMyCharactersPage = location.pathname.includes('/myCharacters');
 
     useEffect(() => {
         if (Array.isArray(favoritesSheet.data)) {
@@ -91,23 +95,11 @@ function SheetSnippet(props: SheetSnippetProps) {
             <img src={`/src/assets/images${props.img}`} alt={`Avatar de ${props.name}`} className="size-[80px] object-cover outline-3 outline-secondary rounded-sm" />
             <div className="flex flex-wrap flex-col justify-center ms-[8px]">
                 <span className="w-[150px] md:w-full lg:w-[100px] xl:w-full font-uncial-antiqua text-2xl truncate">
-                    {props.authorId === props.myId &&
-                        <Link
-                            key={props.id}
-                            to={`/myCharacters/${props.id}`}
-                        >
-                            {props.name}
-                        </Link>
-                    }
-
-                    {props.authorId !== props.myId &&
-                        <Link
-                            key={props.id}
-                            to={`/registers/${props.id}`}
-                        >
-                            {props.name}
-                        </Link>
-                    }
+                    <Link
+                        to={`${isMyCharactersPage ? '/myCharacters' : '/registers'}/${props.id}`}
+                    >
+                        {props.name}
+                    </Link>
                 </span>
                 <span className="w-[150px] md:w-full lg:w-[100px] xl:w-full truncate"></span>
                 {props.authorId != props.myId &&

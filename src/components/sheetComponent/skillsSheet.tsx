@@ -57,7 +57,7 @@ export default function SkillsSheet(props: SkillsSheetProps) {
     };
 
     return (
-        <div className="flex-1 flex flex-wrap justify-between gap-[8px] p-[8px] rounded-[3px]">
+        <div className="flex-1 flex flex-wrap justify-between gap-[8px] rounded-[3px]">
             <h3 className="w-full block text-2xl font-uncial-antiqua mt-[40px] mb-[40px] underline">Compétences</h3>
             {renderSkillsSheetComponent()}
         </div>

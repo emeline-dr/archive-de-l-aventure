@@ -12,6 +12,7 @@ import BackgroundIcon from "../components/backgroundIcon"
 import HeaderSheet from "../components/sheetComponent/headerSheet";
 import AbilitiesSheet from "../components/sheetComponent/abilitiesSheet";
 import HealthSheet from "../components/sheetComponent/healthSheet";
+import DisAdvCondSchoolSheet from '../components/sheetComponent/disAdvCondSchoolSheet';
 import OthersCharactericticsSheet from "../components/sheetComponent/OthersCharactericticsSheet";
 import SanitySheet from "../components/sheetComponent/sanitySheet";
 import FightCoCSheet from "../components/sheetComponent/fightCoCSheet";
@@ -22,6 +23,7 @@ import FeatSheet from "../components/sheetComponent/featSheet";
 import WeaponsSheet from "../components/sheetComponent/weaponsSheet";
 import ItemsSheet from "../components/sheetComponent/itemsSheet";
 import SpellsSheet from "../components/sheetComponent/spellsSheet";
+import TechniquesSchoolNotesSheet from '../components/sheetComponent/techniquesSchoolNotesSheet';
 import AppLoreCaracRelationsSheet from "../components/sheetComponent/appLoreCaracRelationsSheet";
 import ProfileCoCSheet from "../components/sheetComponent/profileCoCSheet";
 import FellowInvestigatorsSheet from "../components/sheetComponent/fellowInvestigatorsSheet";
@@ -95,7 +97,7 @@ export function OthersCharactersPage() {
         <div className='pageContenant flex flex-wrap h-full'>
             <Sidebar></Sidebar>
 
-            <div className='flex-1 z-1 mx-[16px] sm:mx-[80px] my-[40px]'>
+            <div className='flex-1 z-1 mx-[16px] sm:mx-[80px] mt-[40px] mb-[80px]'>
                 <div className='flex flex-wrap start gap-y-[8px]'>
                     <div className="breadcrumb pe-[16px] underline text-accent">
                         <Link to="/registers">Les registres</Link>
@@ -161,6 +163,15 @@ export function OthersCharactersPage() {
                 </div>
 
                 <div className="flex flex-wrap w-full justify-center">
+                    {sheet.system_id === 1 &&
+                        <DisAdvCondSchoolSheet
+                            disadv={details.disadv || ''}
+                            adv={details.adv || ''}
+                            conditions={details.conditions || ''}
+                            school_abilities={details.school_abilities || ''}
+                        />
+                    }
+
                     {sheet.system_id === 2 && <OthersCharactericticsSheet
                         proficiency={details.proficiency ?? 0}
                         ca={details.ca ?? 0}
@@ -227,6 +238,16 @@ export function OthersCharactersPage() {
                 </div>
 
                 <div className='flex flex-wrap w-full justify-between gap-[40px]'>
+                    {sheet.system_id === 1 &&
+                        <ItemsSheet
+                            system_id={sheet.system_id}
+                            koku={details.koku ?? 0}
+                            zeni={details.zeni ?? 0}
+                            bu={details.bu ?? 0}
+                            items={item}
+                        />
+                    }
+
                     {sheet.system_id === 2 &&
                         <ItemsSheet
                             system_id={sheet.system_id}
@@ -257,6 +278,14 @@ export function OthersCharactersPage() {
                         spell_bonus_attack={details.spell_bonus_attack ?? 0}
                     />
                 </div>
+
+                {sheet.system_id === 1 &&
+                    <TechniquesSchoolNotesSheet
+                        new_actions={details.Techniques_new_actions ?? ''}
+                        new_flower={details.techniques_new_flower ?? ''}
+                        notes={details.notes ?? ''}
+                    />
+                }
 
                 {sheet.system_id === 2 &&
                     <AppLoreCaracRelationsSheet

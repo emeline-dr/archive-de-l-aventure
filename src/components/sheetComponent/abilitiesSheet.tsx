@@ -10,11 +10,11 @@ type AbilitiesSheetProps = {
 function AbilitiesSheet(props: AbilitiesSheetProps) {
     const { abilities } = props;
 
-    if (!abilities || abilities.length === 0) return <p>Aucune capacité disponible.</p>;
-
     return (
-        <div className="flex flex-wrap justify-between gap-[8px] max-w-3/4 bg-primary px-[8px] py-[16px] rounded-[3px]">
-            {abilities.map((ability, index) => {
+        <div className="flex flex-wrap h-fit justify-between gap-[8px] max-w-3/4 bg-primary px-[8px] py-[16px] rounded-[3px]">
+            {(!abilities || abilities.length === 0) ? (
+                <span className="italic self-center">Pas de caractéristique.</span>
+            ) : (abilities.map((ability, index) => {
                 const isEvenIndex = index % 2 === 0;
 
                 return (
@@ -47,7 +47,7 @@ function AbilitiesSheet(props: AbilitiesSheetProps) {
                         </div>
                     </div>
                 );
-            })}
+            }))}
         </div>
     );
 }

@@ -32,7 +32,14 @@ export default function HealthSheet(props: HealthSheetProps) {
                 if (!sheetL5R) return <p>Fiche L5R introuvable.</p>;
                 return (
                     <HealthSheetL5R
-                        sheet_id={sheetL5R.details.sheet_id}
+                        endurance={sheetL5R.details.endurance ?? 0}
+                        endu_fatigue={sheetL5R.details.endurance_fatigue ?? 0}
+                        composure={sheetL5R.details.composure ?? 0}
+                        composure_strife={sheetL5R.details.composure_strife ?? 0}
+                        focus={sheetL5R.details.focus ?? 0}
+                        vigilance={sheetL5R.details.vigilance ?? 0}
+                        void_max={sheetL5R.details.void_points_max ?? 0}
+                        void_now={sheetL5R.details.void_points_current ?? 0}
                     />
                 )
             };
@@ -66,7 +73,7 @@ export default function HealthSheet(props: HealthSheetProps) {
     };
 
     return (
-        <div className="w-[300px] flex flex-wrap justify-between gap-[8px] bg-primary p-[8px] rounded-[3px]">
+        <div className="min-w-[300px] max-w-[450px] flex flex-wrap justify-between gap-[8px] bg-primary p-[8px] rounded-[3px]">
             {renderHealthSheetComponent()}
         </div>
     )

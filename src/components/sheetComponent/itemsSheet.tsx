@@ -10,6 +10,9 @@ type ItemsSheetProps = {
     platinum?: number;
     spending_lvl?: number;
     cash?: number;
+    bu?: number;
+    koku?: number;
+    zeni?: number;
     items: Item[];
 };
 
@@ -38,6 +41,27 @@ export default function ItemsSheet(props: ItemsSheetProps) {
         <>
             <h3 className="block text-2xl font-uncial-antiqua mt-[40px] underline">Inventaire</h3>
             <div className="w-full flex flex-wrap justify-center gap-[40px]">
+                {/* L5R */}
+                {props.system_id === 1 &&
+                    <>
+                        <div className="flex flex-wrap flex-col justify-start p-[8px] text-center text-base size-[100px] bg-primary rounded-[3px]">
+                            Zeni
+                            <span className="font-uncial-antiqua text-2xl">{props.bu}</span>
+                        </div>
+
+                        <div className="flex flex-wrap flex-col justify-start p-[8px] text-center text-base size-[100px] bg-primary rounded-[3px]">
+                            Bu <span className="text-xs italic">(1 Bu = 10 Zeni)</span>
+                            <span className="font-uncial-antiqua text-2xl">{props.zeni}</span>
+                        </div>
+
+                        <div className="flex flex-wrap flex-col justify-start p-[8px] text-center text-base size-[100px] bg-primary rounded-[3px]">
+                            Koku <span className="text-xs italic">(1 Koku = 5 Bu)</span>
+                            <span className="font-uncial-antiqua text-2xl">{props.koku}</span>
+                        </div>
+                    </>
+                }
+
+                {/* CoC */}
                 {props.system_id === 3 &&
                     <>
                         <div className="flex flex-wrap flex-col justify-start p-[8px] text-center text-base size-[100px] bg-primary rounded-[3px]">
@@ -51,6 +75,8 @@ export default function ItemsSheet(props: ItemsSheetProps) {
                         </div>
                     </>
                 }
+
+                {/* DND */}
                 {props.system_id === 2 &&
                     <>
                         <div className="flex flex-wrap flex-col justify-start p-[8px] text-center text-base size-[100px] bg-primary rounded-[3px]">
@@ -81,7 +107,7 @@ export default function ItemsSheet(props: ItemsSheetProps) {
                 }
             </div>
             <div className="w-full rounded-[3px] bg-primary p-[16px]">
-                <div className="w-full mb-[32px] flex flex-wrap gap-[16px] justify-center">
+                <div className="w-full mb-[32px] flex flex-wrap gap-[16px] justify-start">
                     {items && items.length > 0 ? (
                         items.map((item) => {
                             const isSelected = selectedItemId === item.id.toString();
@@ -112,7 +138,7 @@ export default function ItemsSheet(props: ItemsSheetProps) {
                             );
                         })
                     ) : (
-                        <span className="text-center text-base font-uncial-antiqua">Aucun objet dans l'inventaire.</span>
+                        <span className="italic w-full">Aucun objet dans l'inventaire.</span>
                     )}
                 </div>
 
