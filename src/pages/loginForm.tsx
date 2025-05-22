@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
+import { useRouter, useRouterState } from '@tanstack/react-router';
 import Cookies from 'js-cookie';
 
 import type { AnyFieldApi } from '@tanstack/react-form';
@@ -16,6 +17,10 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 }
 
 export function LoginForm() {
+    const router = useRouter();
+    const { search } = useRouterState();
+    const redirectTo = search.redirectTo ?? '/index';
+
     const [checked, setChecked] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -53,10 +58,9 @@ export function LoginForm() {
                         expires: oneHourFromNow, path: '/',
                         secure: true
                     })
-                    console.log("Token JWT stocké:", data.jwt);
                 }
 
-                window.location.href = "/index";
+                await router.navigate({ to: redirectTo });
             } catch (error: unknown) {
                 if (error instanceof Error) {
                     console.error('Erreur de connexion:', error);
