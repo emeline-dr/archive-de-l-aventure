@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
+import Cookies from 'js-cookie';
+
 import type { AnyFieldApi } from '@tanstack/react-form';
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
@@ -44,11 +46,15 @@ export function LoginForm() {
                 }
 
                 const data = await response.json();
-                console.log('Connexion réussie:', data);
+                const oneHourFromNow = new Date(new Date().getTime() + 60 * 60 * 1000);
 
                 if (data.jwt) {
-                    localStorage.setItem('authToken', data.jwt);
-                    console.log("Token JWT stocké:", data.jwt);
+                    Cookies.set('authToken', data.jwt, {
+                        expires: oneHourFromNow, path: '/',
+                        secure: true
+                    })
+
+                    console.log(data.jwt)
                 }
 
                 window.location.href = "/index";

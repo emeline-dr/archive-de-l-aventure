@@ -23,7 +23,7 @@ export default function HealthSheetDnD(props: HealthSheetDnDProps) {
 
             <div className="w-full flex flex-wrap flex-col justify-between border-b-1 border-b-background text-2xl text-center font-uncial-antiqua">
                 Perception
-                <span className="w-full font-crimson-text text-base">(perception passive)</span>
+                <span className="w-full font-crimson-text text-base">(Sagesse passive)</span>
                 <span className="text-[32px]">{perception}</span>
             </div>
 

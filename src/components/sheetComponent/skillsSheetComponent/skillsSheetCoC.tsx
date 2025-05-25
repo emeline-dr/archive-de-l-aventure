@@ -1,10 +1,10 @@
 import type { SkillSheet } from "../../../api/sheetApi";
 
-type SkillsSheetDnDProps = {
+type SkillsSheetCoCProps = {
     skills: SkillSheet[];
 };
 
-export default function SkillsSheetDnD(props: SkillsSheetDnDProps) {
+export default function SkillsSheetCoC(props: SkillsSheetCoCProps) {
     return (
         <div className="w-full flex flex-col justify-start gap-[16px] bg-primary rounded-[3px] p-[8px]">
             {(!props.skills || props.skills.length === 0) ? (

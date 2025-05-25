@@ -15,7 +15,7 @@ export type HeaderSheetDnDProps = {
 export default function HeaderSheetDnD(props: HeaderSheetDnDProps) {
     return (
         <>
-            <div className='flex flex-wrap flex-col w-full lg:w-auto gap-[16px] z-1 bg-text-95 py-[16px] px-[32px] text-background border-sm'>
+            <div className='flex flex-wrap flex-col w-full lg:w-auto gap-[16px] z-1 bg-text-95 py-[16px] px-[32px] text-background rounded-sm'>
                 <div><span className='font-uncial-antiqua text-2xl'>Classe :</span> {props.class} ({props.subClass})</div>
                 <div><span className='font-uncial-antiqua text-2xl'>Race :</span> {props.species} {props.subSpecies ? '(' + props.subSpecies + ')' : ''}</div>
                 <div><span className='font-uncial-antiqua text-2xl'>Historique :</span> {props.originDetails}</div>

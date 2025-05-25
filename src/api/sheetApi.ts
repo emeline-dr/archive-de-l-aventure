@@ -77,6 +77,29 @@ export type Feat = {
     level_acquired: number;
 }
 
+export type SavingThrows = {
+    id: number;
+    value: number;
+    proficient: boolean;
+    label: string;
+}
+
+export type SkillSheet = {
+    id: number;
+    skill_id: number;
+    sheet_id: number;
+    value: number;
+    label: string;
+    categories: string;
+}
+
+export type FellowInvestigators = {
+    sheet_id: number;
+    player: string;
+    character: string;
+    id: number;
+}
+
 export type Sheet = {
     id: number;
     user_id: number;
@@ -219,6 +242,9 @@ export type SheetResponse = {
     spells_slot: SpellSlot[];
     feat: Feat[];
     details: Sheet["details"];
+    saving_throw: SavingThrows[];
+    skill: SkillSheet[];
+    fellowInvestigators: FellowInvestigators[];
     language?: { label: string }[] | { label: string } | null;
     classeDnD?: { label: string };
     subClasseDnD?: { label: string };
@@ -247,4 +273,21 @@ export function useSheets(sheet_id: number) {
         queryFn: () => fetchSheets(sheet_id),
         enabled: !!sheet_id,
     });
+}
+
+export async function updateShared(sheet_id: number, shared: boolean): Promise<Sheet> {
+    const response = await fetch(`https://apidnd.up.railway.app/api/sheet/${sheet_id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ shared }),
+    });
+
+    if (!response.ok) {
+        throw new Error("Erreur lors de la mise à jour de 'shared'");
+    }
+
+    const data = await response.json();
+    return data as Sheet;
 }

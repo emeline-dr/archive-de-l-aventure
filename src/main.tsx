@@ -8,17 +8,17 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 
 import { Route as RootRoute } from "./routes/__root";
 
-import { homeRoute } from "./routes/home";
-import { loginRoute } from "./routes/login";
-import { signInRoute } from "./routes/signIn";
-import { indexRoute } from "./routes";
-import { myCharactersRoute } from "./routes/myCharacters";
-import { registersRoute } from "./routes/registers";
-import { NewSheetRoute } from "./routes/newSheet";
-import { CharactersOwnedRoute } from "./routes/charactersOwned";
-import { OthersCharactersRoute } from "./routes/othersCharacters";
-import { UpdateSheetRoute } from "./routes/updateSheets";
-import { commentsRoute } from "./routes/comments";
+import { homeRoute } from './routes/home';
+import { loginRoute } from './routes/login';
+import { signInRoute } from './routes/signIn';
+import { indexRoute } from './routes';
+import { myCharactersRoute } from './routes/myCharacters';
+import { registersRoute } from './routes/registers';
+import { NewSheetRoute } from './routes/newSheet';
+import { CharactersOwnedRoute } from './routes/charactersOwned';
+import { OthersCharactersRoute } from './routes/othersCharacters';
+import { UpdateSheetRoute } from './routes/updateSheets';
+import { CommentsSheetRoute } from './routes/comments';
 
 const routeTree = RootRoute.addChildren([
   homeRoute,
@@ -31,7 +31,7 @@ const routeTree = RootRoute.addChildren([
   OthersCharactersRoute,
   NewSheetRoute,
   UpdateSheetRoute,
-  commentsRoute,
+  CommentsSheetRoute
 ]);
 
 const router = createRouter({ routeTree });

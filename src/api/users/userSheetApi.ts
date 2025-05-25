@@ -11,6 +11,41 @@ export type SheetByUser = {
     lvl: number;
 };
 
+export async function fetchSheets(): Promise<SheetByUser[]> {
+    const res = await fetch('https://apidnd.up.railway.app/api/sheet');
+
+    if (!res.ok) {
+        throw new Error('Échec du chargement des fiches');
+    }
+
+    return res.json();
+}
+
+export function useSheetsForAllUsers() {
+    return useQuery({
+        queryKey: ['sheets-for-all-users'],
+        queryFn: fetchSheets,
+    })
+}
+
+export async function fetchSheetsShared(): Promise<SheetByUser[]> {
+    const res = await fetch('https://apidnd.up.railway.app/api/sheet/shared');
+
+    if (!res.ok) {
+        throw new Error('Échec du chargement des fiches partagées');
+    }
+
+    return res.json();
+}
+
+export function useSheetsShared() {
+    return useQuery({
+        queryKey: ['sheets-shared-for-all-users'],
+        queryFn: fetchSheetsShared,
+    })
+}
+
+
 export async function fetchSheetsByUsers(user_id: number): Promise<SheetByUser[]> {
     const res = await fetch('https://apidnd.up.railway.app/api/sheet/user/' + user_id);
 

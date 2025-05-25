@@ -6,14 +6,15 @@ import BackgroundIcon from '../components/backgroundIcon';
 
 import { getDecodedJwt } from '../utils/AuthUtils';
 import { useSheetsByUsers } from '../api/users/userSheetApi';
+import { useFavoritesSheetById } from '../api/favoriteSheetApi';
 
 export default function IndexPage() {
 
     const decodedToken = getDecodedJwt();
 
     const userId = decodedToken?.id ?? 1;
-    const userName = decodedToken?.username ?? '';
     const { data, isLoading, isError } = useSheetsByUsers(userId);
+    const { data: favoritesData } = useFavoritesSheetById(userId);
 
     if (isLoading) {
         return <div>Chargement...</div>;
@@ -36,38 +37,44 @@ export default function IndexPage() {
                 </div>
                 <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px]'>Mes derniers ajouts</h2>
                 <div className='flex flex-wrap justify-between gap-y-4'>
-                    {data.slice(0, 5).map(sheet => (
-                        <SheetSnippet
-                            id={sheet.id}
-                            key={sheet.id}
-                            authorId={sheet.user_id}
-                            myId={userId}
-                            authorName={userName}
-                            isLiked={sheet.shared}
-                            name={sheet.firstname + ' ' + sheet.lastname}
-                            img={sheet.avatar_src}
-                            system={sheet.system_id}
-                            lvl={sheet.lvl}
-                        />
-                    ))}
+                    {data.length > 0 ? (
+                        data.slice(0, 5).map(sheet => (
+                            <SheetSnippet
+                                id={sheet.id}
+                                key={sheet.id}
+                                authorId={sheet.user_id}
+                                myId={userId}
+                                name={sheet.firstname + ' ' + sheet.lastname}
+                                img={sheet.avatar_src}
+                                system={sheet.system_id}
+                                lvl={sheet.lvl}
+                            />
+                        ))
+                    ) : (
+                        <p>Aucune fiche trouvée.</p>
+                    )}
                 </div>
+
                 <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px]'>Mes favoris</h2>
                 <div className='flex flex-wrap justify-between gap-y-4'>
-                    {data.filter(sheet => sheet.shared).map(sheet => (
+                    {favoritesData && (Array.isArray(favoritesData) ? favoritesData : [favoritesData]).map(sheet => (
                         <SheetSnippet
-                            id={sheet.id}
-                            key={sheet.id}
-                            authorId={sheet.user_id}
+                            id={sheet.sheet_id}
+                            key={sheet.sheet_id}
+                            authorId={sheet.owner_id}
+                            username={sheet.username}
                             myId={userId}
-                            authorName={userName}
-                            isLiked={sheet.shared}
                             name={sheet.firstname + ' ' + sheet.lastname}
                             img={sheet.avatar_src}
                             system={sheet.system_id}
                             lvl={sheet.lvl}
                         />
                     ))}
+                    {!favoritesData &&
+                        <p>Aucun favori.</p>
+                    }
                 </div>
+
             </div>
 
             <BackgroundIcon />
