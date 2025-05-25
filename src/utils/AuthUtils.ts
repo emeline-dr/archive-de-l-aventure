@@ -1,0 +1,40 @@
+import Cookies from "js-cookie";
+
+import { jwtDecode } from "jwt-decode";
+import type { JwtPayload } from "jwt-decode";
+
+interface DecodedToken extends JwtPayload {
+    id: number;
+    username: string;
+    roles: string;
+}
+
+export const getJwtToken = (): string | null => {
+    const token = Cookies.get('authToken');
+    return token ?? null;
+};
+
+export const decodeJwt = (token: string): DecodedToken | null => {
+    try {
+        return jwtDecode<DecodedToken>(token);
+    } catch (error) {
+        console.error('Erreur de décodage du JWT:', error);
+        return null;
+    }
+};
+
+export const getDecodedJwt = (): DecodedToken | null => {
+    const token = getJwtToken();
+    if (token) {
+        return decodeJwt(token);
+    }
+    return null;
+};
+
+export const isJwtExpired = (token: string): boolean => {
+    const decoded = decodeJwt(token);
+    if (!decoded || !decoded.exp) return true;
+
+    const currentTime = Date.now() / 1000;
+    return decoded.exp < currentTime;
+};

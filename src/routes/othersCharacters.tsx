@@ -1,8 +1,15 @@
 import { createRoute } from '@tanstack/react-router';
 import { Route as RootRoute } from './__root';
 
+import { requireAuth } from '../utils/authGuard';
+
+import { OthersCharactersPage } from '../pages/othersCharactersPage';
+
 export const OthersCharactersRoute = createRoute({
-    path: '/registers/1',
+    path: '/registers/$sheetId',
     getParentRoute: () => RootRoute,
-    component: () => <h2>Les fiches aux autres</h2>,
+    component: OthersCharactersPage,
+    beforeLoad: () => {
+        requireAuth();
+    },
 });

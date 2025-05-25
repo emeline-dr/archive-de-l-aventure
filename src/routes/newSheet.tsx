@@ -1,6 +1,8 @@
 import { createRoute, Link } from '@tanstack/react-router';
 import { Route as RootRoute } from './__root';
 
+import { requireAuth } from '../utils/authGuard';
+
 import Sidebar from '../components/sidebar';
 import BackgroundIcon from '../components/backgroundIcon';
 import { NewSheetPage } from '../pages/newSheetPage';
@@ -8,6 +10,9 @@ import { NewSheetPage } from '../pages/newSheetPage';
 export const NewSheetRoute = createRoute({
     path: '/myCharacters/newSheet',
     getParentRoute: () => RootRoute,
+    beforeLoad: () => {
+        requireAuth();
+    },
     component: () =>
         <div className='pageContenant flex flex-wrap h-full'>
             <Sidebar></Sidebar>

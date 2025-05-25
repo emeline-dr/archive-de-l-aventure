@@ -432,7 +432,7 @@ export function L5rFormComponent() {
                     )}
                 </form.Field>
 
-                {/* Choix de l'endurance si fatigue */}
+                {/* Choix de la fatigue */}
                 <form.Field name="enduranceFatigue">
                     {(field) => (
                         <div className='w-[240px]'>
