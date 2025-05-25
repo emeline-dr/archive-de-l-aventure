@@ -9,8 +9,6 @@ import { useSystems } from "../api/systemApi";
 import { OllamaChatModal } from "../components/ollama/ollamaChatModal";
 
 export function NewSheetPage() {
-  const [chatOpen, setChatOpen] = useState(false);
-
   const systems = useSystems();
 
   const [selectedSystem, setSelectedSystem] = useState("");
@@ -54,20 +52,9 @@ export function NewSheetPage() {
             ))}
           </select>
         </div>
-
-        <button
-          type="button"
-          onClick={() => setChatOpen(true)}
-          className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg w-16 h-16 flex items-center justify-center text-3xl"
-          style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}
-          aria-label="Ouvrir le chat IA"
-        >
-          💬
-        </button>
-
-        <OllamaChatModal open={chatOpen} onClose={() => setChatOpen(false)} />
-
         {renderComponent()}
+
+        <OllamaChatModal />
       </div>
     </>
   );

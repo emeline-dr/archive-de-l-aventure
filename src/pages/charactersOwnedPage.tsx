@@ -6,6 +6,8 @@ import { useSheets, updateShared } from '../api/sheetApi';
 
 import Sidebar from "../components/sidebar"
 import BackgroundIcon from "../components/backgroundIcon"
+import { OllamaChatModal } from '../components/ollama/ollamaChatModal';
+
 import HeaderSheet from "../components/sheetComponent/headerSheet";
 import AbilitiesSheet from "../components/sheetComponent/abilitiesSheet";
 import HealthSheet from "../components/sheetComponent/healthSheet";
@@ -259,6 +261,7 @@ export function CharactersOwnedPage() {
                 </div>
             </div>
 
+            <OllamaChatModal />
             <BackgroundIcon></BackgroundIcon>
         </div>
     )

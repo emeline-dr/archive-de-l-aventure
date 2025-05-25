@@ -28,7 +28,7 @@ function SheetSnippet(props: SheetSnippetProps) {
 
     const location = useRouterState({ select: (s) => s.location });
 
-    const isMyCharactersPage = location.pathname.includes('/myCharacters');
+    const isMyCharactersPage = location.pathname.includes('/myCharacters') || location.pathname.includes('/index');
 
     useEffect(() => {
         if (Array.isArray(favoritesSheet.data)) {
