@@ -55,8 +55,14 @@ export default function UpdateSheetPage() {
                         Fiche de {sheet.firstname} {sheet.lastname ? sheet.lastname : ''}
                     </div>
                 </div>
+
+                <div className="flex flex-wrap justify-between">
+                    <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px] leading-none'>Mise à jour de fiche</h2>
+
+                    {renderUpdateComponent()}
+                </div>
             </div>
-            {renderUpdateComponent()}
+
 
             <OllamaChatModal />
             <BackgroundIcon></BackgroundIcon>

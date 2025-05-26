@@ -33,12 +33,7 @@ export function L5rFormComponent() {
             vigilance: '',
             voidPointsMax: '',
             voidPointsCurrent: '',
-            skills: [
-                {
-                    label: '',
-                    value: ''
-                },
-            ],
+            skills: [{ label: '', value: '' }],
             koku: '',
             zeni: '',
             bu: '',
@@ -49,16 +44,15 @@ export function L5rFormComponent() {
             TechniquesNewActions: '',
             TechniquesNewFlower: '',
             armors: [''],
-            weapons: [
-                {
-                    id: '',
-                    name: '',
-                    damage: '',
-                    notes: '',
-                },
-            ],
-        }, onSubmit: async ({ value }) => {
-            console.log('Fiche envoyée avec :', value)
+            weapons: [{
+                id: '',
+                name: '',
+                damage: '',
+                notes: '',
+            }],
+        },
+        onSubmit: async ({ value }) => {
+            console.log('Fiche mise à jour avec :', value)
         },
     })
 

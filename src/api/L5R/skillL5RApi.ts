@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 export type SkillL5R = {
     id: number;
     label: string;
+    proficient: boolean;
+    categories: string;
     system_id: number;
 };
 

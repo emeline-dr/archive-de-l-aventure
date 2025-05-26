@@ -112,6 +112,7 @@ export type Sheet = {
 
     details: {
         sheet_id: number;
+        id: number;
 
         classe_id?: number;
         subClasse_id?: number;
@@ -180,7 +181,7 @@ export type Sheet = {
         disadv?: string;
         conditions?: string;
         school_abilities?: string;
-        Techniques_new_actions?: string;
+        techniques_new_actions?: string;
         techniques_new_flower?: string;
 
         occupation?: string;

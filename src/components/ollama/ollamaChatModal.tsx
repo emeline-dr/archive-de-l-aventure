@@ -32,7 +32,6 @@ export function OllamaChatModal() {
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      console.log("Chargement des messages depuis localStorage:", JSON.parse(saved));
       setMessages(JSON.parse(saved));
     }
   }, []);
