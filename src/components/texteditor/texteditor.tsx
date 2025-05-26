@@ -1,11 +1,12 @@
 import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+
+import Placeholder from "@tiptap/extension-placeholder";
+import StarterKit from '@tiptap/starter-kit';
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import Superscript from "@tiptap/extension-superscript";
 import Subscript from "@tiptap/extension-subscript";
 import TextAlign from "@tiptap/extension-text-align";
-import React from "react";
 
 export function TiptapEditor({
   value,
@@ -24,8 +25,13 @@ export function TiptapEditor({
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
+      Placeholder.configure({
+        placeholder: "Écrivez votre commentaire…",
+        showOnlyWhenEditable: true,
+        showOnlyCurrent: false,
+      }),
     ],
-    content: value || "<p>Écrivez un commentaire...</p>",
+    content: value || "",
     onUpdate: ({ editor }) => {
       onChange?.(editor.getHTML());
     },
@@ -33,10 +39,11 @@ export function TiptapEditor({
 
   if (!editor) return null;
 
+
   return (
-    <div className="bg-[#f9edcd] border border-[#e2c799] p-4 rounded font-serif">
+    <div className="border border-secondary rounded-md mx-auto">
       {/* Toolbar */}
-      <div className="flex gap-2 mb-2 flex-wrap">
+      <div className="flex gap-[8px] p-[8px] bg-primary flex-wrap">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={
@@ -152,7 +159,7 @@ export function TiptapEditor({
           <span className="cursor-pointer">❌🔗</span>
         </button>
       </div>
-      <EditorContent editor={editor} />
+      <EditorContent className="p-[16px] prose max-w-none" editor={editor} />
     </div>
   );
 }

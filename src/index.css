@@ -147,3 +147,11 @@
 .pageContenant {
     min-height: calc(100vh - 124px);
 }
+
+.ProseMirror p.is-empty::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--color-text-75);
+    pointer-events: none;
+    height: 0;
+}

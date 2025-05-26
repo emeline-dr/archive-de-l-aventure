@@ -281,7 +281,7 @@ export async function updateShared(sheet_id: number, shared: boolean): Promise<S
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ shared }),
+        body: JSON.stringify({ shared, sheet_id }),
     });
 
     if (!response.ok) {
