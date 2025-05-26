@@ -1,4 +1,7 @@
 type TechniquesSchoolNotesSheetProps = {
+    distinctions: string;
+    passions: string;
+    anxieties: string;
     new_flower: string;
     new_actions: string;
     notes: string;
@@ -8,12 +11,33 @@ export default function TechniquesSchoolNotesSheet(props: TechniquesSchoolNotesS
 
     return (
         <div className="w-full flex flex-wrap gap-[40px] mt-[40px]">
+            <div className="flex-1">
+                <h3 className="block text-2xl font-uncial-antiqua underline mb-[40px]">Distinctions</h3>
+                <div className="flex flex-wrap bg-primary rounded-[3px] p-[8px]">
+                    <p>{props.distinctions}</p>
+                </div>
+            </div>
+
+            <div className="flex-1">
+                <h3 className="block text-2xl font-uncial-antiqua underline mb-[40px]">Passions</h3>
+                <div className="flex flex-wrap bg-primary rounded-[3px] p-[8px]">
+                    <p>{props.passions}</p>
+                </div>
+            </div>
+
+            <div className="flex-1">
+                <h3 className="block text-2xl font-uncial-antiqua underline mb-[40px]">Anxiétés</h3>
+                <div className="flex flex-wrap bg-primary rounded-[3px] p-[8px]">
+                    <p>{props.anxieties}</p>
+                </div>
+            </div>
+
             <h3 className="block w-full text-2xl font-uncial-antiqua underline">Techniques</h3>
-            <div className="flex-1 flex flex-wrap bg-primary rounded-[3px] p-[8px]">
+            <div className="flex-2 flex flex-wrap bg-primary rounded-[3px] p-[8px]">
                 <h4 className="w-full font-uncial-antiqua text-xl">Nouvelles ֍</h4>
                 <p>{props.new_flower}</p>
             </div>
-            <div className="flex-1 flex flex-wrap bg-primary rounded-[3px] p-[8px]">
+            <div className="flex-2 flex flex-wrap bg-primary rounded-[3px] p-[8px]">
                 <h4 className="w-full font-uncial-antiqua text-xl">Nouvelles actions</h4>
                 <p>{props.new_actions}</p>
             </div>

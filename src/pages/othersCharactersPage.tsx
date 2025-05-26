@@ -167,8 +167,13 @@ export function OthersCharactersPage() {
                         <DisAdvCondSchoolSheet
                             disadv={details.disadv || ''}
                             adv={details.adv || ''}
+                            adversities={details.adversities || ''}
+                            roles={details.roles || ''}
                             conditions={details.conditions || ''}
                             school_abilities={details.school_abilities || ''}
+                            ninjo={details.ninjo || ''}
+                            giri={details.giri || ''}
+                            personality_habits_quirks={details.personality_habits_quirks || ''}
                         />
                     }
 
@@ -281,6 +286,9 @@ export function OthersCharactersPage() {
 
                 {sheet.system_id === 1 &&
                     <TechniquesSchoolNotesSheet
+                        distinctions={details.distinctions ?? ''}
+                        passions={details.passions ?? ''}
+                        anxieties={details.anxieties ?? ''}
                         new_actions={details.techniques_new_actions ?? ''}
                         new_flower={details.techniques_new_flower ?? ''}
                         notes={details.notes ?? ''}
