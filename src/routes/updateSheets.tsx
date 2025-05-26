@@ -3,10 +3,12 @@ import { Route as RootRoute } from './__root';
 
 import { requireAuth } from '../utils/authGuard';
 
+import UpdateSheetPage from '../pages/updateSheetPage';
+
 export const UpdateSheetRoute = createRoute({
     path: '/myCharacters/$sheetId/updateSheet',
     getParentRoute: () => RootRoute,
-    component: () => <h2>Ici, on modifie sa fiche</h2>,
+    component: UpdateSheetPage,
     beforeLoad: () => {
         requireAuth();
     },
