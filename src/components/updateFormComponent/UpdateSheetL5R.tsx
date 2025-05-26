@@ -22,10 +22,12 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             clan: data?.clanL5R?.label ?? '',
             family: data?.familyL5R?.label ?? '',
             school: data?.schoolL5R?.label ?? '',
+            roles: data?.details.roles ?? '',
             rankSchool: data?.details.school_rank ?? '',
             ninjo: data?.details.ninjo ?? '',
             giri: data?.details.giri ?? '',
             distinctions: data?.details.distinctions ?? '',
+            adversities: data?.details.adversities ?? '',
             passions: data?.details.passions ?? '',
             anxieties: data?.details.anxieties ?? '',
             personalityHabitsQuirks: data?.details.personality_habits_quirks ?? '',
@@ -54,10 +56,11 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             koku: data?.details.koku ?? 0,
             zeni: data?.details.zeni ?? 0,
             bu: data?.details.bu ?? 0,
+            notes: data?.details.notes ?? '',
             Adv: data?.details.adv ?? '',
             DisAdv: data?.details.disadv ?? '',
             conditions: data?.details.conditions ?? '',
-            SchoolAbilities: data?.details.school_abilities ?? '',
+            schoolAbilities: data?.details.school_abilities ?? '',
             techniquesNewActions: data?.details.techniques_new_actions ?? '',
             techniquesNewFlower: data?.details.techniques_new_flower ?? '',
             armors: [''],
@@ -108,9 +111,11 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 family_id: familyId,
                 school_id: schoolId,
                 school_rank: Number(value.rankSchool) || 0,
+                roles: value.roles,
                 ninjo: value.ninjo,
                 giri: value.giri,
                 distinctions: value.distinctions,
+                adversities: value.adversities,
                 passions: value.passions,
                 anxieties: value.anxieties,
                 personality_habits_quirks: value.personalityHabitsQuirks,
@@ -128,10 +133,11 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 koku: value.koku,
                 zeni: value.zeni,
                 bu: value.bu,
+                notes: value.notes,
                 adv: value.Adv,
                 disadv: value.DisAdv,
                 conditions: value.conditions,
-                school_abilities: value.SchoolAbilities,
+                school_abilities: value.schoolAbilities,
                 techniques_new_actions: value.techniquesNewActions,
                 techniques_new_flower: value.techniquesNewFlower,
             };
@@ -480,24 +486,290 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            {/* Choix de la personnalité, habitudes et manies */}
-            <form.Field name="personalityHabitsQuirks">
-                {(field) => (
-                    <div className='mt-[40px] w-full'>
-                        <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                            Personnalité, habitudes et manies
-                        </label>
-                        <textarea
-                            name={field.name}
-                            id={field.name}
-                            value={field.state.value ?? ''}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
-                            placeholder="Entrez votre personnalité, habitudes et manies"
-                        />
-                    </div>
-                )}
-            </form.Field>
+            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+                {/* Choix de la personnalité, habitudes et manies */}
+                <form.Field name="personalityHabitsQuirks">
+                    {(field) => (
+                        <div className='flex-1'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Personnalité, habitudes et manies
+                            </label>
+                            <textarea
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre personnalité, habitudes et manies"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Adversités */}
+                <form.Field name="adversities">
+                    {(field) => (
+                        <div className='flex-1'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Adversités
+                            </label>
+                            <textarea
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos adversités"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Rôles */}
+                <form.Field name="roles">
+                    {(field) => (
+                        <div className='flex-1'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Rôles
+                            </label>
+                            <textarea
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos rôles"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+                {/* Choix de l'exp total */}
+                <form.Field name="expTotal">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Expérience totale
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre expérience totale"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix de l'expérience dépensée */}
+                <form.Field name="expoSpend">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Expérience dépensée
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre expérience dépensée"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix de l'expérience restante */}
+                <form.Field name="expSaved">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Expérience restante
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre expérience restante"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+                {/* Choix de l'endurance */}
+                <form.Field name="endurance">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Endurance
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre endurance"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix de la fatigue */}
+                <form.Field name="enduranceFatigue">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Endurance <i className='font-crimson-text text-sm'>(fatigue)</i>
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre endurance lors de fatigue"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix du sang-froid */}
+                <form.Field name="composure">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Sang-froid
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre sang-froid"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix du sang-froid si conflit */}
+                <form.Field name="composureStrife">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Sang-froid <i className='font-crimson-text text-sm'>(conflit)</i>
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre sang-froid lors de conflit"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+                {/* Choix de l'attention */}
+                <form.Field name="focus">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Attention
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre attention"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix de vigilance */}
+                <form.Field name="vigilance">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Vigilance
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre vigilance"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix du points de vide max */}
+                <form.Field name="voidPointsMax">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Points de vide max.
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos points de vide max."
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix des points de vide actuels */}
+                <form.Field name="voidPointsCurrent">
+                    {(field) => (
+                        <div className='w-[250px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Points de vide actuels
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos points de vide actuels"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
 
             {/* Compétences */}
             <div className="w-full mt-[40px]">
@@ -619,6 +891,208 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     </button>
                 </div>
             </div>
+
+            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+                {/* Choix des avatanges */}
+                <form.Field name="Adv">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Avantages
+                            </label>
+                            <input
+                                type="text"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos avantages"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix des désavantages */}
+                <form.Field name="DisAdv">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Désavantages
+                            </label>
+                            <input
+                                type="text"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos désavantages"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix des états */}
+                <form.Field name="conditions">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                États
+                            </label>
+                            <input
+                                type="text"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos états"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+                {/* Choix des compétences d'école */}
+                <form.Field name="schoolAbilities">
+                    {(field) => (
+                        <div className='flex-1'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Compétences d'école
+                            </label>
+                            <textarea
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos compétences d'école"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix des techniques (nouvelles actions) */}
+                <form.Field name="techniquesNewActions">
+                    {(field) => (
+                        <div className='flex-1'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Techniques <i className='font-crimson-text text-sm'>(nouvelles actions)</i>
+                            </label>
+                            <textarea
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos techniques (nouvelles actions)"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix des techniques (nouvelles fleurs) */}
+                <form.Field name="techniquesNewFlower">
+                    {(field) => (
+                        <div className='flex-1'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Techniques <i className='font-crimson-text text-sm'>(nouvelles fleurs)</i>
+                            </label>
+                            <textarea
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos techniques (nouvelles fleurs)"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+                {/* Choix des koku */}
+                <form.Field name="koku">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Koku
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos koku"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix des bu */}
+                <form.Field name="bu">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Bu
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos bu"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix des zeni */}
+                <form.Field name="zeni">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Zeni
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez vos zeni"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            {/* Notes */}
+            <form.Field name="notes">
+                {(field) => (
+                    <div className='mt-[40px] w-full'>
+                        <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                            Notes
+                        </label>
+                        <textarea
+                            name={field.name}
+                            id={field.name}
+                            value={field.state.value ?? ''}
+                            onChange={(e) => field.handleChange(e.target.value)}
+                            className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                            placeholder="Entrez votre personnalité, habitudes et manies"
+                        />
+                    </div>
+                )}
+            </form.Field>
 
             {/* Bouton de soumission */}
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>

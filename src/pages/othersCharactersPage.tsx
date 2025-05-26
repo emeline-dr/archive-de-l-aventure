@@ -281,7 +281,7 @@ export function OthersCharactersPage() {
 
                 {sheet.system_id === 1 &&
                     <TechniquesSchoolNotesSheet
-                        new_actions={details.Techniques_new_actions ?? ''}
+                        new_actions={details.techniques_new_actions ?? ''}
                         new_flower={details.techniques_new_flower ?? ''}
                         notes={details.notes ?? ''}
                     />

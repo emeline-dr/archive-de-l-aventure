@@ -40,9 +40,9 @@ export function L5rFormComponent() {
             Adv: '',
             DisAdv: '',
             conditions: '',
-            SchoolAbilities: '',
-            TechniquesNewActions: '',
-            TechniquesNewFlower: '',
+            schoolAbilities: '',
+            techniquesNewActions: '',
+            techniquesNewFlower: '',
             armors: [''],
             weapons: [{
                 id: '',
@@ -485,7 +485,7 @@ export function L5rFormComponent() {
             </div>
 
             <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
-                {/* Choix de l'endurance */}
+                {/* Choix de l'attention */}
                 <form.Field name="focus">
                     {(field) => (
                         <div className='w-[240px]'>
@@ -523,7 +523,7 @@ export function L5rFormComponent() {
                     )}
                 </form.Field>
 
-                {/* Choix du sang-froid */}
+                {/* Choix du points de vide max */}
                 <form.Field name="voidPointsMax">
                     {(field) => (
                         <div className='w-[240px]'>
@@ -703,7 +703,7 @@ export function L5rFormComponent() {
 
             <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
                 {/* Choix des compétences d'école */}
-                <form.Field name="SchoolAbilities">
+                <form.Field name="schoolAbilities">
                     {(field) => (
                         <div className='flex-1'>
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
@@ -721,7 +721,7 @@ export function L5rFormComponent() {
                 </form.Field>
 
                 {/* Choix des techniques (nouvelles actions) */}
-                <form.Field name="TechniquesNewActions">
+                <form.Field name="techniquesNewActions">
                     {(field) => (
                         <div className='flex-1'>
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
@@ -739,7 +739,7 @@ export function L5rFormComponent() {
                 </form.Field>
 
                 {/* Choix des techniques (nouvelles fleurs) */}
-                <form.Field name="TechniquesNewFlower">
+                <form.Field name="techniquesNewFlower">
                     {(field) => (
                         <div className='flex-1'>
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">

@@ -51,8 +51,13 @@ export default function UpdateSheetPage() {
                     <div className="breadcrumb pe-[16px] underline text-accent">
                         <Link to="/myCharacters">Mes aventuriers</Link>
                     </div>
+                    <div className="breadcrumb pe-[16px] underline text-accent">
+                        <Link to={`/myCharacters/${sheet.id}`}>
+                            Fiche de {sheet.firstname} {sheet.lastname ? sheet.lastname : ''}
+                        </Link>
+                    </div>
                     <div className="breadcrumb text-background">
-                        Fiche de {sheet.firstname} {sheet.lastname ? sheet.lastname : ''}
+                        Mise à jour
                     </div>
                 </div>
 

@@ -51,7 +51,7 @@ export type SheetL5R = {
     disadv: string;
     conditions: string;
     school_abilities: string;
-    Techniques_new_actions: string;
+    techniques_new_actions: string;
     techniques_new_flower: string;
 
     clan: Entity;
