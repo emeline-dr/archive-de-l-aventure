@@ -13,7 +13,7 @@ export default function FellowInvestigatorsSheet(props: FellowInvestigatorsSheet
 
     return (
         <>
-            <h3 className="block flex flex-wrap justify-between gap-[40px] text-2xl font-uncial-antiqua my-[40px] underline">Amis investigateurs</h3>
+            <h3 className="block w-full flex flex-wrap justify-between gap-[40px] text-2xl font-uncial-antiqua mt-[40px] underline">Amis investigateurs</h3>
             {fellow_investigators.map((friend) => {
                 return (
                     <div className="flex-1 rounded-sm bg-primary mt-[40px] px-[8px] py-[16px]">
