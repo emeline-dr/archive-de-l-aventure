@@ -106,7 +106,7 @@ export function OthersCharactersPage() {
                 </div>
 
                 <div className="flex flex-wrap justify-between mt-[40px]">
-                    <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline mb-[40px]'>Fiche de {sheet.firstname ? sheet.firstname : 'Arlahne'} {sheet.lastname ? sheet.lastname : ''}</h2>
+                    <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline mb-[40px]'>{sheet.firstname ? sheet.firstname : 'Arlahne'} {sheet.lastname ? sheet.lastname : ''}</h2>
 
                     <div className='flex flex-wrap gap-[16px]  mb-[40px]'>
                         <button
