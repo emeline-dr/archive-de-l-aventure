@@ -85,7 +85,15 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     avatar_src: string;
                 };
                 details?: Sheet["details"];
-                skill?: Array<{ id: number; label: string; value: number }>;
+                skill?: Array<{
+                    id: number;
+                    skill_id: number;
+                    sheet_id: number;
+                    label: string;
+                    value: number;
+                    proficient: boolean;
+                    categories: string;
+                }>;
                 weapon?: Array<{ id: number; label: string; damage: string; notes: string }>;
                 clanL5R?: { label: string; }
                 familyL5R?: { label: string; }
@@ -198,7 +206,6 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 console.error('Erreur API:', err);
             }
         },
-
     })
 
     const clansL5R = useClan();

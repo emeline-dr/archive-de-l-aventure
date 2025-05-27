@@ -855,7 +855,7 @@ export function CthulhuFormComponent() {
           )}
         </form.Field>
 
-        {/* Biens précieux */}
+        {/* Possessions */}
         <form.Field name="assets">
           {(field) => (
             <div className="flex-1">
@@ -863,7 +863,7 @@ export function CthulhuFormComponent() {
                 htmlFor={field.name}
                 className="block text-xl font-uncial-antiqua mb-[8px]"
               >
-                Biens précieux
+                Possessions
               </label>
               <textarea
                 name={field.name}
