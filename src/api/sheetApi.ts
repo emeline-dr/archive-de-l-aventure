@@ -278,13 +278,13 @@ export function useSheets(sheet_id: number) {
     });
 }
 
-export async function updateShared(sheet_id: number, shared: boolean): Promise<Sheet> {
+export async function updateShared(sheet: Sheet, sheet_id: number): Promise<Sheet> {
     const response = await fetch(`https://apidnd.up.railway.app/api/sheet/${sheet_id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ shared, sheet_id }),
+        body: JSON.stringify({ sheet }),
     });
 
     if (!response.ok) {

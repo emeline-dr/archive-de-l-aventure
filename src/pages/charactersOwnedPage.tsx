@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { useParams } from '@tanstack/react-router';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
+import type { Sheet } from '../api/sheetApi';
 import { useSheets, updateShared } from '../api/sheetApi';
 
 import Sidebar from "../components/sidebar"
@@ -33,7 +34,7 @@ export function CharactersOwnedPage() {
     const queryClient = useQueryClient();
 
     const { mutate, isPending } = useMutation({
-        mutationFn: (shared: boolean) => updateShared(Number(sheetId), shared),
+        mutationFn: ({ sheet }: { sheet: Sheet }) => updateShared(sheet, Number(sheetId)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['sheets-per-user', Number(sheetId)] });
         },
@@ -41,12 +42,11 @@ export function CharactersOwnedPage() {
 
     if (isLoading || !data) return <div>Chargement...</div>;
 
-    const handleToggleShared = () => {
-        mutate(!data.sheet.shared);
-    };
-
     const { sheet, details, weapon, feat, item, abilities, saving_throw, spells, spells_slot, fellowInvestigators } = data;
 
+    const handleToggleShared = () => {
+        mutate({ sheet: { ...sheet, shared: !sheet.shared } });
+    };
     return (
         <div className='pageContenant flex flex-wrap h-full'>
             <Sidebar></Sidebar>
