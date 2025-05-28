@@ -107,7 +107,7 @@ function HeaderSheet(props: HeaderSheetProps) {
         >
             <div className="absolute z-1 top-0 start-0 w-full h-full bg-accent-25"></div>
             <img
-                src={`/src/assets/images${props.avatar}`}
+                src={`${props.avatar}`}
                 alt={`Avatar de ${props.firstname} ${props.lastname ? props.lastname : ''}`}
                 className="object-cover z-1 w-[150px] h-[250px] lg:w-[200px] rounded-[3px] border-3 border-secondary"
             />

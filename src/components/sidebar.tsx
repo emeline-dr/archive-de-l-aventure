@@ -23,7 +23,7 @@ function Sidebar() {
                     className="w-full flex flex-col items-center"
                 >
                     <img
-                        src={`/src/assets/images${sheet.avatar_src}`}
+                        src={`${sheet.avatar_src}`}
                         alt={`Avatar de ${sheet.firstname} ${sheet.lastname}`}
                         className="mx-[20px] size-[40px] xl:size-[80px] object-cover outline-3 outline-secondary rounded-xs"
                     />
