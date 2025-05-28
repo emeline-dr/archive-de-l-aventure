@@ -146,7 +146,7 @@ export function OthersCharactersPage() {
                     sheet_id={sheet.id}
                     avatar={sheet.avatar_src}
                     firstname={sheet.firstname}
-                    lastname={sheet.lastname}
+                    lastname={sheet.lastname ?? ''}
                 />
 
                 <div className='flex flex-wrap w-full justify-between gap-y-[40px]'>

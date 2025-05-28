@@ -104,7 +104,7 @@ export type Sheet = {
     id: number;
     user_id: number;
     system_id: number;
-    lastname: string;
+    lastname?: string;
     firstname: string;
     avatar_src: string;
     shared: boolean;
@@ -115,7 +115,7 @@ export type Sheet = {
         id: number;
 
         classe_id?: number;
-        subClasse_id?: number;
+        sub_classe_id?: number;
         species_id?: number;
         origin_id?: number;
         alignment?: string;
@@ -148,7 +148,7 @@ export type Sheet = {
         allies?: string;
         enemies?: string;
         exp?: number;
-        sub_species_id?: number;
+        sub_species_id?: number | null;
 
         clan_id?: number;
         family_id?: number;
@@ -231,6 +231,7 @@ export type Sheet = {
     classeDnD?: { label: string };
     subClasseDnD?: { label: string };
     speciesDnD?: { label: string };
+    subSpeciesDnD?: { label: string };
     origineDnD?: { label: string };
 };
 
@@ -250,6 +251,7 @@ export type SheetResponse = {
     classeDnD?: { label: string };
     subClasseDnD?: { label: string };
     speciesDnD?: { label: string };
+    subSpeciesDnD?: { label: string };
     origineDnD?: { label: string };
     clanL5R?: { label: string };
     familyL5R?: { label: string };

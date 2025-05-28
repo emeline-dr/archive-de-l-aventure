@@ -67,6 +67,7 @@ function HeaderSheet(props: HeaderSheetProps) {
                         class={sheet.classeDnD?.label || ''}
                         subClass={sheet.subClasseDnD?.label || ''}
                         species={sheet.speciesDnD?.label || ''}
+                        subSpecies={sheet.subSpeciesDnD?.label || ''}
                         originDetails={sheet.origineDnD?.label || ''}
                         alignment={sheet.details?.alignment ?? ''}
                         lvl={sheet.sheet.lvl}

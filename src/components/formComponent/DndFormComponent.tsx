@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useSpecies, useSubSpecies } from "../../api/DnD/speciesDnDApi";
 import { useClass, useSubClass } from "../../api/DnD/classDnDApi";
@@ -58,16 +58,10 @@ export function DndFormComponent() {
     },
   });
 
-  useEffect(() => {
-    if (form.state.values.classDnd !== "clerc") {
-      form.setFieldValue("subClass", "");
-    }
-  }, [form, form.state.values.classDnd]);
-
   const [armorCount, setArmorCount] = useState(1);
-  const [, setWeaponCount] = useState(0);
+  const [, setWeaponCount] = useState(1);
   const [languageCount, setLanguageCount] = useState(1);
-  const [, setSkillsCount] = useState(0);
+  const [, setSkillsCount] = useState(1);
 
   const speciesDnD = useSpecies();
   const subSpeciesDnD = useSubSpecies();
@@ -273,8 +267,8 @@ export function DndFormComponent() {
                                   <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
                                     {field.state.value ===
                                       race.id.toString() && (
-                                      <i className="fa-solid fa-check text-accent"></i>
-                                    )}
+                                        <i className="fa-solid fa-check text-accent"></i>
+                                      )}
                                   </span>
                                   {race.label}
                                 </label>
