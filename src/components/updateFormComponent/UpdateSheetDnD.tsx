@@ -33,7 +33,11 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
             historic: data?.details.origin_id ?? 1,
             toolsHistoric1: data?.details.tools_prof?.split(',')[0]?.trim() ?? "",
             toolsHistoric2: data?.details.tools_prof?.split(',')[1]?.trim() ?? "",
-            language: [""],
+            language: Array.isArray(data?.language)
+                ? data.language
+                : data?.language
+                    ? [data.language]
+                    : [""],
             lvl: data?.sheet.lvl ?? 1,
             exp: data?.details.exp ?? 0,
             skills: [
@@ -88,6 +92,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     lvl: number;
                 };
                 details?: Sheet["details"];
+                language?: { label: string }[];
                 skill?: Array<{
                     id: number;
                     skill_id: number;
@@ -107,6 +112,13 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     avatar_src: value.avatar,
                     lvl: value.lvl,
                 },
+                ...(value.language?.length > 0
+                    ? {
+                        language: value.language.map((lang) =>
+                            typeof lang === "string" ? { label: lang } : lang
+                        ),
+                    }
+                    : {}),
             };
 
             payload.details = {
@@ -237,7 +249,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 {/* Avatar */}
                 <form.Field name="avatar">
                     {(field) => (
-                        <div>
+                        <div className="w-[240px]">
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
                                 Avatar
                             </label>
@@ -247,7 +259,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                                 id={field.name}
                                 value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
-                                className="p-[8px] bg-primary rounded-lg border border-secondary"
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez l'url de votre avatar"
                             />
                         </div>
@@ -257,7 +269,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 {/* Level */}
                 <form.Field name="lvl">
                     {(field) => (
-                        <div>
+                        <div className="w-[240px]">
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
                                 Niveau
                             </label>
@@ -267,7 +279,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                                 id={field.name}
                                 value={field.state.value ?? 1}
                                 onChange={(e) => field.handleChange(Number(e.target.value))}
-                                className="p-[8px] bg-primary rounded-lg border border-secondary"
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre nvieau"
                             />
                         </div>
@@ -277,7 +289,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 {/* Expérience */}
                 <form.Field name="exp">
                     {(field) => (
-                        <div>
+                        <div className="w-[240px]">
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
                                 Expérience
                             </label>
@@ -287,7 +299,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                                 id={field.name}
                                 value={field.state.value ?? 1}
                                 onChange={(e) => field.handleChange(Number(e.target.value))}
-                                className="p-[8px] bg-primary rounded-lg border border-secondary"
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre expérience"
                             />
                         </div>
@@ -613,14 +625,20 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     <div className="w-full flex flex-wrap flex-col justify-start gap-[8px]">
                         {/* Choix d'une/de plusieurs langue(s) */}
                         {[...Array(languageCount)].map((_, index) => (
-                            <div className="flex flex-wrap w-[240px] justify-between gap-[8px]">
-                                <form.Field key={index} name={`language[${index}]`}>
+                            <div key={index} className="flex flex-wrap w-[240px] justify-between gap-[8px]">
+                                <form.Field name={`language[${index}]`}>
                                     {(field) => (
                                         <select
                                             name={field.name}
                                             id={field.name}
-                                            value={field.state.value ?? ""}
-                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            value={field.state.value?.label ?? ""}
+                                            onChange={(e) => {
+                                                const selectedLabel = e.target.value;
+                                                const selectedLanguage = languageDnD.data.find(
+                                                    (lang) => lang.label === selectedLabel
+                                                );
+                                                field.handleChange(selectedLanguage ?? { label: selectedLabel });
+                                            }}
                                             className="flex-1 p-[8px] bg-primary rounded-lg border border-secondary"
                                         >
                                             <option value="">Sélectionner une langue</option>
@@ -654,7 +672,13 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             type="button"
                             onClick={() => {
                                 const currentLanguages = form.state.values.language ?? [];
-                                form.setFieldValue("armors", [...currentLanguages, ""]);
+                                form.setFieldValue(
+                                    "language",
+                                    [...(currentLanguages ?? [])].map((lang) =>
+                                        typeof lang === "string" ? { label: lang } : lang
+                                    ).concat({ label: "" })
+                                );
+
                                 setLanguageCount((l) => l + 1);
                             }}
                             className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
@@ -662,6 +686,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             <i className="fa-solid fa-plus text-2xl"></i>
                         </button>
                     </div>
+
                 </div>
             </div>
 
