@@ -631,7 +631,9 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                                         <select
                                             name={field.name}
                                             id={field.name}
-                                            value={field.state.value?.label ?? ""}
+                                            value={typeof field.state.value === "object" && field.state.value !== null
+                                                ? field.state.value.label
+                                                : ""}
                                             onChange={(e) => {
                                                 const selectedLabel = e.target.value;
                                                 const selectedLanguage = languageDnD.data.find(
@@ -655,9 +657,15 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        const updatedLanguage = [...form.state.values.language];
-                                        updatedLanguage.splice(index, 1);
-                                        form.setFieldValue("language", updatedLanguage);
+                                        const currentLanguages = form.state.values.language ?? [];
+
+                                        const normalizedLanguages = currentLanguages.map((lang) =>
+                                            typeof lang === "string" ? { label: lang } : lang
+                                        );
+
+                                        normalizedLanguages.splice(index, 1);
+
+                                        form.setFieldValue("language", normalizedLanguages);
                                         setLanguageCount((c) => c - 1);
                                     }}
                                     className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
