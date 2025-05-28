@@ -45,14 +45,18 @@ export default function CommentsComponent() {
             Commentaires de la fiche de {sheet.firstname} {sheet.lastname ? sheet.lastname : ''}
           </h2>
 
-          <div className="mt-[40px] mb-[80px] w-full">
-            <div className="flex flex-wrap justify-between w-full font-uncial-antiqua tracking-[10%]">
-              <h3 className="text-2xl mb-[8px]">Kymeria</h3>
-              <span className="text-base">Le 09/05/2025,23:57</span>
-            </div>
-            <div className="bg-primary p-[8px] rounded-[5px] text-base w-full tracking-[10%]">
-              TAdadada.
-            </div>
+          <div className="mt-[40px] mb-[80px] w-full flex flex-wrap gap-[40px]">
+            {comments.data.map((comment) => (
+              <div className="w-full">
+                <div className="flex flex-wrap justify-between w-full font-uncial-antiqua tracking-[10%]">
+                  <h3 className="text-2xl mb-[8px]">{comment.user_id}</h3>
+                  <span className="text-base"></span>
+                </div>
+                <div className="bg-primary p-[8px] rounded-[5px] text-base w-full tracking-[10%]">
+                  {comment.text}
+                </div>
+              </div>
+            ))}
           </div>
 
           <TiptapEditor value={comment} onChange={setComment} />

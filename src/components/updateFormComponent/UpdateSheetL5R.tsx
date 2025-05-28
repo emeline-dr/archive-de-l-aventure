@@ -12,7 +12,8 @@ import { useSkillL5RFiltered } from "../../api/L5R/skillL5RApi"
 export default function UpdateSheetL5R(props: { sheetId: number }) {
     const { data, isLoading } = useSheets(props.sheetId)
 
-    const [, setSkillsCount] = useState(0);
+    const [, setSkillsCount] = useState(1);
+    const [, setWeaponCount] = useState(1);
 
     const form = useForm({
         defaultValues: {
@@ -46,7 +47,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 {
                     id: 1,
                     skill_id: 0,
-                    sheet_id: data?.sheet.id ?? 0,
+                    sheet_id: data?.sheet.id ?? 1,
                     label: '',
                     value: 0,
                     proficient: false,
@@ -67,14 +68,24 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             weapons: [
                 {
                     id: 1,
-                    name: '',
-                    damage: '',
+                    label: '',
+                    damage: 0,
                     notes: '',
                 },
             ],
         },
         onSubmit: async ({ value }) => {
             if (!data) return;
+
+            const existingSkills = data.skill ?? [];
+            const validSkills = (value.skills ?? []).filter(
+                (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
+            );
+
+            const existingWeapons = data.weapon ?? [];
+            const validWeapons = (value.weapons ?? []).filter(
+                (weapon) => weapon.label.trim() !== '' && !isNaN(weapon.damage)
+            );
 
             const payload: {
                 sheet: {
@@ -94,7 +105,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     proficient: boolean;
                     categories: string;
                 }>;
-                weapon?: Array<{ id: number; label: string; damage: string; notes: string }>;
+                weapon?: Array<{ id: number; label: string; damage: number; notes: string }>;
                 clanL5R?: { label: string; }
                 familyL5R?: { label: string; }
                 schoolL5R?: { label: string; }
@@ -150,60 +161,80 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 techniques_new_flower: value.techniquesNewFlower,
             };
 
-            if (value.skills && value.skills.length > 0) {
-                const validSkills = value.skills.filter(
-                    (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
-                );
-
-                if (validSkills.length > 0) {
-                    payload.skill = validSkills.map((skill) => ({
-                        id: skill.id,
-                        skill_id: skill.skill_id,
-                        label: skill.label,
-                        value: skill.value,
-                        proficient: skill.proficient,
-                        categories: skill.categories,
-                        sheet_id: data.sheet.id
-                    }));
-                }
+            if (existingSkills.length > 0 && validSkills.length > 0) {
+                payload.skill = validSkills.map((skill) => ({
+                    id: skill.id,
+                    skill_id: skill.skill_id,
+                    sheet_id: data.sheet.id,
+                    label: skill.label,
+                    value: skill.value,
+                    proficient: skill.proficient,
+                    categories: skill.categories,
+                }));
             }
 
-
-            if (value.weapons && value.weapons.length > 0) {
-                const validWeapons = value.weapons.filter(
-                    (w) => w.name.trim() !== '' || w.damage.trim() !== '' || w.notes.trim() !== ''
-                );
-
-                if (validWeapons.length > 0) {
-                    payload.weapon = validWeapons.map((w) => ({
-                        id: w.id || 0,
-                        label: w.name,
-                        damage: w.damage,
-                        notes: w.notes,
-                    }));
-                }
+            if (existingWeapons.length > 0 && validWeapons.length > 0) {
+                payload.weapon = validWeapons.map((w) => ({
+                    id: w.id || 1,
+                    label: w.label,
+                    damage: w.damage,
+                    notes: w.notes,
+                }));
             }
-
 
             try {
-                console.log('Payload envoyé à l’API :', JSON.stringify(payload, null, 2));
-
-                const response = await fetch(`https://apidnd.up.railway.app/api/sheet/${data.sheet.id}`, {
+                // PATCH sans les skills vides
+                const patchRes = await fetch(`https://apidnd.up.railway.app/api/sheet/${data.sheet.id}`, {
                     method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 });
 
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la mise à jour de la fiche');
+                if (!patchRes.ok) throw new Error('Erreur lors du PATCH');
+
+                console.log('PATCH réussi : fiche mise à jour');
+
+                // POST séparé si aucun skill valide n'était dans le payload
+                if (existingSkills.length === 0 && validSkills.length > 0) {
+                    const postRes = await fetch(`https://apidnd.up.railway.app/api/skillSheet`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(validSkills.map((skill) => ({
+                            id: skill.id,
+                            skill_id: skill.skill_id,
+                            sheet_id: data.sheet.id,
+                            label: skill.label,
+                            value: skill.value,
+                            proficient: skill.proficient,
+                            categories: skill.categories,
+                        }))),
+                    });
+
+                    if (!postRes.ok) throw new Error('Erreur lors du POST des compétences');
+
+                    console.log('POST des compétences effectué');
                 }
 
-                const updatedData = await response.json();
-                console.log('Mise à jour réussie :', updatedData);
+                if (existingWeapons.length === 0 && validWeapons.length > 0) {
+                    const postWeaponsRes = await fetch(`https://apidnd.up.railway.app/api/weaponSheet`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(validWeapons.map((weapon) => ({
+                            id: weapon.id,
+                            sheet_id: data.sheet.id,
+                            label: weapon.label,
+                            damage: weapon.damage,
+                            notes: weapon.notes,
+                        })))
+                    });
+
+                    if (!postWeaponsRes) throw new Error('Erreur lors du POST des armes');
+
+                    console.log('POST des armes effectué')
+                }
+
             } catch (err) {
-                console.error('Erreur API:', err);
+                console.error('Erreur API :', err);
             }
         },
     })
@@ -825,15 +856,20 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
 
                             <form.Field name={`skills[${index}].proficient`}>
                                 {(field) => (
-                                    <label className="flex items-center gap-2">
+                                    <label className="flex items-center text-lg gap-[8px] mx-[16px]">
                                         <input
                                             type="checkbox"
                                             name={field.name}
                                             id={field.name}
                                             checked={field.state.value ?? false}
                                             onChange={(e) => field.handleChange(e.target.checked)}
-                                            className="size-4"
+                                            className="hidden"
                                         />
+                                        <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                            {field.state.value && (
+                                                <i className="fa-solid fa-check text-accent"></i>
+                                            )}
+                                        </span>
                                         Maîtrise ?
                                     </label>
                                 )}
@@ -1018,6 +1054,115 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                         </div>
                     )}
                 </form.Field>
+            </div>
+
+            {/* Armes */}
+            <div className="w-full mt-[40px]">
+                <label className="block text-xl font-uncial-antiqua mb-[8px]">Armes</label>
+
+                <div className="w-full flex flex-col gap-4">
+                    {form.state.values.weapons.map((_, index) => (
+                        <div key={index} className="flex flex-wrap gap-[8px]">
+                            {/* ID */}
+                            <form.Field name={`weapons[${index}].id`}>
+                                {(field) => (
+                                    <input
+                                        type="text"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={index + 1}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="size-[40px] text-center text-xl bg-primary rounded-lg border border-secondary cursor-not-allowed"
+                                        disabled
+                                    />
+                                )}
+                            </form.Field>
+
+                            <div className="flex flex-wrap flex-1 gap-[8px]">
+                                {/* Nom */}
+                                <form.Field name={`weapons[${index}].label`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Nom de l'arme ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Dégâts */}
+                                <form.Field name={`weapons[${index}].damage`}>
+                                    {(field) => (
+                                        <input
+                                            type="number"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Dégâts de l'arme ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Notes */}
+                                <form.Field name={`weapons[${index}].notes`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Notes de l'arme ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Supprimer une arme */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updatedWeapons = [...form.state.values.weapons]
+                                        updatedWeapons.splice(index, 1)
+                                        form.setFieldValue('weapons', updatedWeapons)
+                                        setWeaponCount((c) => c - 1)
+                                    }}
+                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                                >
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Ajouter une nouvelle arme */}
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const current = form.state.values.weapons ?? []
+                            const maxId = current.reduce((max, weapon) => Math.max(max, weapon.id ?? 0), 0);
+                            form.setFieldValue('weapons', [
+                                ...current,
+                                {
+                                    id: maxId + 1,
+                                    label: '',
+                                    damage: 0,
+                                    notes: '',
+                                },
+                            ])
+                            setWeaponCount((w) => w + 1)
+                        }}
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
+                    >
+                        <i className="fa-solid fa-plus text-2xl"></i>
+                    </button>
+                </div>
             </div>
 
             <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>

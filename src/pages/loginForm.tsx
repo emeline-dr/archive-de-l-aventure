@@ -53,8 +53,6 @@ export function LoginForm() {
                         expires: oneHourFromNow, path: '/',
                         secure: true
                     })
-
-                    console.log(data.jwt)
                 }
 
                 window.location.href = "/index";
