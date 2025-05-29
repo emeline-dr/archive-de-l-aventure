@@ -100,7 +100,9 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
 
             const weaponsToPost = validWeapons.filter(weapon =>
                 !existingWeapons.some(existing => existing.id === weapon.id) &&
-                !existingWeapons.some(existing => existing.sheet_id === data.sheet.id)
+                !existingWeapons.some(
+                    existing => existing.sheet_id === data.sheet.id && existing.label === weapon.label
+                )
             );
 
             const payload: {
@@ -238,6 +240,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                         const bodyContent = {
                             id: weapon.id,
                             sheet_id: data.sheet.id,
+                            label: weapon.label,
                             damage: weapon.damage,
                             notes: weapon.notes,
                         };
@@ -254,10 +257,8 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     console.log('PATCH des armes effectué');
                 }
 
-                console.log('Tableau des armes à poster:', weaponsToPost);
                 // POST si l'arme est nouvelle
                 if (weaponsToPost.length > 0) {
-                    console.log(weaponsToPost)
                     const url = `https://apidnd.up.railway.app/api/weaponSheet/multiple`;
 
                     const bodyContent = weaponsToPost.map(weapon => ({
@@ -1113,7 +1114,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                                         type="text"
                                         name={field.name}
                                         id={field.name}
-                                        value={index + 1}
+                                        value={field.state.value ?? ''}
                                         onChange={(e) => field.handleChange(Number(e.target.value))}
                                         className="size-[40px] text-center text-xl bg-primary rounded-lg border border-secondary cursor-not-allowed"
                                         disabled
