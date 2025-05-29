@@ -91,6 +91,7 @@ export type SkillSheet = {
     value: number;
     label: string;
     categories: string;
+    proficient: boolean;
 }
 
 export type FellowInvestigators = {
@@ -227,7 +228,7 @@ export type Sheet = {
         label: string;
     };
 
-    language?: { label: string }[];
+    language?: { label?: string }[] | { label?: string } | null;
     classeDnD?: { label: string };
     subClasseDnD?: { label: string };
     speciesDnD?: { label: string };
@@ -247,7 +248,7 @@ export type SheetResponse = {
     saving_throw: SavingThrows[];
     skill: SkillSheet[];
     fellowInvestigators: FellowInvestigators[];
-    language?: { label: string }[] | { label: string } | null;
+    language?: { label?: string }[] | { label?: string } | null;
     classeDnD?: { label: string };
     subClasseDnD?: { label: string };
     speciesDnD?: { label: string };

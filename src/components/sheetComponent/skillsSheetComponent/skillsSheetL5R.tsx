@@ -12,7 +12,12 @@ export default function SkillsSheetL5R(props: SkillsSheetL5RProps) {
             ) : (
                 props.skills.map((skill, index) => (
                     <div key={index} className="flex flex-wrap justify-start gap-[8px]">
-                        <i className="fa-solid fa-circle text-2xl"></i>
+                        {skill.proficient === true &&
+                            <i className="fa-solid fa-circle-check text-2xl"></i>
+                        }
+                        {skill.proficient === false &&
+                            <i className="fa-solid fa-circle text-2xl"></i>
+                        }
                         <span className="font-uncial-antiqua text-xl leading-none">
                             {skill.value >= 0 ? `+${skill.value}` : skill.value}
                         </span>

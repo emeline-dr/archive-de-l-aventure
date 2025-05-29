@@ -43,17 +43,14 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             vigilance: data?.details.vigilance ?? 0,
             voidPointsMax: data?.details.void_points_max ?? 0,
             voidPointsCurrent: data?.details.void_points_current ?? 0,
-            skills: [
-                {
-                    id: 1,
-                    skill_id: 0,
-                    sheet_id: data?.sheet.id ?? 1,
-                    label: '',
-                    value: 0,
-                    proficient: false,
-                    categories: '',
-                },
-            ],
+            skills: (data?.skill ?? []).map((skill) => ({
+                id: skill.id,
+                skill_id: skill.skill_id,
+                sheet_id: data?.sheet.id ?? 1,
+                label: skill.label,
+                value: skill.value,
+                proficient: skill.proficient,
+            })),
             koku: data?.details.koku ?? 0,
             zeni: data?.details.zeni ?? 0,
             bu: data?.details.bu ?? 0,
@@ -82,6 +79,17 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
             );
 
+            const skillsToPatch = validSkills.filter(skill =>
+                existingSkills.some(existing => existing.id === skill.id)
+            );
+
+            const skillsToPost = validSkills.filter(skill =>
+                !existingSkills.some(existing => existing.id === skill.id) &&
+                !existingSkills.some(existing =>
+                    existing.skill_id === skill.skill_id && existing.sheet_id === data.sheet.id
+                )
+            );
+
             const existingWeapons = data.weapon ?? [];
             const validWeapons = (value.weapons ?? []).filter(
                 (weapon) => weapon.label.trim() !== '' && !isNaN(weapon.damage)
@@ -103,7 +111,6 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     label: string;
                     value: number;
                     proficient: boolean;
-                    categories: string;
                 }>;
                 weapon?: Array<{ id: number; label: string; damage: number; notes: string }>;
                 clanL5R?: { label: string; }
@@ -161,18 +168,6 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 techniques_new_flower: value.techniquesNewFlower,
             };
 
-            if (existingSkills.length > 0 && validSkills.length > 0) {
-                payload.skill = validSkills.map((skill) => ({
-                    id: skill.id,
-                    skill_id: skill.skill_id,
-                    sheet_id: data.sheet.id,
-                    label: skill.label,
-                    value: skill.value,
-                    proficient: skill.proficient,
-                    categories: skill.categories,
-                }));
-            }
-
             if (existingWeapons.length > 0 && validWeapons.length > 0) {
                 payload.weapon = validWeapons.map((w) => ({
                     id: w.id || 1,
@@ -194,20 +189,44 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
 
                 console.log('PATCH réussi : fiche mise à jour');
 
-                // POST séparé si aucun skill valide n'était dans le payload
-                if (existingSkills.length === 0 && validSkills.length > 0) {
-                    const postRes = await fetch(`https://apidnd.up.railway.app/api/skillSheet`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(validSkills.map((skill) => ({
+                // PATCH des compétences existantes
+                if (skillsToPatch.length > 0) {
+                    for (const skill of skillsToPatch) {
+                        const bodyContent = {
                             id: skill.id,
                             skill_id: skill.skill_id,
                             sheet_id: data.sheet.id,
-                            label: skill.label,
                             value: skill.value,
                             proficient: skill.proficient,
-                            categories: skill.categories,
-                        }))),
+                        };
+
+                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/skillSheet/${skill.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchRes.ok) throw new Error(`Erreur lors du PATCH de la compétence avec id ${skill.id}`);
+                    }
+
+                    console.log('PATCH des compétences effectué');
+                }
+
+                // POST des nouvelles compétences
+                if (skillsToPost.length > 0) {
+                    const url = `https://apidnd.up.railway.app/api/skillSheet/multiple`;
+
+                    const bodyContent = skillsToPost.map(skill => ({
+                        skill_id: skill.skill_id,
+                        sheet_id: data.sheet.id,
+                        value: skill.value,
+                        proficient: skill.proficient,
+                    }));
+
+                    const postRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
                     });
 
                     if (!postRes.ok) throw new Error('Erreur lors du POST des compétences');
@@ -837,7 +856,6 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                                                     ...updatedSkills[index],
                                                     label: selectedLabel,
                                                     skill_id: selectedSkill.id,
-                                                    categories: selectedSkill.categories
                                                 };
                                                 form.setFieldValue('skills', updatedSkills);
                                             }
@@ -922,7 +940,6 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                                     value: 0,
                                     proficient: false,
                                     sheet_id: 1,
-                                    categories: '',
                                 }
                             ]);
 
