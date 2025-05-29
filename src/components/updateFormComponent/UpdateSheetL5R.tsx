@@ -14,6 +14,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
 
     const [, setSkillsCount] = useState(1);
     const [, setWeaponCount] = useState(1);
+    const [, setItemsCount] = useState(1);
 
     const form = useForm({
         defaultValues: {
@@ -54,6 +55,14 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             koku: data?.details.koku ?? 0,
             zeni: data?.details.zeni ?? 0,
             bu: data?.details.bu ?? 0,
+            items: (data?.item ?? []).map((item) => ({
+                id: item.id,
+                sheet_id: item.sheet_id,
+                label: item.label,
+                quantity: item.quantity,
+                weight: item.weight,
+                description: item.description,
+            })),
             notes: data?.details.notes ?? '',
             Adv: data?.details.adv ?? '',
             DisAdv: data?.details.disadv ?? '',
@@ -72,6 +81,22 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
         },
         onSubmit: async ({ value }) => {
             if (!data) return;
+
+            const existingItems = data.item ?? [];
+            const validItems = (value.items ?? []).filter(
+                (item) => item.label.trim() !== ''
+            )
+
+            const itemsToPatch = validItems.filter(item =>
+                existingItems.some(existing => existing.id === item.id)
+            )
+
+            const itemsToPost = validItems.filter(item =>
+                !existingItems.some(existing => existing.id === item.id) &&
+                !existingItems.some(existing =>
+                    existing.sheet_id === data.sheet.id && existing.label === item.label
+                )
+            )
 
             const existingSkills = data.skill ?? [];
             const validSkills = (value.skills ?? []).filter(
@@ -114,6 +139,14 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     avatar_src: string;
                 };
                 details?: Sheet["details"];
+                items?: Array<{
+                    id: number;
+                    sheet_id: number;
+                    label: string;
+                    quantity: number;
+                    weight: number | null;
+                    description: string | null;
+                }>
                 skill?: Array<{
                     skill_id: number;
                     sheet_id: number;
@@ -188,6 +221,53 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 if (!patchRes.ok) throw new Error('Erreur lors du PATCH');
 
                 console.log('PATCH réussi : fiche mise à jour');
+
+                // PATCH des compétences existantes
+                if (itemsToPatch.length > 0) {
+                    for (const item of itemsToPatch) {
+                        const bodyContent = {
+                            id: item.id,
+                            sheet_id: data.sheet.id,
+                            label: item.label,
+                            quantity: item.quantity,
+                            weight: item.weight,
+                            description: item.description,
+                        };
+
+                        const patchItemRes = await fetch(`https://apidnd.up.railway.app/api/inventoryItem/${item.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchItemRes.ok) throw new Error(`Erreur lors du PATCH de l'item avec id ${item.id}`);
+                    }
+
+                    console.log('PATCH des items effectué');
+                }
+
+                // POST si l'item est nouveau
+                if (itemsToPost.length > 0) {
+                    const url = `https://apidnd.up.railway.app/api/inventoryItem/multiple`;
+
+                    const bodyContent = itemsToPost.map(item => ({
+                        sheet_id: data.sheet.id,
+                        label: item.label,
+                        quantity: item.quantity,
+                        weight: item.weight,
+                        description: item.description,
+                    }));
+
+                    const postItemsRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
+                    });
+
+                    if (!postItemsRes.ok) throw new Error('Erreur lors du POST des items');
+
+                    console.log('POST des items effectué');
+                }
 
                 // PATCH des compétences existantes
                 if (skillsToPatch.length > 0) {
@@ -1270,6 +1350,132 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                         </div>
                     )}
                 </form.Field>
+            </div>
+
+            {/* Armes */}
+            <div className="w-full mt-[40px]">
+                <label className="block text-xl font-uncial-antiqua mb-[8px]">Objets de l'inventaire</label>
+
+                <div className="w-full flex flex-col gap-4">
+                    {form.state.values.items.map((_, index) => (
+                        <div key={index} className="flex flex-wrap gap-[8px]">
+                            <div className="flex flex-wrap flex-1 gap-[8px]">
+                                {/* ID */}
+                                <form.Field name={`items[${index}].id`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                                            className="size-[40px] text-center text-xl bg-primary rounded-lg border border-secondary cursor-not-allowed"
+                                            disabled
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Nom */}
+                                <form.Field name={`items[${index}].label`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Nom de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Quantité */}
+                                <form.Field name={`items[${index}].quantity`}>
+                                    {(field) => (
+                                        <input
+                                            type="number"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? 1}
+                                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Quantité de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Poids */}
+                                <form.Field name={`items[${index}].weight`}>
+                                    {(field) => (
+                                        <input
+                                            type="number"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? 0}
+                                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Poids de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Description */}
+                                <form.Field name={`items[${index}].description`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? 0}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Description de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Supprimer une arme */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updatedItems = [...form.state.values.items]
+                                        updatedItems.splice(index, 1)
+                                        form.setFieldValue('items', updatedItems)
+                                        setItemsCount((i) => i - 1)
+                                    }}
+                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                                >
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Ajouter un nouvel item */}
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const current = form.state.values.items ?? []
+                            const maxId = current.reduce((max, item) => Math.max(max, item.id ?? 0), 0);
+                            form.setFieldValue('items', [
+                                ...current,
+                                {
+                                    id: maxId + 1,
+                                    sheet_id: data?.sheet.id,
+                                    label: '',
+                                    quantity: 1,
+                                    weight: 0,
+                                    description: '',
+                                },
+                            ])
+                            setItemsCount((i) => i + 1)
+                        }}
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
+                    >
+                        <i className="fa-solid fa-plus text-2xl"></i>
+                    </button>
+                </div>
             </div>
 
             {/* Notes */}
