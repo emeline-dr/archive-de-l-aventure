@@ -7,6 +7,7 @@ import { useSheets } from "../../api/sheetApi"
 import { useClan } from "../../api/L5R/clanL5RApi"
 import { useFamily } from "../../api/L5R/familyL5RApi"
 import { useSchool } from "../../api/L5R/schoolL5RApi"
+import { useAbilitiesL5R } from "../../api/L5R/abilitiesL5RApi"
 import { useSkillL5RFiltered } from "../../api/L5R/skillL5RApi"
 
 export default function UpdateSheetL5R(props: { sheetId: number }) {
@@ -44,6 +45,14 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             vigilance: data?.details.vigilance ?? 0,
             voidPointsMax: data?.details.void_points_max ?? 0,
             voidPointsCurrent: data?.details.void_points_current ?? 0,
+            abilities: (data?.abilities ?? []).map((ability) => ({
+                id: ability.id,
+                abilities_id: ability.abilities_id,
+                sheet_id: ability.sheet_id,
+                value: ability.value,
+                modifier: ability.modifier,
+                label: ability.label,
+            })),
             skills: (data?.skill ?? []).map((skill) => ({
                 id: skill.id,
                 skill_id: skill.skill_id,
@@ -81,6 +90,22 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
         },
         onSubmit: async ({ value }) => {
             if (!data) return;
+
+            const existingAbilities = data.abilities ?? [];
+            const validAbilities = (value.abilities ?? []).filter(
+                (ability) => ability && !isNaN(ability.value)
+            )
+
+            const abilitiesToPatch = validAbilities.filter(ability =>
+                existingAbilities.some(existing => existing.id === ability.id)
+            )
+
+            const abilitiesToPost = validAbilities.filter(ability =>
+                !existingAbilities.some(existing => existing.id === ability.id) &&
+                !existingAbilities.some(existing =>
+                    existing.sheet_id === data.sheet.id && existing.abilities_id === ability.abilities_id
+                )
+            )
 
             const existingItems = data.item ?? [];
             const validItems = (value.items ?? []).filter(
@@ -139,6 +164,15 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     avatar_src: string;
                 };
                 details?: Sheet["details"];
+                abilities?: Array<{
+                    id: number;
+                    abilities_id: number;
+                    sheet_id: number;
+                    value: number;
+                    modifier: number;
+                    label: string;
+                    system_id: number;
+                }>;
                 items?: Array<{
                     id: number;
                     sheet_id: number;
@@ -146,7 +180,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     quantity: number;
                     weight: number | null;
                     description: string | null;
-                }>
+                }>;
                 skill?: Array<{
                     skill_id: number;
                     sheet_id: number;
@@ -221,6 +255,53 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 if (!patchRes.ok) throw new Error('Erreur lors du PATCH');
 
                 console.log('PATCH réussi : fiche mise à jour');
+
+                // PATCH des caractéristique existantes
+                if (abilitiesToPatch.length > 0) {
+                    for (const ability of abilitiesToPatch) {
+                        const bodyContent = {
+                            id: ability.id,
+                            abilities_id: ability.abilities_id,
+                            sheet_id: data.sheet.id,
+                            value: ability.value,
+                            modifier: ability.modifier,
+                            label: ability.label,
+                        };
+
+                        const patchAbilitiesRes = await fetch(`https://apidnd.up.railway.app/api/abilitiesSheet/${ability.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchAbilitiesRes.ok) throw new Error(`Erreur lors du PATCH de la caractéristique avec id ${ability.id}`);
+                    }
+
+                    console.log('PATCH des caractéristiques effectué');
+                }
+
+                // POST si la caractéristique est nouvelle
+                if (abilitiesToPost.length > 0) {
+                    const url = `https://apidnd.up.railway.app/api/abilitiesSheet/multiple`;
+
+                    const bodyContent = abilitiesToPost.map(ability => ({
+                        abilities_id: ability.abilities_id,
+                        sheet_id: data.sheet.id,
+                        value: ability.value,
+                        modifier: ability.modifier,
+                        label: ability.label,
+                    }));
+
+                    const postAbilitiesRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
+                    });
+
+                    if (!postAbilitiesRes.ok) throw new Error('Erreur lors du POST des caractéristiques');
+
+                    console.log('POST des caractéristiques effectué');
+                }
 
                 // PATCH des compétences existantes
                 if (itemsToPatch.length > 0) {
@@ -369,10 +450,11 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
     const familiesL5R = useFamily();
     const schoolsL5R = useSchool();
     const skillsL5R = useSkillL5RFiltered();
+    const abilitiesL5R = useAbilitiesL5R();
 
-    if (clansL5R.isLoading || familiesL5R.isLoading || schoolsL5R.isLoading || skillsL5R.isLoading) return <p>Chargement en cours...</p>;
-    if (clansL5R.error || familiesL5R.error || schoolsL5R.error || skillsL5R.error) return <p>Erreur</p>;
-    if (!schoolsL5R.data || !familiesL5R.data || !clansL5R.data || !skillsL5R.data) return null;
+    if (clansL5R.isLoading || familiesL5R.isLoading || schoolsL5R.isLoading || skillsL5R.isLoading || abilitiesL5R.isLoading) return <p>Chargement en cours...</p>;
+    if (clansL5R.error || familiesL5R.error || schoolsL5R.error || skillsL5R.error || abilitiesL5R.error) return <p>Erreur</p>;
+    if (!schoolsL5R.data || !familiesL5R.data || !clansL5R.data || !skillsL5R.data || !abilitiesL5R.data) return null;
 
     if (!data || isLoading) return <p>Chargement...</p>
 
@@ -547,6 +629,62 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                         </div>
                     )}
                 </form.Field>
+            </div>
+
+            {/* Abilities */}
+            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+                <label className="block w-full text-xl font-uncial-antiqua mb-[8px]">
+                    Caractéristiques
+                </label>
+
+                {abilitiesL5R.data.map((ability) => (
+                    <div className="flex-1">
+                        <label className="w-full text-lg font-uncial-antiqua mb-[8px] text-center">{ability.label}</label>
+                        <form.Field name={`abilities[${ability.id}].id`}>
+                            {(field) => (
+                                <input
+                                    type="text"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="hidden"
+                                    disabled
+                                />
+                            )}
+                        </form.Field>
+
+                        {/* Valeur */}
+                        <form.Field name={`abilities[${ability.id}].value`}>
+                            {(field) => (
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                    placeholder={`Valeur de la caractéristique : ${ability.label}`}
+                                />
+                            )}
+                        </form.Field>
+
+                        {/* Modifier */}
+                        <form.Field name={`abilities[${ability.id}].modifier`}>
+                            {(field) => (
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full p-[8px] mt-[8px] bg-primary rounded-lg border border-secondary"
+                                    placeholder={`Modificateur de la caractéristique : ${ability.label}`}
+                                />
+                            )}
+                        </form.Field>
+                    </div>
+                ))}
             </div>
 
             <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
@@ -1352,7 +1490,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            {/* Armes */}
+            {/* Items */}
             <div className="w-full mt-[40px]">
                 <label className="block text-xl font-uncial-antiqua mb-[8px]">Objets de l'inventaire</label>
 
