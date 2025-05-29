@@ -277,12 +277,14 @@ export function OthersCharactersPage() {
                 </div>
 
                 <div className='flex flex-wrap w-full justify-between gap-[40px]'>
-                    <SpellsSheet
-                        spells={spells}
-                        spells_slots={spells_slot}
-                        dd_spell={details.dd_spell ?? 0}
-                        spell_bonus_attack={details.spell_bonus_attack ?? 0}
-                    />
+                    {sheet.system_id !== 1 &&
+                        <SpellsSheet
+                            spells={spells}
+                            spells_slots={spells_slot}
+                            dd_spell={details.dd_spell ?? 0}
+                            spell_bonus_attack={details.spell_bonus_attack ?? 0}
+                        />
+                    }
                 </div>
 
                 {sheet.system_id === 1 &&
