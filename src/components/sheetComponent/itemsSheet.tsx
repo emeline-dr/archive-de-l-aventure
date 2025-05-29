@@ -35,7 +35,10 @@ export default function ItemsSheet(props: ItemsSheetProps) {
 
     const { items = [] } = props;
 
-    const totalWeight = items.reduce((sum, item) => sum + (item.weight || 0), 0);
+    const totalWeight = items.reduce(
+        (sum, item) => sum + (Number(item.weight) || 0),
+        0
+    );
 
     return (
         <>
