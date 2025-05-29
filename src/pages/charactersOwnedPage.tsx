@@ -179,6 +179,7 @@ export function CharactersOwnedPage() {
 
                     <div className='flex flex-wrap w-full justify-between gap-[40px]'>
                         <WeaponsSheet
+                            system_id={sheet.system_id}
                             weapons={weapon}
                         />
                     </div>

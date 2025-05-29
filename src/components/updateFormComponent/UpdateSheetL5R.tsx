@@ -62,14 +62,13 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             techniquesNewActions: data?.details.techniques_new_actions ?? '',
             techniquesNewFlower: data?.details.techniques_new_flower ?? '',
             armors: [''],
-            weapons: [
-                {
-                    id: 1,
-                    label: '',
-                    damage: 0,
-                    notes: '',
-                },
-            ],
+            weapons: (data?.weapon ?? []).map((weapon) => ({
+                id: weapon.id,
+                sheet_id: weapon.sheet_id,
+                label: weapon.label,
+                damage: weapon.damage,
+                notes: weapon.notes
+            }))
         },
         onSubmit: async ({ value }) => {
             if (!data) return;
@@ -92,7 +91,16 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
 
             const existingWeapons = data.weapon ?? [];
             const validWeapons = (value.weapons ?? []).filter(
-                (weapon) => weapon.label.trim() !== '' && !isNaN(weapon.damage)
+                (weapon) => weapon.label.trim() !== '' && weapon.damage?.trim() !== ''
+            );
+
+            const weaponsToPatch = validWeapons.filter(weapon =>
+                existingWeapons.some(existing => existing.id === weapon.id)
+            )
+
+            const weaponsToPost = validWeapons.filter(weapon =>
+                !existingWeapons.some(existing => existing.id === weapon.id) &&
+                !existingWeapons.some(existing => existing.sheet_id === data.sheet.id)
             );
 
             const payload: {
@@ -105,14 +113,13 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 };
                 details?: Sheet["details"];
                 skill?: Array<{
-                    id: number;
                     skill_id: number;
                     sheet_id: number;
                     label: string;
                     value: number;
                     proficient: boolean;
                 }>;
-                weapon?: Array<{ id: number; label: string; damage: number; notes: string }>;
+                weapon?: Array<{ label: string; damage: string; notes: string }>;
                 clanL5R?: { label: string; }
                 familyL5R?: { label: string; }
                 schoolL5R?: { label: string; }
@@ -168,15 +175,6 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 techniques_new_flower: value.techniquesNewFlower,
             };
 
-            if (existingWeapons.length > 0 && validWeapons.length > 0) {
-                payload.weapon = validWeapons.map((w) => ({
-                    id: w.id || 1,
-                    label: w.label,
-                    damage: w.damage,
-                    notes: w.notes,
-                }));
-            }
-
             try {
                 // PATCH sans les skills vides
                 const patchRes = await fetch(`https://apidnd.up.railway.app/api/sheet/${data.sheet.id}`, {
@@ -212,7 +210,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     console.log('PATCH des compétences effectué');
                 }
 
-                // POST des nouvelles compétences
+                // POST si la compétence est nouvelle
                 if (skillsToPost.length > 0) {
                     const url = `https://apidnd.up.railway.app/api/skillSheet/multiple`;
 
@@ -234,20 +232,48 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     console.log('POST des compétences effectué');
                 }
 
-                if (existingWeapons.length === 0 && validWeapons.length > 0) {
-                    const postWeaponsRes = await fetch(`https://apidnd.up.railway.app/api/weaponSheet`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(validWeapons.map((weapon) => ({
+                // PATCH des armes existantes
+                if (weaponsToPatch.length > 0) {
+                    for (const weapon of weaponsToPatch) {
+                        const bodyContent = {
                             id: weapon.id,
                             sheet_id: data.sheet.id,
-                            label: weapon.label,
                             damage: weapon.damage,
                             notes: weapon.notes,
-                        })))
-                    });
+                        };
 
-                    if (!postWeaponsRes) throw new Error('Erreur lors du POST des armes');
+                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/weaponSheet/${weapon.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchRes.ok) throw new Error(`Erreur lors du PATCH de l'arme avec id ${weapon.id}`);
+                    }
+
+                    console.log('PATCH des armes effectué');
+                }
+
+                console.log('Tableau des armes à poster:', weaponsToPost);
+                // POST si l'arme est nouvelle
+                if (weaponsToPost.length > 0) {
+                    console.log(weaponsToPost)
+                    const url = `https://apidnd.up.railway.app/api/weaponSheet/multiple`;
+
+                    const bodyContent = weaponsToPost.map(weapon => ({
+                        sheet_id: data.sheet.id,
+                        label: weapon.label,
+                        damage: weapon.damage,
+                        notes: weapon.notes,
+                    }))
+
+                    const postWeaponsRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
+                    })
+
+                    if (!postWeaponsRes.ok) throw new Error('Erreur lors du POST des armes');
 
                     console.log('POST des armes effectué')
                 }
@@ -1115,11 +1141,11 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                                 <form.Field name={`weapons[${index}].damage`}>
                                     {(field) => (
                                         <input
-                                            type="number"
+                                            type="text"
                                             name={field.name}
                                             id={field.name}
                                             value={field.state.value ?? ''}
-                                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                                            onChange={(e) => field.handleChange(e.target.value)}
                                             className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
                                             placeholder={`Dégâts de l'arme ${index + 1}`}
                                         />
@@ -1168,8 +1194,9 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                                 ...current,
                                 {
                                     id: maxId + 1,
+                                    sheet_id: data?.sheet.id,
                                     label: '',
-                                    damage: 0,
+                                    damage: '',
                                     notes: '',
                                 },
                             ])
