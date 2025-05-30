@@ -100,13 +100,6 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 existingAbilities.some(existing => existing.id === ability.id)
             )
 
-            const abilitiesToPost = validAbilities.filter(ability =>
-                !existingAbilities.some(existing => existing.id === ability.id) &&
-                !existingAbilities.some(existing =>
-                    existing.sheet_id === data.sheet.id && existing.abilities_id === ability.abilities_id
-                )
-            )
-
             const existingItems = data.item ?? [];
             const validItems = (value.items ?? []).filter(
                 (item) => item.label.trim() !== ''
@@ -178,7 +171,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     sheet_id: number;
                     label: string;
                     quantity: number;
-                    weight: number | null;
+                    weight: string | null;
                     description: string | null;
                 }>;
                 skill?: Array<{
@@ -280,30 +273,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     console.log('PATCH des caractéristiques effectué');
                 }
 
-                // POST si la caractéristique est nouvelle
-                if (abilitiesToPost.length > 0) {
-                    const url = `https://apidnd.up.railway.app/api/abilitiesSheet/multiple`;
-
-                    const bodyContent = abilitiesToPost.map(ability => ({
-                        abilities_id: ability.abilities_id,
-                        sheet_id: data.sheet.id,
-                        value: ability.value,
-                        modifier: ability.modifier,
-                        label: ability.label,
-                    }));
-
-                    const postAbilitiesRes = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(bodyContent),
-                    });
-
-                    if (!postAbilitiesRes.ok) throw new Error('Erreur lors du POST des caractéristiques');
-
-                    console.log('POST des caractéristiques effectué');
-                }
-
-                // PATCH des compétences existantes
+                // PATCH des items existants
                 if (itemsToPatch.length > 0) {
                     for (const item of itemsToPatch) {
                         const bodyContent = {
@@ -632,45 +602,22 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             </div>
 
             {/* Abilities */}
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
-                <label className="block w-full text-xl font-uncial-antiqua mb-[8px]">
+            <div className='w-full flex flex-wrap justify-between my-[80px] gap-[16px]'>
+                <label className="block w-full text-xl font-uncial-antiqua mb-[8px] underline">
                     Caractéristiques
                 </label>
 
-                {abilitiesL5R.data.map((ability) => (
-                    <div className="flex-1">
-                        <label className="w-full text-lg font-uncial-antiqua mb-[8px] text-center">{ability.label}</label>
-                        <form.Field name={`abilities[${ability.id}].id`}>
+                {form.state.values.abilities.map((_, index) => (
+                    <div key={index} className="w-[240px]">
+                        {/* Sélection de la capacité */}
+                        <form.Field name={`abilities[${index}].label`}>
                             {(field) => (
-                                <input
-                                    type="text"
-                                    name={field.name}
-                                    id={field.name}
-                                    value={field.state.value ?? ''}
-                                    onChange={(e) => field.handleChange(Number(e.target.value))}
-                                    className="hidden"
-                                    disabled
-                                />
+                                <label className="font-uncial-antiqua text-lg">{field.state.value}</label>
                             )}
                         </form.Field>
 
                         {/* Valeur */}
-                        <form.Field name={`abilities[${ability.id}].value`}>
-                            {(field) => (
-                                <input
-                                    type="number"
-                                    name={field.name}
-                                    id={field.name}
-                                    value={field.state.value ?? ''}
-                                    onChange={(e) => field.handleChange(Number(e.target.value))}
-                                    className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
-                                    placeholder={`Valeur de la caractéristique : ${ability.label}`}
-                                />
-                            )}
-                        </form.Field>
-
-                        {/* Modifier */}
-                        <form.Field name={`abilities[${ability.id}].modifier`}>
+                        <form.Field name={`abilities[${index}].value`}>
                             {(field) => (
                                 <input
                                     type="number"
@@ -679,7 +626,22 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                                     value={field.state.value ?? ''}
                                     onChange={(e) => field.handleChange(Number(e.target.value))}
                                     className="w-full p-[8px] mt-[8px] bg-primary rounded-lg border border-secondary"
-                                    placeholder={`Modificateur de la caractéristique : ${ability.label}`}
+                                    placeholder="Valeur"
+                                />
+                            )}
+                        </form.Field>
+
+                        {/* Modificateur */}
+                        <form.Field name={`abilities[${index}].modifier`}>
+                            {(field) => (
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full p-[8px] mt-[8px] bg-primary rounded-lg border border-secondary"
+                                    placeholder="Modificateur"
                                 />
                             )}
                         </form.Field>
@@ -1547,11 +1509,11 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                                 <form.Field name={`items[${index}].weight`}>
                                     {(field) => (
                                         <input
-                                            type="number"
+                                            type="text"
                                             name={field.name}
                                             id={field.name}
                                             value={field.state.value ?? 0}
-                                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                                            onChange={(e) => field.handleChange(e.target.value)}
                                             className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
                                             placeholder={`Poids de l'item ${index + 1}`}
                                         />
@@ -1573,7 +1535,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                                     )}
                                 </form.Field>
 
-                                {/* Supprimer une arme */}
+                                {/* Supprimer un item */}
                                 <button
                                     type="button"
                                     onClick={() => {
@@ -1603,7 +1565,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                                     sheet_id: data?.sheet.id,
                                     label: '',
                                     quantity: 1,
-                                    weight: 0,
+                                    weight: '',
                                     description: '',
                                 },
                             ])
