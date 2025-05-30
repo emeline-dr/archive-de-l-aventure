@@ -21,6 +21,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
             lastName: data?.sheet.lastname ?? '',
             gender: data?.details.gender ?? '',
             age: data?.details.age ?? 1,
+            lvl: data?.sheet.lvl ?? 1,
             residence: data?.details.residence ?? '',
             birthPlace: data?.details.birthplace ?? '',
             occupation: data?.details.occupation ?? '',
@@ -156,6 +157,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     firstname: string;
                     lastname: string;
                     avatar_src: string;
+                    lvl: number;
                 };
                 details?: Sheet["details"];
                 abilities?: Array<{
@@ -198,6 +200,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     firstname: value.firstName,
                     lastname: value.lastName,
                     avatar_src: value.avatar,
+                    lvl: value.lvl,
                 },
                 fellowInvestigators: (form.state.values.fellowInvestigators ?? []).map((investigator) => ({
                     sheet_id: investigator.sheet_id,
@@ -438,24 +441,47 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 form.handleSubmit()
             }}
         >
-            <form.Field name="avatar">
-                {(field) => (
-                    <div>
-                        <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                            Avatar
-                        </label>
-                        <input
-                            type="text"
-                            name={field.name}
-                            id={field.name}
-                            value={field.state.value ?? ''}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            className="p-[8px] bg-primary rounded-lg border border-secondary"
-                            placeholder="Entrez l'url de votre avatar"
-                        />
-                    </div>
-                )}
-            </form.Field>
+            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]">
+                {/* Avatar */}
+                <form.Field name="avatar">
+                    {(field) => (
+                        <div>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Avatar
+                            </label>
+                            <input
+                                type="text"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez l'url de votre avatar"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Level */}
+                <form.Field name="lvl">
+                    {(field) => (
+                        <div className="w-[240px]">
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Niveau
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 1}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre nvieau"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
 
             <div className="w-full flex flex-wrap justify-between my-[40px] gap-x-[16px] gap-y-[40px]">
                 {/* Choix du prénom */}
