@@ -456,7 +456,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 )}
             </form.Field>
 
-            <div className='w-full flex flex-wrap justify-between my-[40px] gap-y-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix du prénom */}
                 <form.Field name="firstName">
                     {(field) => (
@@ -500,85 +500,95 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 {/* Choix du clan */}
                 <form.Field name="clan">
                     {(field) => (
-                        <div className='w-[240px]'>
-                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                Clan
-                            </label>
-                            <select
-                                name={field.name}
-                                id={field.name}
-                                value={field.state.value ?? ''}
-                                onChange={(e) => {
-                                    field.handleChange(e.target.value);  // Mise à jour explicite de la valeur
-                                }}
-                                className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
-                            >
-                                <option value="">Sélectionner un clan</option>
+                        <div className="flex-1">
+                            <label className="block text-xl font-uncial-antiqua mb-[8px]">Clan</label>
+                            <fieldset className="flex flex-wrap justify-start gap-[8px] bg-primary rounded-[3px] p-[8px]">
                                 {clansL5R.data.map((clanL5R) => (
-                                    <option key={clanL5R.id} value={clanL5R.label}>
-                                        {clanL5R.label}
-                                    </option>
+                                    <div key={clanL5R.id}>
+                                        <label className="flex items-center gap-2 w-[150px]">
+                                            <input
+                                                type="radio"
+                                                value={clanL5R.label}
+                                                checked={field.state.value === clanL5R.label}
+                                                onChange={() => field.handleChange(clanL5R.label)}
+                                                className="hidden"
+                                            />
+                                            <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                                {field.state.value === clanL5R.label && (
+                                                    <i className="fa-solid fa-check text-accent"></i>
+                                                )}
+                                            </span>
+                                            {clanL5R.label}
+                                        </label>
+                                    </div>
                                 ))}
-                            </select>
+                            </fieldset>
                         </div>
                     )}
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between my-[40px] gap-y-[40px]'>
-                {/* Choix de la famille */}
-                <form.Field name="family">
-                    {(field) => (
-                        <div className='w-[240px]'>
-                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                Famille
-                            </label>
-                            <select
-                                name={field.name}
-                                id={field.name}
-                                value={field.state.value ?? ''}
-                                onChange={(e) => {
-                                    field.handleChange(e.target.value);
-                                }}
-                                className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
-                            >
-                                <option value="">Sélectionner une famille</option>
-                                {familiesL5R.data.map((familyL5R) => (
-                                    <option key={familyL5R.id} value={familyL5R.label}>
+            {/* Choix de la famille */}
+            <form.Field name="family">
+                {(field) => (
+                    <div className="w-full">
+                        <label className="block text-xl font-uncial-antiqua mb-[8px]">Famille</label>
+                        <fieldset className="flex flex-wrap justify-start gap-[8px] bg-primary rounded-[3px] p-[8px]">
+                            {familiesL5R.data.map((familyL5R) => (
+                                <div key={familyL5R.id}>
+                                    <label className="flex items-center gap-2 w-[200px]">
+                                        <input
+                                            type="radio"
+                                            value={familyL5R.label}
+                                            checked={field.state.value === familyL5R.label}
+                                            onChange={() => field.handleChange(familyL5R.label)}
+                                            className="hidden"
+                                        />
+                                        <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                            {field.state.value === familyL5R.label && (
+                                                <i className="fa-solid fa-check text-accent"></i>
+                                            )}
+                                        </span>
                                         {familyL5R.label}
-                                    </option>
+                                    </label>
+                                </div>
+                            ))}
+                        </fieldset>
+                    </div>
+                )}
+            </form.Field>
+
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
+                {/* Choix de l'école */}
+                <form.Field name="school">
+                    {(field) => (
+                        <div className="flex-1">
+                            <label className="block text-xl font-uncial-antiqua mb-[8px]">École</label>
+                            <fieldset className="flex flex-wrap justify-start gap-[8px] bg-primary rounded-[3px] p-[8px]">
+                                {schoolsL5R.data.map((schoolL5R) => (
+                                    <div key={schoolL5R.id}>
+                                        <label className="flex items-center gap-2 w-[200px]">
+                                            <input
+                                                type="radio"
+                                                value={schoolL5R.label}
+                                                checked={field.state.value === schoolL5R.label}
+                                                onChange={() => field.handleChange(schoolL5R.label)}
+                                                className="hidden"
+                                            />
+                                            <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                                {field.state.value === schoolL5R.label && (
+                                                    <i className="fa-solid fa-check text-accent"></i>
+                                                )}
+                                            </span>
+                                            {schoolL5R.label}
+                                        </label>
+                                    </div>
                                 ))}
-                            </select>
+                            </fieldset>
                         </div>
                     )}
                 </form.Field>
 
-                {/* Choix de l'école */}
-                <form.Field name="school">
-                    {(field) => (
-                        <div className='w-[240px]'>
-                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                École
-                            </label>
-                            <select
-                                name={field.name}
-                                id={field.name}
-                                value={field.state.value ?? ''}
-                                onChange={(e) => {
-                                    field.handleChange(e.target.value);
-                                }}
-                                className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
-                            >
-                                <option value="">Sélectionner une école</option>
-                                {schoolsL5R.data.map((schoolL5R) => (
-                                    <option key={schoolL5R.id} value={schoolL5R.label}>
-                                        {schoolL5R.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
-                </form.Field>
 
                 {/* Choix du rang d'école */}
                 <form.Field name="rankSchool">
