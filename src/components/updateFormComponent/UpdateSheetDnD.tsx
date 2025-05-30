@@ -1,5 +1,4 @@
 import { useForm } from "@tanstack/react-form"
-import { useState } from "react"
 
 import type { Sheet } from "../../api/sheetApi"
 
@@ -18,8 +17,6 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
     const originDnD = useOrigin();
     const languageDnD = useLanguage();
 
-    const [languageCount, setLanguageCount] = useState(1);
-
     const form = useForm({
         defaultValues: {
             avatar: data?.sheet.avatar_src ?? '',
@@ -33,11 +30,6 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
             historic: data?.details.origin_id ?? 1,
             toolsHistoric1: data?.details.tools_prof?.split(',')[0]?.trim() ?? "",
             toolsHistoric2: data?.details.tools_prof?.split(',')[1]?.trim() ?? "",
-            language: Array.isArray(data?.language)
-                ? data.language
-                : data?.language
-                    ? [data.language]
-                    : [""],
             lvl: data?.sheet.lvl ?? 1,
             exp: data?.details.exp ?? 0,
             skills: [
@@ -92,7 +84,6 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     lvl: number;
                 };
                 details?: Sheet["details"];
-                language?: { label: string }[];
                 skill?: Array<{
                     id: number;
                     skill_id: number;
@@ -112,13 +103,6 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     avatar_src: value.avatar,
                     lvl: value.lvl,
                 },
-                ...(value.language?.length > 0
-                    ? {
-                        language: value.language.map((lang) =>
-                            typeof lang === "string" ? { label: lang } : lang
-                        ),
-                    }
-                    : {}),
             };
 
             payload.details = {
@@ -621,80 +605,6 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     <label className="block w-[240px] text-xl font-uncial-antiqua mb-[8px]">
                         Langues
                     </label>
-
-                    <div className="w-full flex flex-wrap flex-col justify-start gap-[8px]">
-                        {/* Choix d'une/de plusieurs langue(s) */}
-                        {[...Array(languageCount)].map((_, index) => (
-                            <div key={index} className="flex flex-wrap w-[240px] justify-between gap-[8px]">
-                                <form.Field name={`language[${index}]`}>
-                                    {(field) => (
-                                        <select
-                                            name={field.name}
-                                            id={field.name}
-                                            value={typeof field.state.value === "object" && field.state.value !== null
-                                                ? field.state.value.label
-                                                : ""}
-                                            onChange={(e) => {
-                                                const selectedLabel = e.target.value;
-                                                const selectedLanguage = languageDnD.data.find(
-                                                    (lang) => lang.label === selectedLabel
-                                                );
-                                                field.handleChange(selectedLanguage ?? { label: selectedLabel });
-                                            }}
-                                            className="flex-1 p-[8px] bg-primary rounded-lg border border-secondary"
-                                        >
-                                            <option value="">Sélectionner une langue</option>
-                                            {languageDnD.data.map((language) => (
-                                                <option key={language.id} value={language.label}>
-                                                    {language.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    )}
-                                </form.Field>
-
-                                {/* Supprimer une langue */}
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        const currentLanguages = form.state.values.language ?? [];
-
-                                        const normalizedLanguages = currentLanguages.map((lang) =>
-                                            typeof lang === "string" ? { label: lang } : lang
-                                        );
-
-                                        normalizedLanguages.splice(index, 1);
-
-                                        form.setFieldValue("language", normalizedLanguages);
-                                        setLanguageCount((c) => c - 1);
-                                    }}
-                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
-                                >
-                                    <i className="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        ))}
-
-                        {/* Ajouter un champ de langue */}
-                        <button
-                            type="button"
-                            onClick={() => {
-                                const currentLanguages = form.state.values.language ?? [];
-                                form.setFieldValue(
-                                    "language",
-                                    [...(currentLanguages ?? [])].map((lang) =>
-                                        typeof lang === "string" ? { label: lang } : lang
-                                    ).concat({ label: "" })
-                                );
-
-                                setLanguageCount((l) => l + 1);
-                            }}
-                            className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
-                        >
-                            <i className="fa-solid fa-plus text-2xl"></i>
-                        </button>
-                    </div>
-
                 </div>
             </div>
 

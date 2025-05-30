@@ -618,7 +618,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             {/* Choix de la famille */}
             <form.Field name="family">
                 {(field) => (
-                    <div className="w-full">
+                    <div className="w-full my-[40px]">
                         <label className="block text-xl font-uncial-antiqua mb-[8px]">Famille</label>
                         <fieldset className="flex flex-wrap justify-start gap-[8px] bg-primary rounded-[3px] p-[8px]">
                             {familiesL5R.data.map((familyL5R) => (
