@@ -12,11 +12,16 @@ export default function SkillsSheetCoC(props: SkillsSheetCoCProps) {
             ) : (
                 props.skills.map((skill, index) => (
                     <div key={index} className="flex flex-wrap justify-start gap-[8px]">
-                        <i className="fa-solid fa-circle text-2xl"></i>
+                        {skill.proficient === true &&
+                            <i className="fa-solid fa-circle-check text-2xl"></i>
+                        }
+                        {skill.proficient === false &&
+                            <i className="fa-solid fa-circle text-2xl"></i>
+                        }
                         <span className="font-uncial-antiqua text-xl leading-none">
                             {skill.value >= 0 ? `+${skill.value}` : skill.value}
                         </span>
-                        {skill.label} ({skill.categories})
+                        {skill.label}
                     </div>
                 ))
             )}
