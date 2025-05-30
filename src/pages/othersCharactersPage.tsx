@@ -149,7 +149,7 @@ export function OthersCharactersPage() {
                     lastname={sheet.lastname ?? ''}
                 />
 
-                <div className='flex flex-wrap w-full justify-between gap-y-[40px]'>
+                <div className='flex flex-wrap w-full justify-between gap-[40px]'>
                     <AbilitiesSheet
                         system_id={sheet.system_id}
                         sheet_id={sheet.id}

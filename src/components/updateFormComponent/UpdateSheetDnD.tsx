@@ -1,4 +1,5 @@
 import { useForm } from "@tanstack/react-form"
+import { useState } from "react"
 
 import type { Sheet } from "../../api/sheetApi"
 
@@ -17,6 +18,8 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
     const originDnD = useOrigin();
     const languageDnD = useLanguage();
 
+    const [, setLanguageCount] = useState(1);
+
     const form = useForm({
         defaultValues: {
             avatar: data?.sheet.avatar_src ?? '',
@@ -32,17 +35,28 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
             toolsHistoric2: data?.details.tools_prof?.split(',')[1]?.trim() ?? "",
             lvl: data?.sheet.lvl ?? 1,
             exp: data?.details.exp ?? 0,
-            skills: [
-                {
-                    id: 1,
-                    skill_id: 0,
-                    sheet_id: data?.sheet.id ?? 1,
-                    label: '',
-                    value: 0,
-                    proficient: false,
-                    categories: '',
-                },
-            ],
+            language: (data?.language ?? []).map((lang) => ({
+                id: lang.id,
+                sheet_id: data?.sheet.id,
+                language_id: lang.language_id,
+                label: lang.label,
+            })),
+            abilities: (data?.abilities ?? []).map((ability) => ({
+                id: ability.id,
+                abilities_id: ability.abilities_id,
+                sheet_id: ability.sheet_id,
+                value: ability.value,
+                modifier: ability.modifier,
+                label: ability.label,
+            })),
+            skills: (data?.skill ?? []).map((skill) => ({
+                id: skill.id,
+                skill_id: skill.skill_id,
+                sheet_id: data?.sheet.id,
+                label: skill.label,
+                value: skill.value,
+                proficient: skill.proficient,
+            })),
             minorSpell: "",
             lvlOneSpell: "",
             armors: [""],
@@ -64,15 +78,14 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
         onSubmit: async ({ value }) => {
             if (!data) return;
 
-            const existingSkills = data.skill ?? [];
-            const validSkills = (value.skills ?? []).filter(
-                (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
-            );
+            const existingAbilities = data.abilities ?? [];
+            const validAbilities = (value.abilities ?? []).filter(
+                (ability) => ability && !isNaN(ability.value)
+            )
 
-            const existingWeapons = data.weapon ?? [];
-            const validWeapons = (value.weapons ?? []).filter(
-                (weapon) => weapon.label.trim() !== '' && !isNaN(weapon.damage)
-            );
+            const abilitiesToPatch = validAbilities.filter(ability =>
+                existingAbilities.some(existing => existing.id === ability.id)
+            )
 
             const payload: {
                 sheet: {
@@ -84,6 +97,15 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     lvl: number;
                 };
                 details?: Sheet["details"];
+                abilities?: Array<{
+                    id: number;
+                    abilities_id: number;
+                    sheet_id: number;
+                    value: number;
+                    modifier: number;
+                    label: string;
+                    system_id: number;
+                }>;
                 skill?: Array<{
                     id: number;
                     skill_id: number;
@@ -93,6 +115,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     proficient: boolean;
                     categories: string;
                 }>;
+                language?: Array<{ id: number; sheet_id: number; language_id: number; }>,
                 weapon?: Array<{ id: number; label: string; type: string; bonus: number; damage: number; damageType: string; notes: string }>;
             } = {
                 sheet: {
@@ -103,6 +126,11 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     avatar_src: value.avatar,
                     lvl: value.lvl,
                 },
+                language: (form.state.values.language ?? []).map((lang) => ({
+                    id: lang.id,
+                    sheet_id: data.sheet.id,
+                    language_id: lang.language_id,
+                })),
             };
 
             payload.details = {
@@ -120,30 +148,6 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 exp: value.exp,
             };
 
-            if (existingSkills.length > 0 && validSkills.length > 0) {
-                payload.skill = validSkills.map((skill) => ({
-                    id: skill.id,
-                    skill_id: skill.skill_id,
-                    sheet_id: data.sheet.id,
-                    label: skill.label,
-                    value: skill.value,
-                    proficient: skill.proficient,
-                    categories: skill.categories,
-                }));
-            }
-
-            if (existingWeapons.length > 0 && validWeapons.length > 0) {
-                payload.weapon = validWeapons.map((w) => ({
-                    id: w.id || 1,
-                    label: w.label,
-                    type: w.type,
-                    bonus: w.bonus,
-                    damage: w.damage,
-                    damageType: w.damageType,
-                    notes: w.notes,
-                }));
-            }
-
             try {
                 // PATCH sans les skills vides
                 const patchRes = await fetch(`https://apidnd.up.railway.app/api/sheet/${data.sheet.id}`, {
@@ -156,45 +160,29 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
 
                 console.log('PATCH réussi : fiche mise à jour');
 
-                // POST séparé si aucun skill valide n'était dans le payload
-                if (existingSkills.length === 0 && validSkills.length > 0) {
-                    const postRes = await fetch(`https://apidnd.up.railway.app/api/skillSheet`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(validSkills.map((skill) => ({
-                            id: skill.id,
-                            skill_id: skill.skill_id,
+                // PATCH des caractéristique existantes
+                if (abilitiesToPatch.length > 0) {
+                    for (const ability of abilitiesToPatch) {
+                        const bodyContent = {
+                            id: ability.id,
+                            abilities_id: ability.abilities_id,
                             sheet_id: data.sheet.id,
-                            label: skill.label,
-                            value: skill.value,
-                            proficient: skill.proficient,
-                            categories: skill.categories,
-                        }))),
-                    });
+                            value: ability.value,
+                            modifier: ability.modifier,
+                            label: ability.label,
+                        };
 
-                    if (!postRes.ok) throw new Error('Erreur lors du POST des compétences');
+                        const patchAbilitiesRes = await fetch(`https://apidnd.up.railway.app/api/abilitiesSheet/${ability.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
 
-                    console.log('POST des compétences effectué');
+                        if (!patchAbilitiesRes.ok) throw new Error(`Erreur lors du PATCH de la caractéristique avec id ${ability.id}`);
+                    }
+
+                    console.log('PATCH des caractéristiques effectué');
                 }
-
-                if (existingWeapons.length === 0 && validWeapons.length > 0) {
-                    const postWeaponsRes = await fetch(`https://apidnd.up.railway.app/api/weaponSheet`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(validWeapons.map((weapon) => ({
-                            id: weapon.id,
-                            sheet_id: data.sheet.id,
-                            label: weapon.label,
-                            damage: weapon.damage,
-                            notes: weapon.notes,
-                        })))
-                    });
-
-                    if (!postWeaponsRes) throw new Error('Erreur lors du POST des armes');
-
-                    console.log('POST des armes effectué')
-                }
-
             } catch (err) {
                 console.error('Erreur API :', err);
             }
@@ -291,7 +279,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]">
+            <div className="w-full flex flex-wrap justify-between my-[40px] gap-y-[40px]">
                 {/* Choix du prénom */}
                 <form.Field name="firstName">
                     {(field) => (
@@ -372,8 +360,8 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     );
 
                     return (
-                        <div className="w-full">
-                            <label className="block text-xl font-uncial-antiqua mt-[40px] mb-[8px]">
+                        <div className="w-full my-[40px]">
+                            <label className="block text-xl font-uncial-antiqua mb-[8px]">
                                 Race
                             </label>
                             <fieldset className="flex flex-wrap justify-start gap-[8px] bg-primary rounded-[3px] p-[8px]">
@@ -461,8 +449,8 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     );
 
                     return (
-                        <div className="w-full">
-                            <label className="block text-xl font-uncial-antiqua mt-[40px] mb-[8px]">
+                        <div className="w-full my-[40px]">
+                            <label className="block text-xl font-uncial-antiqua mb-[8px]">
                                 Classe
                             </label>
                             <fieldset className="flex flex-wrap gap-[8px] justify-start bg-primary rounded-[3px] p-[8px]">
@@ -530,7 +518,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 }}
             </form.Field>
 
-            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]">
+            <div className="w-full flex flex-wrap justify-between my-[40px] gap-y-[40px]">
                 {/* Choix de l'historique */}
                 <form.Field name="historic">
                     {(field) => (
@@ -605,7 +593,130 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     <label className="block w-[240px] text-xl font-uncial-antiqua mb-[8px]">
                         Langues
                     </label>
+
+                    <div className="w-full flex flex-wrap flex-col justify-start gap-[8px]">
+                        {/* Choix d'une/de plusieurs langue(s) */}
+                        {form.state.values.language.map((_, index) => (
+                            <div key={index} className="flex flex-wrap w-[240px] justify-between gap-[8px]">
+                                <form.Field name={`language[${index}].label`}>
+                                    {(field) => (
+                                        <select
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => {
+                                                const selectedLabel = e.target.value;
+                                                const selectedLanguage = languageDnD.data.find(lang => lang.label === selectedLabel);
+                                                field.handleChange(selectedLabel);
+
+                                                if (selectedLanguage) {
+                                                    const updatedLanguages = [...form.state.values.language];
+                                                    updatedLanguages[index] = {
+                                                        ...updatedLanguages[index],
+                                                        label: selectedLabel,
+                                                        language_id: selectedLanguage.id,
+                                                    }
+
+                                                    form.setFieldValue('language', updatedLanguages);
+                                                }
+                                            }}
+                                            className="flex-1 p-[8px] bg-primary rounded-lg border border-secondary"
+                                        >
+                                            <option value="">Sélectionner une langue</option>
+                                            {languageDnD.data.map((language) => (
+                                                <option key={language.id} value={language.label}>
+                                                    {language.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </form.Field>
+
+                                {/* Supprimer une langue */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updatedLanguages = form.state.values.language.filter((_, i) => i !== index);
+                                        form.setFieldValue('language', updatedLanguages);
+                                    }}
+                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                                >
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        ))}
+
+                        {/* Ajouter un champ de langue */}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const current = form.state.values.language ?? [];
+                                const maxId = current.reduce((max, lang) => Math.max(max, lang.id ?? 0), 0);
+                                form.setFieldValue("language", [
+                                    ...current,
+                                    {
+                                        id: maxId + 1,
+                                        sheet_id: data?.sheet.id,
+                                        label: '',
+                                        language_id: 1,
+                                    },
+                                ]);
+                                setLanguageCount((l) => l + 1);
+                            }}
+                            className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
+                        >
+                            <i className="fa-solid fa-plus text-2xl"></i>
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            {/* Abilities */}
+            <div className='w-full flex flex-wrap justify-between my-[80px] gap-[16px]'>
+                <label className="block w-full text-xl font-uncial-antiqua mb-[8px] underline">
+                    Caractéristiques
+                </label>
+
+                {form.state.values.abilities.map((_, index) => (
+                    <div key={index} className="w-[240px]">
+                        {/* Sélection de la capacité */}
+                        <form.Field name={`abilities[${index}].label`}>
+                            {(field) => (
+                                <label className="font-uncial-antiqua text-lg">{field.state.value}</label>
+                            )}
+                        </form.Field>
+
+                        {/* Valeur */}
+                        <form.Field name={`abilities[${index}].value`}>
+                            {(field) => (
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full p-[8px] mt-[8px] bg-primary rounded-lg border border-secondary"
+                                    placeholder="Valeur"
+                                />
+                            )}
+                        </form.Field>
+
+                        {/* Modificateur */}
+                        <form.Field name={`abilities[${index}].modifier`}>
+                            {(field) => (
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full p-[8px] mt-[8px] bg-primary rounded-lg border border-secondary"
+                                    placeholder="Modificateur"
+                                />
+                            )}
+                        </form.Field>
+                    </div>
+                ))}
             </div>
 
             {/* Bouton de soumission */}
@@ -616,6 +727,6 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     </button>
                 )}
             </form.Subscribe>
-        </form>
+        </form >
     )
 }

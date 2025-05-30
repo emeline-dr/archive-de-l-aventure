@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 export type Language = {
     id: number;
     label: string;
+    language_id: number;
 };
 
 export async function fetchLanguage(): Promise<Language[]> {

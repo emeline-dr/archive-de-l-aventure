@@ -101,13 +101,6 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 existingAbilities.some(existing => existing.id === ability.id)
             )
 
-            const abilitiesToPost = validAbilities.filter(ability =>
-                !existingAbilities.some(existing => existing.id === ability.id) &&
-                !existingAbilities.some(existing =>
-                    existing.sheet_id === data.sheet.id && existing.abilities_id === ability.abilities_id
-                )
-            )
-
             const existingItems = data.item ?? [];
             const validItems = (value.items ?? []).filter(
                 (item) => item.label.trim() !== ''
@@ -279,28 +272,6 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     }
 
                     console.log('PATCH des caractéristiques effectué');
-                }
-
-                // POST si la caractéristique est nouvelle
-                if (abilitiesToPost.length > 0) {
-                    const url = `https://apidnd.up.railway.app/api/abilitiesSheet/multiple`;
-
-                    const bodyContent = abilitiesToPost.map(ability => ({
-                        abilities_id: ability.abilities_id,
-                        sheet_id: data.sheet.id,
-                        value: ability.value,
-                        modifier: ability.modifier,
-                    }));
-
-                    const postAbilitiesRes = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(bodyContent),
-                    });
-
-                    if (!postAbilitiesRes.ok) throw new Error('Erreur lors du POST des caractéristiques');
-
-                    console.log('POST des caractéristiques effectué');
                 }
 
                 // PATCH des items existants
@@ -1167,7 +1138,6 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                                     </label>
                                 )}
                             </form.Field>
-
 
                             {/* Valeur */}
                             <form.Field name={`skills[${index}].value`}>

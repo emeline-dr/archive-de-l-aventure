@@ -101,6 +101,13 @@ export type FellowInvestigators = {
     id: number;
 }
 
+export type Languages = {
+    id: number;
+    language_id: number;
+    sheet_id: number;
+    label: string;
+}
+
 export type Sheet = {
     id: number;
     user_id: number;
@@ -228,7 +235,6 @@ export type Sheet = {
         label: string;
     };
 
-    language?: { label?: string }[] | { label?: string } | null;
     classeDnD?: { label: string };
     subClasseDnD?: { label: string };
     speciesDnD?: { label: string };
@@ -247,8 +253,8 @@ export type SheetResponse = {
     details: Sheet["details"];
     saving_throw: SavingThrows[];
     skill: SkillSheet[];
-    fellowInvestigators: FellowInvestigators[];
-    language?: { label?: string }[] | { label?: string } | null;
+    fellowInvestigators?: FellowInvestigators[];
+    language?: Languages[];
     classeDnD?: { label: string };
     subClasseDnD?: { label: string };
     speciesDnD?: { label: string };
