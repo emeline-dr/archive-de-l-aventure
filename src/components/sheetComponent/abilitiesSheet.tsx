@@ -11,7 +11,7 @@ function AbilitiesSheet(props: AbilitiesSheetProps) {
     const { abilities } = props;
 
     return (
-        <div className="flex flex-wrap h-fit justify-between gap-[8px] max-w-3/4 bg-primary px-[8px] py-[16px] rounded-[3px]">
+        <div className="flex flex-wrap h-fit justify-between gap-[8px] max-w-[60%] bg-primary px-[8px] py-[16px] rounded-[3px]">
             {(!abilities || abilities.length === 0) ? (
                 <span className="italic self-center">Pas de caractéristique.</span>
             ) : (abilities.map((ability, index) => {

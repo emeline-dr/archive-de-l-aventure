@@ -73,7 +73,7 @@ export default function HealthSheet(props: HealthSheetProps) {
     };
 
     return (
-        <div className="min-w-[300px] max-w-[450px] flex flex-wrap justify-between gap-[8px] bg-primary p-[8px] rounded-[3px]">
+        <div className="min-w-[300px] max-w-[450px] h-fit flex flex-wrap justify-between gap-[8px] bg-primary p-[8px] rounded-[3px]">
             {renderHealthSheetComponent()}
         </div>
     )
