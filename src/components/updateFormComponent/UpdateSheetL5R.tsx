@@ -456,7 +456,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 )}
             </form.Field>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-y-[40px]'>
                 {/* Choix du prénom */}
                 <form.Field name="firstName">
                     {(field) => (
@@ -525,7 +525,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-y-[40px]'>
                 {/* Choix de la famille */}
                 <form.Field name="family">
                     {(field) => (
@@ -649,7 +649,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 ))}
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix du Ninjô */}
                 <form.Field name="ninjo">
                     {(field) => (
@@ -689,7 +689,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix des titres */}
                 <form.Field name="distinctions">
                     {(field) => (
@@ -750,7 +750,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix de la personnalité, habitudes et manies */}
                 <form.Field name="personalityHabitsQuirks">
                     {(field) => (
@@ -809,7 +809,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix de l'exp total */}
                 <form.Field name="expTotal">
                     {(field) => (
@@ -871,7 +871,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix de l'endurance */}
                 <form.Field name="endurance">
                     {(field) => (
@@ -953,7 +953,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix de l'attention */}
                 <form.Field name="focus">
                     {(field) => (
@@ -1036,7 +1036,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             </div>
 
             {/* Compétences */}
-            <div className="w-full mt-[40px]">
+            <div className="w-full my-[40px]">
                 <label className="block text-xl font-uncial-antiqua mb-[8px]">
                     Compétences de l'aventurier
                 </label>
@@ -1159,7 +1159,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </div>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix des avatanges */}
                 <form.Field name="Adv">
                     {(field) => (
@@ -1221,7 +1221,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix des compétences d'école */}
                 <form.Field name="schoolAbilities">
                     {(field) => (
@@ -1281,7 +1281,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             </div>
 
             {/* Armes */}
-            <div className="w-full mt-[40px]">
+            <div className="w-full my-[40px]">
                 <label className="block text-xl font-uncial-antiqua mb-[8px]">Armes</label>
 
                 <div className="w-full flex flex-col gap-4">
@@ -1390,7 +1390,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 </div>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix des koku */}
                 <form.Field name="koku">
                     {(field) => (
@@ -1453,7 +1453,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             </div>
 
             {/* Items */}
-            <div className="w-full mt-[40px]">
+            <div className="w-full my-[40px]">
                 <label className="block text-xl font-uncial-antiqua mb-[8px]">Objets de l'inventaire</label>
 
                 <div className="w-full flex flex-col gap-4">
@@ -1581,7 +1581,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             {/* Notes */}
             <form.Field name="notes">
                 {(field) => (
-                    <div className='mt-[40px] w-full'>
+                    <div className='my-[40px] w-full'>
                         <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
                             Notes
                         </label>
@@ -1600,7 +1600,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             {/* Bouton de soumission */}
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
                 {([canSubmit, isSubmitting]) => (
-                    <button type="submit" disabled={!canSubmit} className="btn btn-text mt-[40px]">
+                    <button type="submit" disabled={!canSubmit} className="btn btn-text my-[40px]">
                         {isSubmitting ? '...' : 'Mettre à jour la fiche'}
                     </button>
                 )}
