@@ -5,7 +5,6 @@ import type { Sheet } from "../../api/sheetApi"
 
 import { useSheets } from "../../api/sheetApi"
 import { useSkillCoCFiltered } from "../../api/CoC/skillCoCApi"
-import { useAbilitiesCoC } from "../../api/CoC/abilitiesCoC"
 
 export default function UpdateSheetCoC(props: { sheetId: number }) {
     const { data, isLoading } = useSheets(props.sheetId)
@@ -92,7 +91,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
         onSubmit: async ({ value }) => {
             if (!data) return;
 
-            /* const existingAbilities = data.abilities ?? [];
+            const existingAbilities = data.abilities ?? [];
             const validAbilities = (value.abilities ?? []).filter(
                 (ability) => ability && !isNaN(ability.value)
             )
@@ -106,7 +105,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 !existingAbilities.some(existing =>
                     existing.sheet_id === data.sheet.id && existing.abilities_id === ability.abilities_id
                 )
-            ) */
+            )
 
             const existingItems = data.item ?? [];
             const validItems = (value.items ?? []).filter(
@@ -115,13 +114,6 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
 
             const itemsToPatch = validItems.filter(item =>
                 existingItems.some(existing => existing.id === item.id)
-            )
-
-            const itemsToPost = validItems.filter(item =>
-                !existingItems.some(existing => existing.id === item.id) &&
-                !existingItems.some(existing =>
-                    existing.sheet_id === data.sheet.id && existing.label === item.label
-                )
             )
 
             const existingSkills = data.skill ?? [];
@@ -262,7 +254,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
 
                 console.log('PATCH réussi : fiche mise à jour');
 
-                /* // PATCH des caractéristique existantes
+                // PATCH des caractéristique existantes
                 if (abilitiesToPatch.length > 0) {
                     for (const ability of abilitiesToPatch) {
                         const bodyContent = {
@@ -295,7 +287,6 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                         sheet_id: data.sheet.id,
                         value: ability.value,
                         modifier: ability.modifier,
-                        label: ability.label,
                     }));
 
                     const postAbilitiesRes = await fetch(url, {
@@ -307,7 +298,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     if (!postAbilitiesRes.ok) throw new Error('Erreur lors du POST des caractéristiques');
 
                     console.log('POST des caractéristiques effectué');
-                } */
+                }
 
                 // PATCH des items existants
                 if (itemsToPatch.length > 0) {
@@ -331,29 +322,6 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     }
 
                     console.log('PATCH des items effectué');
-                }
-
-                // POST si l'item est nouveau
-                if (itemsToPost.length > 0) {
-                    const url = `https://apidnd.up.railway.app/api/inventoryItem/multiple`;
-
-                    const bodyContent = itemsToPost.map(item => ({
-                        sheet_id: data.sheet.id,
-                        label: item.label,
-                        quantity: item.quantity,
-                        weight: item.weight,
-                        description: item.description,
-                    }));
-
-                    const postItemsRes = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(bodyContent),
-                    });
-
-                    if (!postItemsRes.ok) throw new Error('Erreur lors du POST des items');
-
-                    console.log('POST des items effectué');
                 }
 
                 // PATCH des compétences existantes
@@ -455,12 +423,10 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
     })
 
     const skillsCoC = useSkillCoCFiltered();
-    const abilitiesCoC = useAbilitiesCoC();
 
     if (
         !data || isLoading
         || !skillsCoC.data || skillsCoC.isLoading
-        || !abilitiesCoC.data || abilitiesCoC.isLoading
     ) return <p>Chargement...</p>
 
     return (
@@ -662,40 +628,17 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     Caractéristiques
                 </label>
 
-                {abilitiesCoC.data.map((ability) => (
-                    <div className="w-[240px]">
-                        <label className="w-full text-lg font-uncial-antiqua mb-[8px] text-center">{ability.label}</label>
-                        <form.Field name={`abilities[${ability.id}].id`}>
+                {form.state.values.abilities.map((_, index) => (
+                    <div key={index} className="w-[240px]">
+                        {/* Sélection de la capacité */}
+                        <form.Field name={`abilities[${index}].label`}>
                             {(field) => (
-                                <input
-                                    type="text"
-                                    name={field.name}
-                                    id={field.name}
-                                    value={field.state.value ?? ''}
-                                    onChange={(e) => field.handleChange(Number(e.target.value))}
-                                    className="hidden"
-                                    disabled
-                                />
+                                <label className="font-uncial-antiqua text-lg">{field.state.value}</label>
                             )}
                         </form.Field>
 
                         {/* Valeur */}
-                        <form.Field name={`abilities[${ability.id}].value`}>
-                            {(field) => (
-                                <input
-                                    type="number"
-                                    name={field.name}
-                                    id={field.name}
-                                    value={field.state.value ?? ''}
-                                    onChange={(e) => field.handleChange(Number(e.target.value))}
-                                    className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
-                                    placeholder={`Valeur de la caractéristique : ${ability.label}`}
-                                />
-                            )}
-                        </form.Field>
-
-                        {/* Modifier */}
-                        <form.Field name={`abilities[${ability.id}].modifier`}>
+                        <form.Field name={`abilities[${index}].value`}>
                             {(field) => (
                                 <input
                                     type="number"
@@ -704,7 +647,22 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                                     value={field.state.value ?? ''}
                                     onChange={(e) => field.handleChange(Number(e.target.value))}
                                     className="w-full p-[8px] mt-[8px] bg-primary rounded-lg border border-secondary"
-                                    placeholder={`Modificateur de la caractéristique : ${ability.label}`}
+                                    placeholder="Valeur"
+                                />
+                            )}
+                        </form.Field>
+
+                        {/* Modificateur */}
+                        <form.Field name={`abilities[${index}].modifier`}>
+                            {(field) => (
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full p-[8px] mt-[8px] bg-primary rounded-lg border border-secondary"
+                                    placeholder="Modificateur"
                                 />
                             )}
                         </form.Field>
