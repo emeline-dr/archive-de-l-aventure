@@ -1,11 +1,19 @@
 import { useForm } from "@tanstack/react-form"
+import { useState } from "react"
 
 import type { Sheet } from "../../api/sheetApi"
 
 import { useSheets } from "../../api/sheetApi"
+import { useSkillCoCFiltered } from "../../api/CoC/skillCoCApi"
+import { useAbilitiesCoC } from "../../api/CoC/abilitiesCoC"
 
 export default function UpdateSheetCoC(props: { sheetId: number }) {
     const { data, isLoading } = useSheets(props.sheetId)
+
+    const [, setSkillsCount] = useState(1);
+    const [, setWeaponCount] = useState(1);
+    const [, setItemsCount] = useState(1);
+    const [, setFellowInvestigators] = useState(1);
 
     const form = useForm({
         defaultValues: {
@@ -31,27 +39,39 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
             dodge: data?.details.dodge ?? 0,
             spending_lvl: data?.details.spending_lvl ?? 0,
             cash: data?.details.cash ?? 0,
+            items: (data?.item ?? []).map((item) => ({
+                id: item.id,
+                sheet_id: item.sheet_id,
+                label: item.label,
+                quantity: item.quantity,
+                weight: item.weight,
+                description: item.description,
+            })),
             notes: data?.details.notes ?? '',
-            skills: [
-                {
-                    id: 1,
-                    skill_id: 0,
-                    sheet_id: data?.sheet.id ?? 0,
-                    label: '',
-                    value: 0,
-                    proficient: false,
-                    categories: '',
-                },
-            ],
-            weapons: [
-                {
-                    id: 1,
-                    name: '',
-                    type: '',
-                    damage: '',
-                    notes: '',
-                },
-            ],
+            abilities: (data?.abilities ?? []).map((ability) => ({
+                id: ability.id,
+                abilities_id: ability.abilities_id,
+                sheet_id: ability.sheet_id,
+                value: ability.value,
+                modifier: ability.modifier,
+                label: ability.label,
+            })),
+            skills: (data?.skill ?? []).map((skill) => ({
+                id: skill.id,
+                skill_id: skill.skill_id,
+                sheet_id: data?.sheet.id ?? 1,
+                label: skill.label,
+                value: skill.value,
+                proficient: skill.proficient,
+            })),
+            weapons: (data?.weapon ?? []).map((weapon) => ({
+                id: weapon.id,
+                sheet_id: weapon.sheet_id,
+                label: weapon.label,
+                damage_type: weapon.damage_type,
+                damage: weapon.damage,
+                notes: weapon.notes
+            })),
             personalDesc: data?.details.personal_desc ?? '',
             traits: data?.details.traits ?? '',
             believes: data?.details.believes ?? '',
@@ -62,17 +82,80 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
             tomeSpellsArtifacts: data?.details.tomes_spell_artifacts ?? '',
             encounters: data?.details.encounters ?? '',
             assets: data?.details.assets ?? '',
-            fellowInvestigators: [
-                {
-                    sheet_id: 1,
-                    name: '',
-                    player: '',
-                    id: 1,
-                },
-            ],
+            fellowInvestigators: (data?.fellowInvestigators ?? []).map((investigator) => ({
+                sheet_id: investigator.sheet_id,
+                player: investigator.player,
+                character: investigator.character,
+                id: investigator.id,
+            })),
         },
         onSubmit: async ({ value }) => {
             if (!data) return;
+
+            /* const existingAbilities = data.abilities ?? [];
+            const validAbilities = (value.abilities ?? []).filter(
+                (ability) => ability && !isNaN(ability.value)
+            )
+
+            const abilitiesToPatch = validAbilities.filter(ability =>
+                existingAbilities.some(existing => existing.id === ability.id)
+            )
+
+            const abilitiesToPost = validAbilities.filter(ability =>
+                !existingAbilities.some(existing => existing.id === ability.id) &&
+                !existingAbilities.some(existing =>
+                    existing.sheet_id === data.sheet.id && existing.abilities_id === ability.abilities_id
+                )
+            ) */
+
+            const existingItems = data.item ?? [];
+            const validItems = (value.items ?? []).filter(
+                (item) => item.label.trim() !== ''
+            )
+
+            const itemsToPatch = validItems.filter(item =>
+                existingItems.some(existing => existing.id === item.id)
+            )
+
+            const itemsToPost = validItems.filter(item =>
+                !existingItems.some(existing => existing.id === item.id) &&
+                !existingItems.some(existing =>
+                    existing.sheet_id === data.sheet.id && existing.label === item.label
+                )
+            )
+
+            const existingSkills = data.skill ?? [];
+            const validSkills = (value.skills ?? []).filter(
+                (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
+            );
+
+            const skillsToPatch = validSkills.filter(skill =>
+                existingSkills.some(existing => existing.id === skill.id)
+            );
+
+            const skillsToPost = validSkills.filter(skill =>
+                !existingSkills.some(existing => existing.id === skill.id) &&
+                !existingSkills.some(existing =>
+                    existing.skill_id === skill.skill_id && existing.sheet_id === data.sheet.id
+                )
+            );
+
+            const existingWeapons = data.weapon ?? [];
+            const validWeapons = (value.weapons ?? []).filter(
+                (weapon) => weapon.label.trim() !== '' && weapon.damage?.trim() !== ''
+            );
+
+
+            const weaponsToPatch = validWeapons.filter(weapon =>
+                existingWeapons.some(existing => existing.id === weapon.id)
+            )
+
+            const weaponsToPost = validWeapons.filter(weapon =>
+                !existingWeapons.some(existing => existing.id === weapon.id) &&
+                !existingWeapons.some(
+                    existing => existing.sheet_id === data.sheet.id && existing.label === weapon.label
+                )
+            );
 
             const payload: {
                 sheet: {
@@ -83,6 +166,23 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     avatar_src: string;
                 };
                 details?: Sheet["details"];
+                abilities?: Array<{
+                    id: number;
+                    abilities_id: number;
+                    sheet_id: number;
+                    value: number;
+                    modifier: number;
+                    label: string;
+                    system_id: number;
+                }>;
+                items?: Array<{
+                    id: number;
+                    sheet_id: number;
+                    label: string;
+                    quantity: number;
+                    weight: string | null;
+                    description: string | null;
+                }>;
                 skill?: Array<{
                     id: number;
                     skill_id: number;
@@ -93,7 +193,12 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     categories: string;
                 }>;
                 weapon?: Array<{ id: number; label: string; type: string; damage: string; notes: string }>;
-                fellowInvestigators?: { sheet_id: number; name: string; player: string; id: number; }
+                fellowInvestigators?: Array<{
+                    sheet_id: number;
+                    character: string;
+                    player: string;
+                    id: number;
+                }>;
             } = {
                 sheet: {
                     id: data.sheet.id,
@@ -102,6 +207,12 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     lastname: value.lastName,
                     avatar_src: value.avatar,
                 },
+                fellowInvestigators: (form.state.values.fellowInvestigators ?? []).map((investigator) => ({
+                    sheet_id: investigator.sheet_id,
+                    character: investigator.character,
+                    player: investigator.player,
+                    id: investigator.id,
+                })),
             };
 
             payload.details = {
@@ -139,67 +250,218 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 notes: value.notes,
             };
 
-            if (value.skills && value.skills.length > 0) {
-                const validSkills = value.skills.filter(
-                    (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
-                );
-
-                if (validSkills.length > 0) {
-                    payload.skill = validSkills.map((skill) => ({
-                        id: skill.id,
-                        skill_id: skill.skill_id,
-                        label: skill.label,
-                        value: skill.value,
-                        proficient: skill.proficient,
-                        categories: skill.categories,
-                        sheet_id: data.sheet.id
-                    }));
-                }
-            }
-
-
-            if (value.weapons && value.weapons.length > 0) {
-                const validWeapons = value.weapons.filter(
-                    (w) => w.name.trim() !== '' || w.damage.trim() !== '' || w.notes.trim() !== ''
-                );
-
-                if (validWeapons.length > 0) {
-                    payload.weapon = validWeapons.map((w) => ({
-                        id: w.id || 0,
-                        label: w.name,
-                        type: w.type,
-                        damage: w.damage,
-                        notes: w.notes,
-                    }));
-                }
-            }
-
-
             try {
-                console.log('Payload envoyé à l’API :', JSON.stringify(payload, null, 2));
-
-                const response = await fetch(`https://apidnd.up.railway.app/api/sheet/${data.sheet.id}`, {
+                // PATCH sans les skills vides
+                const patchRes = await fetch(`https://apidnd.up.railway.app/api/sheet/${data.sheet.id}`, {
                     method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 });
 
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la mise à jour de la fiche');
+                if (!patchRes.ok) throw new Error('Erreur lors du PATCH');
+
+                console.log('PATCH réussi : fiche mise à jour');
+
+                /* // PATCH des caractéristique existantes
+                if (abilitiesToPatch.length > 0) {
+                    for (const ability of abilitiesToPatch) {
+                        const bodyContent = {
+                            id: ability.id,
+                            abilities_id: ability.abilities_id,
+                            sheet_id: data.sheet.id,
+                            value: ability.value,
+                            modifier: ability.modifier,
+                            label: ability.label,
+                        };
+
+                        const patchAbilitiesRes = await fetch(`https://apidnd.up.railway.app/api/abilitiesSheet/${ability.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchAbilitiesRes.ok) throw new Error(`Erreur lors du PATCH de la caractéristique avec id ${ability.id}`);
+                    }
+
+                    console.log('PATCH des caractéristiques effectué');
                 }
 
-                const updatedData = await response.json();
-                console.log('Mise à jour réussie :', updatedData);
+                // POST si la caractéristique est nouvelle
+                if (abilitiesToPost.length > 0) {
+                    const url = `https://apidnd.up.railway.app/api/abilitiesSheet/multiple`;
+
+                    const bodyContent = abilitiesToPost.map(ability => ({
+                        abilities_id: ability.abilities_id,
+                        sheet_id: data.sheet.id,
+                        value: ability.value,
+                        modifier: ability.modifier,
+                        label: ability.label,
+                    }));
+
+                    const postAbilitiesRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
+                    });
+
+                    if (!postAbilitiesRes.ok) throw new Error('Erreur lors du POST des caractéristiques');
+
+                    console.log('POST des caractéristiques effectué');
+                } */
+
+                // PATCH des items existants
+                if (itemsToPatch.length > 0) {
+                    for (const item of itemsToPatch) {
+                        const bodyContent = {
+                            id: item.id,
+                            sheet_id: data.sheet.id,
+                            label: item.label,
+                            quantity: item.quantity,
+                            weight: item.weight,
+                            description: item.description,
+                        };
+
+                        const patchItemRes = await fetch(`https://apidnd.up.railway.app/api/inventoryItem/${item.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchItemRes.ok) throw new Error(`Erreur lors du PATCH de l'item avec id ${item.id}`);
+                    }
+
+                    console.log('PATCH des items effectué');
+                }
+
+                // POST si l'item est nouveau
+                if (itemsToPost.length > 0) {
+                    const url = `https://apidnd.up.railway.app/api/inventoryItem/multiple`;
+
+                    const bodyContent = itemsToPost.map(item => ({
+                        sheet_id: data.sheet.id,
+                        label: item.label,
+                        quantity: item.quantity,
+                        weight: item.weight,
+                        description: item.description,
+                    }));
+
+                    const postItemsRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
+                    });
+
+                    if (!postItemsRes.ok) throw new Error('Erreur lors du POST des items');
+
+                    console.log('POST des items effectué');
+                }
+
+                // PATCH des compétences existantes
+                if (skillsToPatch.length > 0) {
+                    for (const skill of skillsToPatch) {
+                        const bodyContent = {
+                            id: skill.id,
+                            skill_id: skill.skill_id,
+                            sheet_id: data.sheet.id,
+                            value: skill.value,
+                            proficient: skill.proficient,
+                        };
+
+                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/skillSheet/${skill.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchRes.ok) throw new Error(`Erreur lors du PATCH de la compétence avec id ${skill.id}`);
+                    }
+
+                    console.log('PATCH des compétences effectué');
+                }
+
+                // POST si la compétence est nouvelle
+                if (skillsToPost.length > 0) {
+                    const url = `https://apidnd.up.railway.app/api/skillSheet/multiple`;
+
+                    const bodyContent = skillsToPost.map(skill => ({
+                        skill_id: skill.skill_id,
+                        sheet_id: data.sheet.id,
+                        value: skill.value,
+                        proficient: skill.proficient,
+                    }));
+
+                    const postRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
+                    });
+
+                    if (!postRes.ok) throw new Error('Erreur lors du POST des compétences');
+
+                    console.log('POST des compétences effectué');
+                }
+
+                // PATCH des armes existantes
+                if (weaponsToPatch.length > 0) {
+                    for (const weapon of weaponsToPatch) {
+                        const bodyContent = {
+                            id: weapon.id,
+                            sheet_id: data.sheet.id,
+                            label: weapon.label,
+                            damage_type: weapon.damage_type,
+                            damage: weapon.damage,
+                            notes: weapon.notes,
+                        };
+
+                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/weaponSheet/${weapon.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchRes.ok) throw new Error(`Erreur lors du PATCH de l'arme avec id ${weapon.id}`);
+                    }
+
+                    console.log('PATCH des armes effectué');
+                }
+
+                // POST si l'arme est nouvelle
+                if (weaponsToPost.length > 0) {
+                    const url = `https://apidnd.up.railway.app/api/weaponSheet/multiple`;
+
+                    const bodyContent = weaponsToPost.map(weapon => ({
+                        sheet_id: data.sheet.id,
+                        label: weapon.label,
+                        damage: weapon.damage,
+                        damage_type: weapon.damage_type,
+                        notes: weapon.notes,
+                    }))
+
+                    const postWeaponsRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
+                    })
+
+                    if (!postWeaponsRes.ok) throw new Error('Erreur lors du POST des armes');
+
+                    console.log('POST des armes effectué')
+                }
+
             } catch (err) {
-                console.error('Erreur API:', err);
+                console.error('Erreur API :', err);
             }
         },
     })
 
+    const skillsCoC = useSkillCoCFiltered();
+    const abilitiesCoC = useAbilitiesCoC();
 
-    if (!data || isLoading) return <p>Chargement...</p>
+    if (
+        !data || isLoading
+        || !skillsCoC.data || skillsCoC.isLoading
+        || !abilitiesCoC.data || abilitiesCoC.isLoading
+    ) return <p>Chargement...</p>
 
     return (
         <form
@@ -229,7 +491,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 )}
             </form.Field>
 
-            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]">
+            <div className="w-full flex flex-wrap justify-between my-[40px] gap-x-[16px] gap-y-[40px]">
                 {/* Choix du prénom */}
                 <form.Field name="firstName">
                     {(field) => (
@@ -323,7 +585,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-[40px]">
+            <div className="w-full flex flex-wrap justify-between my-[40px] gap-[40px]">
                 {/* Choix du lieu de résidence */}
                 <form.Field name="residence">
                     {(field) => (
@@ -394,7 +656,63 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full gap-[16px] flex flex-wrap justify-between mt-[40px] gap-y-[40px]">
+            {/* Abilities */}
+            <div className='w-full flex flex-wrap justify-between my-[80px] gap-[16px]'>
+                <label className="block w-full text-xl font-uncial-antiqua mb-[8px] underline">
+                    Caractéristiques
+                </label>
+
+                {abilitiesCoC.data.map((ability) => (
+                    <div className="w-[240px]">
+                        <label className="w-full text-lg font-uncial-antiqua mb-[8px] text-center">{ability.label}</label>
+                        <form.Field name={`abilities[${ability.id}].id`}>
+                            {(field) => (
+                                <input
+                                    type="text"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="hidden"
+                                    disabled
+                                />
+                            )}
+                        </form.Field>
+
+                        {/* Valeur */}
+                        <form.Field name={`abilities[${ability.id}].value`}>
+                            {(field) => (
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                    placeholder={`Valeur de la caractéristique : ${ability.label}`}
+                                />
+                            )}
+                        </form.Field>
+
+                        {/* Modifier */}
+                        <form.Field name={`abilities[${ability.id}].modifier`}>
+                            {(field) => (
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full p-[8px] mt-[8px] bg-primary rounded-lg border border-secondary"
+                                    placeholder={`Modificateur de la caractéristique : ${ability.label}`}
+                                />
+                            )}
+                        </form.Field>
+                    </div>
+                ))}
+            </div>
+
+            <div className="w-full gap-[16px] flex flex-wrap justify-between my-[40px] gap-y-[40px]">
                 {/* Choix des dommages */}
                 <form.Field name="hit_point">
                     {(field) => (
@@ -487,7 +805,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full gap-[16px] flex flex-wrap justify-between mt-[40px] gap-y-[40px]">
+            <div className="w-full gap-[16px] flex flex-wrap justify-between my-[40px] gap-y-[40px]">
                 {/* Choix de la folie */}
                 <form.Field name="temp_insane">
                     {(field) => (
@@ -581,7 +899,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full gap-[16px] flex flex-wrap justify-between mt-[40px] gap-y-[40px]">
+            <div className="w-full gap-[16px] flex flex-wrap justify-between my-[40px] gap-y-[40px]">
                 {/* Choix des points magiques */}
                 <form.Field name="magic_points">
                     {(field) => (
@@ -675,7 +993,257 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-[40px]">
+            {/* Armes */}
+            <div className="w-full my-[40px]">
+                <label className="block text-xl font-uncial-antiqua mb-[8px]">Armes</label>
+
+                <div className="w-full flex flex-col gap-4">
+                    {form.state.values.weapons.map((_, index) => (
+                        <div key={index} className="flex flex-wrap gap-[8px]">
+                            {/* ID */}
+                            <form.Field name={`weapons[${index}].id`}>
+                                {(field) => (
+                                    <input
+                                        type="text"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="size-[40px] text-center text-xl bg-primary rounded-lg border border-secondary cursor-not-allowed"
+                                        disabled
+                                    />
+                                )}
+                            </form.Field>
+
+                            <div className="flex flex-wrap flex-1 gap-[8px]">
+                                {/* Nom */}
+                                <form.Field name={`weapons[${index}].label`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Nom de l'arme ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Types de dommage */}
+                                <form.Field name={`weapons[${index}].damage_type`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Type de dégâts de l'arme ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Dégâts */}
+                                <form.Field name={`weapons[${index}].damage`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Dégâts de l'arme ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Notes */}
+                                <form.Field name={`weapons[${index}].notes`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Notes de l'arme ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Supprimer une arme */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updatedWeapons = [...form.state.values.weapons]
+                                        updatedWeapons.splice(index, 1)
+                                        form.setFieldValue('weapons', updatedWeapons)
+                                        setWeaponCount((c) => c - 1)
+                                    }}
+                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                                >
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Ajouter une nouvelle arme */}
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const current = form.state.values.weapons ?? []
+                            const maxId = current.reduce((max, weapon) => Math.max(max, weapon.id ?? 0), 0);
+                            form.setFieldValue('weapons', [
+                                ...current,
+                                {
+                                    id: maxId + 1,
+                                    sheet_id: data?.sheet.id,
+                                    label: '',
+                                    damage_type: '',
+                                    damage: '',
+                                    notes: '',
+                                },
+                            ])
+                            setWeaponCount((w) => w + 1)
+                        }}
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
+                    >
+                        <i className="fa-solid fa-plus text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            {/* Compétences */}
+            <div className="w-full my-[40px]">
+                <label className="block text-xl font-uncial-antiqua mb-[8px]">
+                    Compétences de l'aventurier
+                </label>
+
+                <div className="w-full flex flex-col gap-4">
+                    {form.state.values.skills.map((_, index) => (
+                        <div key={index} className="flex flex-wrap gap-[8px]">
+                            {/* Nom */}
+                            <form.Field name={`skills[${index}].label`}>
+                                {(field) => (
+                                    <select
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => {
+                                            const selectedLabel = e.target.value;
+                                            const selectedSkill = skillsCoC.data.find(skill => skill.label === selectedLabel);
+
+                                            field.handleChange(selectedLabel);
+
+                                            if (selectedSkill) {
+                                                const updatedSkills = [...form.state.values.skills];
+                                                updatedSkills[index] = {
+                                                    ...updatedSkills[index],
+                                                    label: selectedLabel,
+                                                    skill_id: selectedSkill.id,
+                                                };
+                                                form.setFieldValue('skills', updatedSkills);
+                                            }
+                                        }}
+                                        className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                    >
+                                        <option value="">Sélectionner une compétence</option>
+                                        {skillsCoC.data.map((skill) => (
+                                            <option key={skill.id} value={skill.label}>
+                                                {skill.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                )}
+                            </form.Field>
+
+                            <form.Field name={`skills[${index}].proficient`}>
+                                {(field) => (
+                                    <label className="flex items-center text-lg gap-[8px] mx-[16px]">
+                                        <input
+                                            type="checkbox"
+                                            name={field.name}
+                                            id={field.name}
+                                            checked={field.state.value ?? false}
+                                            onChange={(e) => field.handleChange(e.target.checked)}
+                                            className="hidden"
+                                        />
+                                        <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                            {field.state.value && (
+                                                <i className="fa-solid fa-check text-accent"></i>
+                                            )}
+                                        </span>
+                                        Maîtrise ?
+                                    </label>
+                                )}
+                            </form.Field>
+
+
+                            {/* Valeur */}
+                            <form.Field name={`skills[${index}].value`}>
+                                {(field) => (
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder={`Points de la compétence ${index + 1}`}
+                                    />
+                                )}
+                            </form.Field>
+
+                            {/* Supprimer une compétence */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const updatedSkills = [...form.state.values.skills]
+                                    updatedSkills.splice(index, 1)
+                                    form.setFieldValue('skills', updatedSkills)
+                                    setSkillsCount((c) => c - 1)
+                                }}
+                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    ))}
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const current = form.state.values.skills ?? [];
+                            const maxId = current.reduce((max, skill) => Math.max(max, skill.id ?? 0), 0);
+
+                            form.setFieldValue('skills', [
+                                ...current,
+                                {
+                                    id: maxId + 1,
+                                    skill_id: 0,
+                                    label: '',
+                                    value: 0,
+                                    proficient: false,
+                                    sheet_id: 1,
+                                }
+                            ]);
+
+                            setSkillsCount((s) => s + 1)
+                        }}
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
+                    >
+                        <i className="fa-solid fa-plus text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div className="w-full flex flex-wrap justify-between my-[40px] gap-[40px]">
                 {/* Description */}
                 <form.Field name="personalDesc">
                     {(field) => (
@@ -721,7 +1289,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-[40px]">
+            <div className="w-full flex flex-wrap justify-between my-[40px] gap-[40px]">
                 {/* Idéologie et croyances */}
                 <form.Field name="believes">
                     {(field) => (
@@ -767,7 +1335,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-[40px]">
+            <div className="w-full flex flex-wrap justify-between my-[40px] gap-[40px]">
                 {/* Biens Précieux */}
                 <form.Field name="treasuredPossession">
                     {(field) => (
@@ -813,7 +1381,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-[40px]">
+            <div className="w-full flex flex-wrap justify-between my-[40px] gap-[40px]">
                 {/* Phobie et manies */}
                 <form.Field name="phobiaMania">
                     {(field) => (
@@ -859,7 +1427,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-[40px]">
+            <div className="w-full flex flex-wrap justify-between my-[40px] gap-[40px]">
                 {/* Rencontres importantes */}
                 <form.Field name="encounters">
                     {(field) => (
@@ -905,7 +1473,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
-            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-[40px]">
+            <div className="w-full flex flex-wrap justify-between my-[40px] gap-[40px]">
                 {/* Niveau de dépense */}
                 <form.Field name="spending_lvl">
                     {(field) => (
@@ -953,10 +1521,218 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
+            {/* Items */}
+            <div className="w-full my-[40px]">
+                <label className="block text-xl font-uncial-antiqua mb-[8px]">Objets de l'inventaire</label>
+
+                <div className="w-full flex flex-col gap-4">
+                    {form.state.values.items.map((_, index) => (
+                        <div key={index} className="flex flex-wrap gap-[8px]">
+                            <div className="flex flex-wrap flex-1 gap-[8px]">
+                                {/* ID */}
+                                <form.Field name={`items[${index}].id`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                                            className="size-[40px] text-center text-xl bg-primary rounded-lg border border-secondary cursor-not-allowed"
+                                            disabled
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Nom */}
+                                <form.Field name={`items[${index}].label`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Nom de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Quantité */}
+                                <form.Field name={`items[${index}].quantity`}>
+                                    {(field) => (
+                                        <input
+                                            type="number"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? 1}
+                                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Quantité de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Poids */}
+                                <form.Field name={`items[${index}].weight`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? 0}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Poids de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Description */}
+                                <form.Field name={`items[${index}].description`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? 0}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Description de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Supprimer un item */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updatedItems = [...form.state.values.items]
+                                        updatedItems.splice(index, 1)
+                                        form.setFieldValue('items', updatedItems)
+                                        setItemsCount((i) => i - 1)
+                                    }}
+                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                                >
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Ajouter un nouvel item */}
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const current = form.state.values.items ?? []
+                            const maxId = current.reduce((max, item) => Math.max(max, item.id ?? 0), 0);
+                            form.setFieldValue('items', [
+                                ...current,
+                                {
+                                    id: maxId + 1,
+                                    sheet_id: data?.sheet.id,
+                                    label: '',
+                                    quantity: 1,
+                                    weight: '',
+                                    description: '',
+                                },
+                            ])
+                            setItemsCount((i) => i + 1)
+                        }}
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
+                    >
+                        <i className="fa-solid fa-plus text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            {/* Amis investigateurs */}
+            <div className="w-full my-[40px]">
+                <label className="block text-xl font-uncial-antiqua mb-[8px]">
+                    Amis investigateurs
+                </label>
+
+                <div className="w-full flex flex-col gap-4">
+                    {form.state.values.fellowInvestigators?.map((_, index) => (
+                        <div key={index} className="flex flex-wrap gap-[8px]">
+                            {/* Nom */}
+                            <form.Field name={`fellowInvestigators[${index}].character`}>
+                                {(field) => (
+                                    <input
+                                        type="text"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ""}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder={`Nom du personnage ${index + 1}`}
+                                    />
+                                )}
+                            </form.Field>
+
+                            {/* Joueur */}
+                            <form.Field name={`fellowInvestigators[${index}].player`}>
+                                {(field) => (
+                                    <input
+                                        type="text"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ""}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder={`Joueur du personnage ${index + 1}`}
+                                    />
+                                )}
+                            </form.Field>
+
+                            {/* Supprimer un ami investigateur */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const updatedFellowInvestigators = [
+                                        ...form.state.values.fellowInvestigators,
+                                    ];
+                                    updatedFellowInvestigators.splice(index, 1);
+                                    form.setFieldValue("fellowInvestigators", updatedFellowInvestigators);
+                                    setFellowInvestigators((c) => c - 1);
+                                }}
+                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    ))}
+
+                    {/* Ajouter un ami investigateur */}
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const current = form.state.values.fellowInvestigators ?? [];
+                            const maxId = current.reduce((max, investigator) => Math.max(max, investigator.id ?? 0), 0);
+                            form.setFieldValue("fellowInvestigators", [
+                                ...current,
+                                {
+                                    id: maxId + 1,
+                                    sheet_id: data.sheet.id,
+                                    character: "",
+                                    player: "",
+                                },
+                            ]);
+                            setFellowInvestigators((i) => i + 1);
+                        }}
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
+                    >
+                        <i className="fa-solid fa-plus text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
+
             {/* Notes */}
             <form.Field name="notes">
                 {(field) => (
-                    <div className='mt-[40px] w-full'>
+                    <div className='my-[40px] w-full'>
                         <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
                             Notes
                         </label>
@@ -975,7 +1751,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
             {/* Bouton de soumission */}
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
                 {([canSubmit, isSubmitting]) => (
-                    <button type="submit" disabled={!canSubmit} className="btn btn-text mt-[40px]">
+                    <button type="submit" disabled={!canSubmit} className="btn btn-text my-[40px]">
                         {isSubmitting ? '...' : 'Mettre à jour la fiche'}
                     </button>
                 )}
