@@ -110,6 +110,13 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 existingItems.some(existing => existing.id === item.id)
             )
 
+            const itemsToPost = validItems.filter(item =>
+                !existingItems.some(existing => existing.id === item.id) &&
+                !existingItems.some(existing =>
+                    existing.sheet_id === data.sheet.id && existing.label === item.label
+                )
+            )
+
             const existingSkills = data.skill ?? [];
             const validSkills = (value.skills ?? []).filter(
                 (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
@@ -296,6 +303,29 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     }
 
                     console.log('PATCH des items effectué');
+                }
+
+                // POST si l'item est nouveau
+                if (itemsToPost.length > 0) {
+                    const url = `https://apidnd.up.railway.app/api/inventoryItem/multiple`;
+
+                    const bodyContent = itemsToPost.map(item => ({
+                        sheet_id: data.sheet.id,
+                        label: item.label,
+                        quantity: item.quantity,
+                        weight: item.weight,
+                        description: item.description,
+                    }));
+
+                    const postItemsRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
+                    });
+
+                    if (!postItemsRes.ok) throw new Error('Erreur lors du POST des items');
+
+                    console.log('POST des items effectué');
                 }
 
                 // PATCH des compétences existantes

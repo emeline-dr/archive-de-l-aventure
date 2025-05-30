@@ -8,6 +8,7 @@ import { useSpecies, useSubSpecies } from "../../api/DnD/speciesDnDApi"
 import { useClass, useSubClass } from "../../api/DnD/classDnDApi"
 import { useOrigin } from "../../api/DnD/originDnDApi"
 import { useLanguage } from "../../api/DnD/languageDnDApi"
+import { useSkillDnDFiltered } from "../../api/DnD/skillDnDApi"
 
 export default function UpdateSheetDnD(props: { sheetId: number }) {
     const { data, isLoading } = useSheets(props.sheetId)
@@ -17,8 +18,10 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
     const subClassDnD = useSubClass();
     const originDnD = useOrigin();
     const languageDnD = useLanguage();
+    const skillsDnD = useSkillDnDFiltered();
 
     const [, setLanguageCount] = useState(1);
+    const [, setSkillsCount] = useState(1);
 
     const form = useForm({
         defaultValues: {
@@ -86,6 +89,22 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
             const abilitiesToPatch = validAbilities.filter(ability =>
                 existingAbilities.some(existing => existing.id === ability.id)
             )
+
+            const existingSkills = data.skill ?? [];
+            const validSkills = (value.skills ?? []).filter(
+                (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
+            );
+
+            const skillsToPatch = validSkills.filter(skill =>
+                existingSkills.some(existing => existing.id === skill.id)
+            );
+
+            const skillsToPost = validSkills.filter(skill =>
+                !existingSkills.some(existing => existing.id === skill.id) &&
+                !existingSkills.some(existing =>
+                    existing.skill_id === skill.skill_id && existing.sheet_id === data.sheet.id
+                )
+            );
 
             const payload: {
                 sheet: {
@@ -183,6 +202,51 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
 
                     console.log('PATCH des caractéristiques effectué');
                 }
+
+                // PATCH des compétences existantes
+                if (skillsToPatch.length > 0) {
+                    for (const skill of skillsToPatch) {
+                        const bodyContent = {
+                            id: skill.id,
+                            skill_id: skill.skill_id,
+                            sheet_id: data.sheet.id,
+                            value: skill.value,
+                            proficient: skill.proficient,
+                        };
+
+                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/skillSheet/${skill.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchRes.ok) throw new Error(`Erreur lors du PATCH de la compétence avec id ${skill.id}`);
+                    }
+
+                    console.log('PATCH des compétences effectué');
+                }
+
+                // POST si la compétence est nouvelle
+                if (skillsToPost.length > 0) {
+                    const url = `https://apidnd.up.railway.app/api/skillSheet/multiple`;
+
+                    const bodyContent = skillsToPost.map(skill => ({
+                        skill_id: skill.skill_id,
+                        sheet_id: data.sheet.id,
+                        value: skill.value,
+                        proficient: skill.proficient,
+                    }));
+
+                    const postRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
+                    });
+
+                    if (!postRes.ok) throw new Error('Erreur lors du POST des compétences');
+
+                    console.log('POST des compétences effectué');
+                }
             } catch (err) {
                 console.error('Erreur API :', err);
             }
@@ -203,7 +267,9 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
         originDnD.isLoading ||
         !originDnD.data ||
         languageDnD.isLoading ||
-        !languageDnD.data
+        !languageDnD.data ||
+        skillsDnD.isLoading ||
+        !skillsDnD.data
     ) {
         return <p>Chargement...</p>;
     }
@@ -672,13 +738,13 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
             </div>
 
             {/* Abilities */}
-            <div className='w-full flex flex-wrap justify-between my-[80px] gap-[16px]'>
+            <div className='w-full flex flex-wrap justify-start my-[80px] gap-[16px]'>
                 <label className="block w-full text-xl font-uncial-antiqua mb-[8px] underline">
                     Caractéristiques
                 </label>
 
                 {form.state.values.abilities.map((_, index) => (
-                    <div key={index} className="w-[240px]">
+                    <div key={index} className="flex-1">
                         {/* Sélection de la capacité */}
                         <form.Field name={`abilities[${index}].label`}>
                             {(field) => (
@@ -717,6 +783,129 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                         </form.Field>
                     </div>
                 ))}
+            </div>
+
+            {/* Compétences */}
+            <div className="w-full my-[40px]">
+                <label className="block text-xl font-uncial-antiqua mb-[8px]">
+                    Compétences de l'aventurier
+                </label>
+
+                <div className="w-full flex flex-col gap-4">
+                    {form.state.values.skills.map((_, index) => (
+                        <div key={index} className="flex flex-wrap gap-[8px]">
+                            {/* Nom */}
+                            <form.Field name={`skills[${index}].label`}>
+                                {(field) => (
+                                    <select
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => {
+                                            const selectedLabel = e.target.value;
+                                            const selectedSkill = skillsDnD.data.find(skill => skill.label === selectedLabel);
+
+                                            field.handleChange(selectedLabel);
+
+                                            if (selectedSkill) {
+                                                const updatedSkills = [...form.state.values.skills];
+                                                updatedSkills[index] = {
+                                                    ...updatedSkills[index],
+                                                    label: selectedLabel,
+                                                    skill_id: selectedSkill.id,
+                                                };
+                                                form.setFieldValue('skills', updatedSkills);
+                                            }
+                                        }}
+                                        className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                    >
+                                        <option value="">Sélectionner une compétence</option>
+                                        {skillsDnD.data.map((skill) => (
+                                            <option key={skill.id} value={skill.label}>
+                                                {skill.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                )}
+                            </form.Field>
+
+                            <form.Field name={`skills[${index}].proficient`}>
+                                {(field) => (
+                                    <label className="flex items-center text-lg gap-[8px] mx-[16px]">
+                                        <input
+                                            type="checkbox"
+                                            name={field.name}
+                                            id={field.name}
+                                            checked={field.state.value ?? false}
+                                            onChange={(e) => field.handleChange(e.target.checked)}
+                                            className="hidden"
+                                        />
+                                        <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                            {field.state.value && (
+                                                <i className="fa-solid fa-check text-accent"></i>
+                                            )}
+                                        </span>
+                                        Maîtrise ?
+                                    </label>
+                                )}
+                            </form.Field>
+
+                            {/* Valeur */}
+                            <form.Field name={`skills[${index}].value`}>
+                                {(field) => (
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder={`Points de la compétence ${index + 1}`}
+                                    />
+                                )}
+                            </form.Field>
+
+                            {/* Supprimer une compétence */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const updatedSkills = [...form.state.values.skills]
+                                    updatedSkills.splice(index, 1)
+                                    form.setFieldValue('skills', updatedSkills)
+                                    setSkillsCount((c) => c - 1)
+                                }}
+                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    ))}
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const current = form.state.values.skills ?? [];
+                            const maxId = current.reduce((max, skill) => Math.max(max, skill.id ?? 0), 0);
+
+                            form.setFieldValue('skills', [
+                                ...current,
+                                {
+                                    id: maxId + 1,
+                                    skill_id: 0,
+                                    label: '',
+                                    value: 0,
+                                    proficient: false,
+                                    sheet_id: 1,
+                                }
+                            ]);
+
+                            setSkillsCount((s) => s + 1)
+                        }}
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
+                    >
+                        <i className="fa-solid fa-plus text-2xl"></i>
+                    </button>
+                </div>
             </div>
 
             {/* Bouton de soumission */}
