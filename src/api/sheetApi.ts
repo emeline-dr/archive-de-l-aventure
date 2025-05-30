@@ -42,7 +42,7 @@ export type Item = {
     sheet_id: number;
     label: string;
     quantity: number;
-    weight: number | null;
+    weight: string | null;
     description: string | null;
 };
 
