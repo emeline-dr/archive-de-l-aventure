@@ -34,6 +34,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             passions: data?.details.passions ?? '',
             anxieties: data?.details.anxieties ?? '',
             personalityHabitsQuirks: data?.details.personality_habits_quirks ?? '',
+            lvl: data?.sheet.lvl ?? 1,
             expTotal: data?.details.exp_total ?? 0,
             expSaved: data?.details.exp_saved ?? 0,
             expoSpend: data?.details.expo_spent ?? 0,
@@ -155,6 +156,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     firstname: string;
                     lastname: string;
                     avatar_src: string;
+                    lvl: number;
                 };
                 details?: Sheet["details"];
                 abilities?: Array<{
@@ -192,6 +194,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     firstname: value.firstName,
                     lastname: value.lastName,
                     avatar_src: value.avatar,
+                    lvl: value.lvl,
                 },
             };
 
@@ -437,24 +440,108 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 form.handleSubmit()
             }}
         >
-            <form.Field name="avatar">
-                {(field) => (
-                    <div>
-                        <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                            Avatar
-                        </label>
-                        <input
-                            type="text"
-                            name={field.name}
-                            id={field.name}
-                            value={field.state.value ?? ''}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            className="p-[8px] bg-primary rounded-lg border border-secondary"
-                            placeholder="Entrez l'url de votre avatar"
-                        />
-                    </div>
-                )}
-            </form.Field>
+            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]">
+                <form.Field name="avatar">
+                    {(field) => (
+                        <div>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Avatar
+                            </label>
+                            <input
+                                type="text"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                                className="p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez l'url de votre avatar"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Level */}
+                <form.Field name="lvl">
+                    {(field) => (
+                        <div className="w-[240px]">
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Niveau
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 1}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre nvieau"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
+                {/* Choix de l'exp total */}
+                <form.Field name="expTotal">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Expérience totale
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre expérience totale"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix de l'expérience dépensée */}
+                <form.Field name="expoSpend">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Expérience dépensée
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre expérience dépensée"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix de l'expérience restante */}
+                <form.Field name="expSaved">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Expérience restante
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre expérience restante"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
 
             <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix du prénom */}
@@ -813,68 +900,6 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos rôles"
-                            />
-                        </div>
-                    )}
-                </form.Field>
-            </div>
-
-            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
-                {/* Choix de l'exp total */}
-                <form.Field name="expTotal">
-                    {(field) => (
-                        <div className='w-[240px]'>
-                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                Expérience totale
-                            </label>
-                            <input
-                                type="number"
-                                name={field.name}
-                                id={field.name}
-                                value={field.state.value ?? 0}
-                                onChange={(e) => field.handleChange(Number(e.target.value))}
-                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
-                                placeholder="Entrez votre expérience totale"
-                            />
-                        </div>
-                    )}
-                </form.Field>
-
-                {/* Choix de l'expérience dépensée */}
-                <form.Field name="expoSpend">
-                    {(field) => (
-                        <div className='w-[240px]'>
-                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                Expérience dépensée
-                            </label>
-                            <input
-                                type="number"
-                                name={field.name}
-                                id={field.name}
-                                value={field.state.value ?? 0}
-                                onChange={(e) => field.handleChange(Number(e.target.value))}
-                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
-                                placeholder="Entrez votre expérience dépensée"
-                            />
-                        </div>
-                    )}
-                </form.Field>
-
-                {/* Choix de l'expérience restante */}
-                <form.Field name="expSaved">
-                    {(field) => (
-                        <div className='w-[240px]'>
-                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                Expérience restante
-                            </label>
-                            <input
-                                type="number"
-                                name={field.name}
-                                id={field.name}
-                                value={field.state.value ?? 0}
-                                onChange={(e) => field.handleChange(Number(e.target.value))}
-                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
-                                placeholder="Entrez votre expérience restante"
                             />
                         </div>
                     )}

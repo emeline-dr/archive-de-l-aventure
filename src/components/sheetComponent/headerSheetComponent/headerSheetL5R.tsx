@@ -4,6 +4,7 @@ type HeaderSheetL5RProps = {
     family: string;
     school: string;
     school_rank: number;
+    lvl: number;
     exp_total: number;
     exp_spent: number;
     exp_saved: number;
@@ -16,11 +17,12 @@ export default function HeaderSheetL5R(props: HeaderSheetL5RProps) {
                 <div><span className='font-uncial-antiqua text-2xl'>Clan :</span> {props.clan}</div>
                 <div><span className='font-uncial-antiqua text-2xl'>Famille :</span> {props.family}</div>
                 <div><span className='font-uncial-antiqua text-2xl'>École :</span> {props.school}</div>
+                <div><span className='font-uncial-antiqua text-2xl'>Rang :</span> {props.school_rank}</div>
             </div>
 
             <div className='absolute flex flex-col justify-between gap-[8px] end-[40px] w-[150px] h-[250px] z-1'>
                 <div className='flex justify-center size-[150px] rounded-full bg-background'>
-                    <span className="self-center text-uncial-antiqua text-[64px]">{props.school_rank}</span>
+                    <span className="self-center text-uncial-antiqua text-[64px]">{props.lvl}</span>
                 </div>
                 <div className='w-full flex flex-wrap bg-text p-[8px] text-background rounded-sm'>
                     <span className='self-center'>Exp. Totale</span> <span className='flex-1 text-center text-uncial-antiqua text-2xl'>{props.exp_total}</span>
