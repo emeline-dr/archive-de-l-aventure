@@ -307,7 +307,7 @@ export function OthersCharactersPage() {
                         enemies={details.enemies || ''}
                     />}
 
-                {sheet.system_id === 3 &&
+                {sheet.system_id === 3 && fellowInvestigators &&
                     <>
                         <FellowInvestigatorsSheet
                             fellow_investigators={fellowInvestigators}

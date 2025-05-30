@@ -10,7 +10,7 @@ export default function SavingThrowSheet(props: SavingThrowSheetProps) {
     const { savingThrows } = props;
     return (
         <>
-            <div className="w-[300px] flex flex-wrap flex-col justify-start gap-[8px] p-[8px] rounded-[3px]">
+            <div className="w-[300px] flex flex-wrap flex-col justify-start gap-[8px] rounded-[3px]">
                 <h3 className="w-full block text-2xl font-uncial-antiqua mt-[40px] mb-[40px] underline">Jets de sauvegarde</h3>
                 <div className="w-full bg-primary rounded-[3px] p-[8px] flex flex-col justify-between gap-[16px]">
                     {savingThrows.map((s_t) => (
@@ -33,7 +33,7 @@ export default function SavingThrowSheet(props: SavingThrowSheetProps) {
                 </div>
             </div>
 
-            <div className="w-[300px] flex flex-wrap flex-col justify-start gap-[8px] p-[8px] rounded-[3px]">
+            <div className="w-[300px] flex flex-wrap flex-col justify-start gap-[8px] rounded-[3px]">
                 <h3 className="w-full block text-2xl font-uncial-antiqua mt-[40px] mb-[40px] underline">Contre la mort</h3>
                 <div className="w-full flex flex-wrap justify-between gap-[8px] bg-primary rounded-[3px] p-[8px]">
                     <div className="flex-1">

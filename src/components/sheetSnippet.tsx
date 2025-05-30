@@ -92,7 +92,7 @@ function SheetSnippet(props: SheetSnippetProps) {
 
     return (
         <div className="relative flex flex-wrap justify-start w-full lg:w-[49%] h-[135px] py-[27px] px-[16px] bg-primary rounded-[5px]">
-            <img src={`${props.img}`} alt={`Avatar de ${props.name}`} className="size-[80px] object-cover outline-3 outline-secondary rounded-sm" />
+            <img src={`${props.img}`} alt={`Avatar de ${props.name}`} className="w-[80px] h-[100px] -mt-[10px] object-cover outline-3 outline-secondary rounded-sm" />
             <div className="flex flex-wrap flex-col justify-center ms-[8px]">
                 <span className="w-[150px] md:w-full lg:w-[100px] xl:w-[250px] font-uncial-antiqua text-2xl truncate">
                     <Link

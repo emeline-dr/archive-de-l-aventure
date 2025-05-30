@@ -25,7 +25,7 @@ function Sidebar() {
                     <img
                         src={`${sheet.avatar_src}`}
                         alt={`Avatar de ${sheet.firstname} ${sheet.lastname}`}
-                        className="mx-[20px] size-[40px] xl:size-[80px] object-cover outline-3 outline-secondary rounded-xs"
+                        className="mx-[20px] w-[40px] h-[100px] xl:w-[80px] object-cover outline-3 outline-secondary rounded-xs"
                     />
                     <span className="block w-full text-center font-uncial-antiqua text-lg mt-[8px] mb-[16px] truncate">
                         {sheet.firstname} {sheet.lastname}
