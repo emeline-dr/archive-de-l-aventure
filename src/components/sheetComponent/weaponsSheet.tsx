@@ -17,37 +17,37 @@ export default function WeaponsSheet(props: WeaponsSheetProps) {
                 </div>
             ) : (weapons.map((weapon) => (
                 <div className="w-full flex flex-wrap gap-[8px]">
-                    <div className="h-[60px] flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
+                    <div className="h-[65px] flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
                         <span className="font-uncial-antiqua text-xl">{weapon.label}</span>
                     </div>
 
                     {props.system_id === 2 &&
                         <>
-                            <div className="h-[60px] flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
+                            <div className="h-[65px] flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
                                 <span>{weapon.properties}</span>
                             </div>
 
 
-                            <div className="h-[60px] flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
+                            <div className="h-[65px] flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
                                 <span className="font-uncial-antiqua text-xl">Attaque</span>
                                 <span className="self-center leading-[2] ps-[16px]">{weapon.bonus}</span>
                             </div>
                         </>
                     }
 
-                    <div className="h-[60px] flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
+                    <div className="h-[65px] flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
                         <span className="font-uncial-antiqua text-xl">Dégâts</span>
                         <span className="self-center leading-[2] ps-[16px]">{weapon.damage}</span>
                     </div>
 
                     {props.system_id === 2 &&
-                        <div className="h-fit flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
+                        <div className="h-[65px] flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
                             <span className="font-uncial-antiqua text-xl">Type</span>
                             <span className="self-center leading-[2] ps-[16px]">{weapon.damage_type}</span>
                         </div>
                     }
 
-                    <div className="h-fit flex-1 flex justify-start content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
+                    <div className="flex-1 flex justify-start content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
                         <span className="flex-1 font-uncial-antiqua text-xl">Autres</span>
                         <span className="self-center leading-[2] ps-[16px]">{weapon.notes ? weapon.notes : '/'}</span>
                     </div>
