@@ -79,8 +79,10 @@ export type Feat = {
 
 export type SavingThrows = {
     id: number;
+    sheet_id: number;
     value: number;
     proficient: boolean;
+    abilities_id: number;
     label: string;
 }
 

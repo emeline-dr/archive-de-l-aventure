@@ -40,7 +40,7 @@ export default function WeaponsSheet(props: WeaponsSheetProps) {
                         <span className="self-center leading-[2] ps-[16px]">{weapon.damage}</span>
                     </div>
 
-                    {props.system_id === 2 &&
+                    {props.system_id !== 1 &&
                         <div className="h-[65px] flex flex-wrap content-center px-[8px] py-[16px] rounded-[3px] bg-primary">
                             <span className="font-uncial-antiqua text-xl">Type</span>
                             <span className="self-center leading-[2] ps-[16px]">{weapon.damage_type}</span>
