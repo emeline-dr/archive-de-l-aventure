@@ -9,13 +9,13 @@ type HealthSheetDnDProps = {
 }
 
 export default function HealthSheetDnD(props: HealthSheetDnDProps) {
-    const sagesseAbility = props.abilities.find((sagesse) => sagesse.id === 10);
+    const sagesseAbility = props.abilities.find((sagesse) => sagesse.abilities_id === 10);
     let perception = 0;
 
     if (!sagesseAbility) {
         perception = 0
     } else {
-        perception = sagesseAbility.value + 10;
+        perception = sagesseAbility.modifier + 10;
     }
 
     return (
