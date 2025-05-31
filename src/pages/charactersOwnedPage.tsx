@@ -120,7 +120,7 @@ export function CharactersOwnedPage() {
                             <OthersCharactericticsSheet
                                 proficiency={details.proficiency ?? 0}
                                 ca={details.ca ?? 0}
-                                initiative={details.speed ?? 0}
+                                initiative={details.initiative ?? 0}
                                 speed={details.speed ?? 0}
                                 swim_speed={details.swim_speed ?? 0}
                                 climb_speed={details.climb_speed ?? 0}
