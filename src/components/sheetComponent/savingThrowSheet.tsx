@@ -41,7 +41,7 @@ export default function SavingThrowSheet(props: SavingThrowSheetProps) {
                         {Array.from({ length: 3 }).map((_, index) => (
                             <i
                                 key={index}
-                                className={`fa-regular fa-heart text-[24px] ${index < props.success ? 'text-green-500' : 'text-text'
+                                className={`fa-regular fa-heart text-[24px] ${index < props.success ? 'text-green-600' : 'text-text'
                                     }`}
                             ></i>
                         ))}
@@ -53,7 +53,7 @@ export default function SavingThrowSheet(props: SavingThrowSheetProps) {
                         {Array.from({ length: 3 }).map((_, index) => (
                             <i
                                 key={index}
-                                className={`fa-solid fa-skull text-[24px] ${index < props.success ? 'text-green-500' : 'text-text'
+                                className={`fa-solid fa-skull text-[24px] ${index < props.success ? 'text-red-800' : 'text-text'
                                     }`}
                             ></i>
                         ))}
