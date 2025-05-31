@@ -743,7 +743,6 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                     )}
                 </form.Field>
 
-
                 {/* Choix si inconscient ou pas */}
                 <form.Field name="unconscious">
                     {(field) => (

@@ -81,7 +81,14 @@ export default function OthersCharactericticsSheet(props: OthersCharactericticsS
             </div>
             <div className="flex flex-wrap flex-col justify-start p-[8px] text-center text-base flex-1 size-[100px] bg-primary rounded-[3px]">
                 Inspiration
-                <span className="font-uncial-antiqua text-2xl">{props.inspiration}</span>
+                <span className="font-uncial-antiqua text-2xl mt-[8px]">
+                    {props.inspiration === true &&
+                        <i className="fa-solid fa-check"></i>
+                    }
+                    {props.inspiration === false &&
+                        <i className="fa-solid fa-x"></i>
+                    }
+                </span>
             </div>
         </div>
     )
