@@ -162,7 +162,7 @@ export function CthulhuFormComponent() {
         } else {
           const responseData = await response.json();
           console.log("Fiche CoC envoyée avec succès :", responseData);
-          alert("Fiche CoC envoyée avec succès !");
+          window.location.href = "/index";
         }
       } catch (error) {
         console.error("Erreur réseau :", error);

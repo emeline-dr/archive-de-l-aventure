@@ -5,69 +5,181 @@ import { useClan } from "../../api/L5R/clanL5RApi"
 import { useFamily } from "../../api/L5R/familyL5RApi"
 import { useSchool } from "../../api/L5R/schoolL5RApi"
 import { useSkillL5RFiltered } from "../../api/L5R/skillL5RApi"
+import { useAbilitiesL5R } from "../../api/L5R/abilitiesL5RApi"
+import { getDecodedJwt } from "../../utils/AuthUtils";
 
 export function L5rFormComponent() {
+    const decodedToken = getDecodedJwt();
+    const userId = decodedToken?.id;
+
     const form = useForm({
         defaultValues: {
             avatar: '',
             firstName: '',
             lastName: '',
-            clan: '',
-            family: '',
-            school: '',
-            rankSchool: '',
+            clan_id: 0,
+            family_id: 0,
+            school_id: 0,
+            roles: '',
+            rankSchool: 0,
             ninjo: '',
             giri: '',
             distinctions: '',
+            adversities: '',
             passions: '',
             anxieties: '',
             personalityHabitsQuirks: '',
-            expTotal: '',
-            expSaved: '',
-            expoSpend: '',
-            endurance: '',
-            enduranceFatigue: '',
-            composure: '',
-            composureStrife: '',
-            focus: '',
-            vigilance: '',
-            voidPointsMax: '',
-            voidPointsCurrent: '',
-            skills: [{ label: '', value: '' }],
-            koku: '',
-            zeni: '',
-            bu: '',
+            lvl: 1,
+            expTotal: 0,
+            expSaved: 0,
+            expoSpend: 0,
+            endurance: 0,
+            enduranceFatigue: 0,
+            composure: 0,
+            composureStrife: 0,
+            focus: 0,
+            vigilance: 0,
+            voidPointsMax: 0,
+            voidPointsCurrent: 0,
+            abilities: [{
+                abilities_id: 1,
+                value: 1,
+                modifier: 0,
+            }],
+            skills: [{
+                skill_id: 1,
+                label: '',
+                value: 1,
+                proficient: false,
+            }],
+            koku: 0,
+            zeni: 0,
+            bu: 0,
+            items: [{
+                label: '',
+                quantity: 1,
+                weight: '',
+                description: '',
+            }],
+            notes: '',
             Adv: '',
             DisAdv: '',
             conditions: '',
             schoolAbilities: '',
             techniquesNewActions: '',
             techniquesNewFlower: '',
-            armors: [''],
             weapons: [{
-                id: '',
-                name: '',
+                label: '',
                 damage: '',
-                notes: '',
+                notes: ''
             }],
         },
         onSubmit: async ({ value }) => {
-            console.log('Fiche mise à jour avec :', value)
+            try {
+                const payload = {
+                    sheet: {
+                        firstname: value.firstName,
+                        lastname: value.lastName,
+                        avatar_src: value.avatar,
+                        lvl: value.lvl,
+                        user_id: userId,
+                        system_id: 1,
+                    },
+                    details: {
+                        clan_id: value.clan_id,
+                        family_id: value.family_id,
+                        school_id: value.school_id,
+                        school_rank: value.rankSchool,
+                        roles: value.roles,
+                        ninjo: value.ninjo,
+                        giri: value.giri,
+                        distinctions: value.distinctions,
+                        adversities: value.adversities,
+                        passions: value.passions,
+                        anxieties: value.anxieties,
+                        personality_habits_quirks: value.personalityHabitsQuirks,
+                        exp_total: value.expTotal,
+                        exp_saved: value.expSaved,
+                        expo_spent: value.expoSpend,
+                        endurance: value.endurance,
+                        endurance_fatigue: value.enduranceFatigue,
+                        composure: value.composure,
+                        composure_strife: value.composureStrife,
+                        focus: value.focus,
+                        vigilance: value.vigilance,
+                        void_points_max: value.voidPointsMax,
+                        void_points_current: value.voidPointsCurrent,
+                        koku: value.koku,
+                        zeni: value.zeni,
+                        bu: value.bu,
+                        notes: value.notes,
+                        adv: value.Adv,
+                        disadv: value.DisAdv,
+                        conditions: value.conditions,
+                        school_abilities: value.schoolAbilities,
+                        techniques_new_actions: value.techniquesNewActions,
+                        techniques_new_flower: value.techniquesNewFlower,
+                    },
+                    abilities: (value.abilities ?? []).map((ability) => ({
+                        abilities_id: ability.abilities_id,
+                        value: ability.value,
+                        modifier: ability.modifier,
+                    })),
+                    items: (value.items ?? []).map((item) => ({
+                        label: item.label,
+                        quantity: item.quantity,
+                        weight: item.weight,
+                        description: item.description,
+                    })),
+                    skills: (value.skills ?? []).map((skill) => ({
+                        skill_id: skill.skill_id,
+                        value: skill.value,
+                        proficient: skill.proficient,
+                    })),
+                    weapons: (value.weapons ?? []).map((weapon) => ({
+                        label: weapon.label,
+                        damage: weapon.damage,
+                        notes: weapon.notes,
+                    }))
+                }
+
+                const response = await fetch("https://apidnd.up.railway.app/api/sheet/l5r", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Erreur lors de l'envoi :", errorData);
+                    alert("Erreur lors de l'envoi du formulaire");
+                } else {
+                    const responseData = await response.json();
+                    console.log("Fiche L5R envoyée avec succès :", responseData);
+                    window.location.href = "/index";
+                }
+            } catch (error) {
+                console.error("Erreur réseau :", error);
+                alert("Erreur réseau");
+            }
         },
     })
 
-    const [, setSkillsCount] = useState(0);
-    const [armorCount, setArmorCount] = useState(1);
-    const [, setWeaponCount] = useState(0)
+    const [, setSkillsCount] = useState(1);
+    const [, setWeaponCount] = useState(1);
+    const [, setItemsCount] = useState(1);
 
     const clansL5R = useClan();
     const familiesL5R = useFamily();
     const schoolsL5R = useSchool();
     const skillsL5R = useSkillL5RFiltered();
+    const abilitiesL5R = useAbilitiesL5R();
 
-    if (clansL5R.isLoading || familiesL5R.isLoading || schoolsL5R.isLoading || skillsL5R.isLoading) return <p>Chargement en cours...</p>;
-    if (clansL5R.error || familiesL5R.error || schoolsL5R.error || skillsL5R.error) return <p>Erreur</p>;
-    if (!schoolsL5R.data || !familiesL5R.data || !clansL5R.data || !skillsL5R.data) return null;
+    if (clansL5R.isLoading || familiesL5R.isLoading || schoolsL5R.isLoading || skillsL5R.isLoading || abilitiesL5R.isLoading) return <p>Chargement en cours...</p>;
+    if (clansL5R.error || familiesL5R.error || schoolsL5R.error || skillsL5R.error || abilitiesL5R.error) return <p>Erreur</p>;
+    if (!schoolsL5R.data || !familiesL5R.data || !schoolsL5R.data || !skillsL5R.data || !abilitiesL5R.data) return null;
 
     return (
         <form
@@ -97,7 +209,91 @@ export function L5rFormComponent() {
                 )}
             </form.Field>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]'>
+            <div className="w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]">
+                {/* Level */}
+                <form.Field name="lvl">
+                    {(field) => (
+                        <div className="w-[240px]">
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Niveau
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 1}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre nvieau"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
+                {/* Choix de l'exp total */}
+                <form.Field name="expTotal">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Expérience totale
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre expérience totale"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix de l'expérience dépensée */}
+                <form.Field name="expoSpend">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Expérience dépensée
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre expérience dépensée"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+
+                {/* Choix de l'expérience restante */}
+                <form.Field name="expSaved">
+                    {(field) => (
+                        <div className='w-[240px]'>
+                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                                Expérience restante
+                            </label>
+                            <input
+                                type="number"
+                                name={field.name}
+                                id={field.name}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
+                                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                placeholder="Entrez votre expérience restante"
+                            />
+                        </div>
+                    )}
+                </form.Field>
+            </div>
+
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix du prénom */}
                 <form.Field name="firstName">
                     {(field) => (
@@ -109,6 +305,7 @@ export function L5rFormComponent() {
                                 type="text"
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre prénom"
@@ -128,6 +325,7 @@ export function L5rFormComponent() {
                                 type="text"
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre nom de famille"
@@ -137,78 +335,93 @@ export function L5rFormComponent() {
                 </form.Field>
 
                 {/* Choix du clan */}
-                <form.Field name="clan">
+                <form.Field name="clan_id">
                     {(field) => (
-                        <div className='w-[240px]'>
-                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                Clan
-                            </label>
-                            <select
-                                name={field.name}
-                                id={field.name}
-                                value={field.state.value ?? ''}
-                                onChange={(e) => field.handleChange(e.target.value)}
-                                className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
-                            >
-                                <option value="">Sélectionner un clan</option>
-                                {clansL5R.data.map((clanL5R) => (
-                                    <option key={clanL5R.id} value={clanL5R.label}>
-                                        {clanL5R.label}
-                                    </option>
+                        <div className="flex-1">
+                            <label className="block text-xl font-uncial-antiqua mb-[8px]">Clan</label>
+                            <fieldset className="flex flex-wrap justify-start gap-[8px] bg-primary rounded-[3px] p-[8px]">
+                                {clansL5R?.data?.map((clanL5R) => (
+                                    <div key={clanL5R.id}>
+                                        <label className="flex items-center gap-2 w-[150px]">
+                                            <input
+                                                type="radio"
+                                                value={clanL5R.label}
+                                                checked={field.state.value === clanL5R.id}
+                                                onChange={() => field.handleChange(clanL5R.id)}
+                                                className="hidden"
+                                            />
+                                            <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                                {field.state.value === clanL5R.id && (
+                                                    <i className="fa-solid fa-check text-accent"></i>
+                                                )}
+                                            </span>
+                                            {clanL5R.label}
+                                        </label>
+                                    </div>
                                 ))}
-                            </select>
+                            </fieldset>
                         </div>
                     )}
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-y-[40px]'>
-                {/* Choix de la famille */}
-                <form.Field name="family">
-                    {(field) => (
-                        <div className='w-[240px]'>
-                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                Famille
-                            </label>
-                            <select
-                                name={field.name}
-                                id={field.name}
-                                value={field.state.value ?? ''}
-                                onChange={(e) => field.handleChange(e.target.value)}
-                                className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
-                            >
-                                <option value="">Sélectionner une famille</option>
-                                {familiesL5R.data.map((familyL5R) => (
-                                    <option key={familyL5R.id} value={familyL5R.label}>
+            {/* Choix de la famille */}
+            <form.Field name="family_id">
+                {(field) => (
+                    <div className="w-full my-[40px]">
+                        <label className="block text-xl font-uncial-antiqua mb-[8px]">Famille</label>
+                        <fieldset className="flex flex-wrap justify-start gap-[8px] bg-primary rounded-[3px] p-[8px]">
+                            {familiesL5R.data.map((familyL5R) => (
+                                <div key={familyL5R.id}>
+                                    <label className="flex items-center gap-2 w-[200px]">
+                                        <input
+                                            type="radio"
+                                            value={familyL5R.label}
+                                            checked={field.state.value === familyL5R.id}
+                                            onChange={() => field.handleChange(Number(familyL5R.id))}
+                                            className="hidden"
+                                        />
+                                        <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                            {field.state.value === familyL5R.id && (
+                                                <i className="fa-solid fa-check text-accent"></i>
+                                            )}
+                                        </span>
                                         {familyL5R.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
-                </form.Field>
+                                    </label>
+                                </div>
+                            ))}
+                        </fieldset>
+                    </div>
+                )}
+            </form.Field>
 
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix de l'école */}
-                <form.Field name="school">
+                <form.Field name="school_id">
                     {(field) => (
-                        <div className='w-[240px]'>
-                            <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                École
-                            </label>
-                            <select
-                                name={field.name}
-                                id={field.name}
-                                value={field.state.value ?? ''}
-                                onChange={(e) => field.handleChange(e.target.value)}
-                                className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
-                            >
-                                <option value="">Sélectionner une école</option>
+                        <div className="flex-1">
+                            <label className="block text-xl font-uncial-antiqua mb-[8px]">École</label>
+                            <fieldset className="flex flex-wrap justify-start gap-[8px] bg-primary rounded-[3px] p-[8px]">
                                 {schoolsL5R.data.map((schoolL5R) => (
-                                    <option key={schoolL5R.id} value={schoolL5R.label}>
-                                        {schoolL5R.label}
-                                    </option>
+                                    <div key={schoolL5R.id}>
+                                        <label className="flex items-center gap-2 w-[200px]">
+                                            <input
+                                                type="radio"
+                                                value={schoolL5R.label}
+                                                checked={field.state.value === schoolL5R.id}
+                                                onChange={() => field.handleChange(schoolL5R.id)}
+                                                className="hidden"
+                                            />
+                                            <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                                {field.state.value === schoolL5R.id && (
+                                                    <i className="fa-solid fa-check text-accent"></i>
+                                                )}
+                                            </span>
+                                            {schoolL5R.label}
+                                        </label>
+                                    </div>
                                 ))}
-                            </select>
+                            </fieldset>
                         </div>
                     )}
                 </form.Field>
@@ -221,10 +434,11 @@ export function L5rFormComponent() {
                                 Rang d'école
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? ''}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre rang d'école"
                             />
@@ -233,7 +447,66 @@ export function L5rFormComponent() {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            {/* Abilities */}
+            <div className='w-full flex flex-wrap justify-between my-[80px] gap-[16px]'>
+                <label className="block w-full text-xl font-uncial-antiqua mb-[8px] underline">
+                    Caractéristiques
+                </label>
+
+                {abilitiesL5R.data.map((ability, index) => (
+                    <div key={index} className="w-[240px]">
+                        {/* Nom de la capacité */}
+                        <label className="font-uncial-antiqua text-lg">{ability.label}</label>
+
+                        {/* Id Abilities */}
+                        <form.Field
+                            name={`abilities[${index}].abilities_id`}
+                            defaultValue={ability.id}
+                        >
+                            {(field) => (
+                                <input
+                                    type="hidden"
+                                    name={field.name}
+                                    value={field.state.value}
+                                />
+                            )}
+                        </form.Field>
+
+
+                        {/* Valeur */}
+                        <form.Field name={`abilities[${index}].value`}>
+                            {(field) => (
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full p-[8px] mt-[8px] bg-primary rounded-lg border border-secondary"
+                                    placeholder="Valeur"
+                                />
+                            )}
+                        </form.Field>
+
+                        {/* Modificateur */}
+                        <form.Field name={`abilities[${index}].modifier`}>
+                            {(field) => (
+                                <input
+                                    type="number"
+                                    name={field.name}
+                                    id={field.name}
+                                    value={field.state.value ?? ''}
+                                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                                    className="w-full p-[8px] mt-[8px] bg-primary rounded-lg border border-secondary"
+                                    placeholder="Modificateur"
+                                />
+                            )}
+                        </form.Field>
+                    </div>
+                ))}
+            </div>
+
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix du Ninjô */}
                 <form.Field name="ninjo">
                     {(field) => (
@@ -244,6 +517,7 @@ export function L5rFormComponent() {
                             <textarea
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre ninjô"
@@ -262,6 +536,7 @@ export function L5rFormComponent() {
                             <textarea
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre giri"
@@ -271,7 +546,7 @@ export function L5rFormComponent() {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix des titres */}
                 <form.Field name="distinctions">
                     {(field) => (
@@ -282,6 +557,7 @@ export function L5rFormComponent() {
                             <textarea
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos titres"
@@ -301,6 +577,7 @@ export function L5rFormComponent() {
                                 type="text"
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos passions"
@@ -320,6 +597,7 @@ export function L5rFormComponent() {
                                 type="text"
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos défaillances"
@@ -329,84 +607,66 @@ export function L5rFormComponent() {
                 </form.Field>
             </div>
 
-            {/* Choix de la personnalité, habitudes et manies */}
-            <form.Field name="personalityHabitsQuirks">
-                {(field) => (
-                    <div className='mt-[40px] w-full'>
-                        <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                            Personnalité, habitudes et manies
-                        </label>
-                        <textarea
-                            name={field.name}
-                            id={field.name}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
-                            placeholder="Entrez votre personnalité, habitudes et manies"
-                        />
-                    </div>
-                )}
-            </form.Field>
-
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
-                {/* Choix de l'exp total */}
-                <form.Field name="expTotal">
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
+                {/* Choix de la personnalité, habitudes et manies */}
+                <form.Field name="personalityHabitsQuirks">
                     {(field) => (
-                        <div className='w-[240px]'>
+                        <div className='flex-1'>
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                Expérience totale
+                                Personnalité, habitudes et manies
                             </label>
-                            <input
-                                type="number"
+                            <textarea
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
-                                placeholder="Entrez votre expérience totale"
+                                placeholder="Entrez votre personnalité, habitudes et manies"
                             />
                         </div>
                     )}
                 </form.Field>
 
-                {/* Choix de l'expérience dépensée */}
-                <form.Field name="expoSpend">
+                {/* Adversités */}
+                <form.Field name="adversities">
                     {(field) => (
-                        <div className='w-[240px]'>
+                        <div className='flex-1'>
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                Expérience dépensée
+                                Adversités
                             </label>
-                            <input
-                                type="number"
+                            <textarea
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
-                                placeholder="Entrez votre expérience dépensée"
+                                placeholder="Entrez vos adversités"
                             />
                         </div>
                     )}
                 </form.Field>
 
-                {/* Choix de l'expérience restante */}
-                <form.Field name="expSaved">
+                {/* Rôles */}
+                <form.Field name="roles">
                     {(field) => (
-                        <div className='w-[240px]'>
+                        <div className='flex-1'>
                             <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
-                                Expérience restante
+                                Rôles
                             </label>
-                            <input
-                                type="number"
+                            <textarea
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
-                                placeholder="Entrez votre expérience restante"
+                                placeholder="Entrez vos rôles"
                             />
                         </div>
                     )}
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix de l'endurance */}
                 <form.Field name="endurance">
                     {(field) => (
@@ -418,7 +678,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre endurance"
                             />
@@ -437,7 +698,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre endurance lors de fatigue"
                             />
@@ -456,7 +718,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre sang-froid"
                             />
@@ -475,7 +738,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre sang-froid lors de conflit"
                             />
@@ -484,7 +748,7 @@ export function L5rFormComponent() {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix de l'attention */}
                 <form.Field name="focus">
                     {(field) => (
@@ -496,7 +760,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre attention"
                             />
@@ -515,7 +780,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez votre vigilance"
                             />
@@ -534,7 +800,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos points de vide max."
                             />
@@ -553,7 +820,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos points de vide actuels"
                             />
@@ -563,7 +831,7 @@ export function L5rFormComponent() {
             </div>
 
             {/* Compétences */}
-            <div className="w-full mt-[40px]">
+            <div className="w-full my-[40px]">
                 <label className="block text-xl font-uncial-antiqua mb-[8px]">
                     Compétences de l'aventurier
                 </label>
@@ -578,7 +846,22 @@ export function L5rFormComponent() {
                                         name={field.name}
                                         id={field.name}
                                         value={field.state.value ?? ''}
-                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        onChange={(e) => {
+                                            const selectedLabel = e.target.value;
+                                            const selectedSkill = skillsL5R.data.find(skill => skill.label === selectedLabel);
+
+                                            field.handleChange(selectedLabel);
+
+                                            if (selectedSkill) {
+                                                const updatedSkills = [...form.state.values.skills];
+                                                updatedSkills[index] = {
+                                                    ...updatedSkills[index],
+                                                    label: selectedLabel,
+                                                    skill_id: selectedSkill.id,
+                                                };
+                                                form.setFieldValue('skills', updatedSkills);
+                                            }
+                                        }}
                                         className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
                                     >
                                         <option value="">Sélectionner une compétence</option>
@@ -591,6 +874,27 @@ export function L5rFormComponent() {
                                 )}
                             </form.Field>
 
+                            <form.Field name={`skills[${index}].proficient`}>
+                                {(field) => (
+                                    <label className="flex items-center text-lg gap-[8px] mx-[16px]">
+                                        <input
+                                            type="checkbox"
+                                            name={field.name}
+                                            id={field.name}
+                                            checked={field.state.value ?? false}
+                                            onChange={(e) => field.handleChange(e.target.checked)}
+                                            className="hidden"
+                                        />
+                                        <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                                            {field.state.value && (
+                                                <i className="fa-solid fa-check text-accent"></i>
+                                            )}
+                                        </span>
+                                        Maîtrise ?
+                                    </label>
+                                )}
+                            </form.Field>
+
                             {/* Valeur */}
                             <form.Field name={`skills[${index}].value`}>
                                 {(field) => (
@@ -599,7 +903,7 @@ export function L5rFormComponent() {
                                         name={field.name}
                                         id={field.name}
                                         value={field.state.value ?? ''}
-                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
                                         className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
                                         placeholder={`Points de la compétence ${index + 1}`}
                                     />
@@ -625,14 +929,18 @@ export function L5rFormComponent() {
                     <button
                         type="button"
                         onClick={() => {
-                            const current = form.state.values.skills ?? []
+                            const current = form.state.values.skills ?? [];
+
                             form.setFieldValue('skills', [
                                 ...current,
                                 {
+                                    skill_id: 0,
                                     label: '',
-                                    value: '',
+                                    value: 0,
+                                    proficient: false,
                                 }
-                            ])
+                            ]);
+
                             setSkillsCount((s) => s + 1)
                         }}
                         className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
@@ -642,7 +950,7 @@ export function L5rFormComponent() {
                 </div>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix des avatanges */}
                 <form.Field name="Adv">
                     {(field) => (
@@ -654,6 +962,7 @@ export function L5rFormComponent() {
                                 type="text"
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos avantages"
@@ -673,6 +982,7 @@ export function L5rFormComponent() {
                                 type="text"
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos désavantages"
@@ -692,6 +1002,7 @@ export function L5rFormComponent() {
                                 type="text"
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos états"
@@ -701,7 +1012,7 @@ export function L5rFormComponent() {
                 </form.Field>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix des compétences d'école */}
                 <form.Field name="schoolAbilities">
                     {(field) => (
@@ -712,6 +1023,7 @@ export function L5rFormComponent() {
                             <textarea
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos compétences d'école"
@@ -730,6 +1042,7 @@ export function L5rFormComponent() {
                             <textarea
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos techniques (nouvelles actions)"
@@ -748,6 +1061,7 @@ export function L5rFormComponent() {
                             <textarea
                                 name={field.name}
                                 id={field.name}
+                                value={field.state.value ?? ''}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos techniques (nouvelles fleurs)"
@@ -757,84 +1071,21 @@ export function L5rFormComponent() {
                 </form.Field>
             </div>
 
-            <div className='w-full mt-[40px]'>
-                <label className="block text-xl font-uncial-antiqua mb-[8px]">
-                    Armures
-                </label>
-
-                <div className="w-full flex flex-wrap justify-start gap-8">
-                    {/* Choix d'une/de plusieurs armure(s) */}
-                    {[...Array(armorCount)].map((_, index) => (
-                        <div className='flex flex-wrap w-[240px] justify-between gap-[8px]'>
-                            <form.Field key={index} name={`armors[${index}]`}>
-                                {(field) => (
-                                    <input
-                                        type="text"
-                                        name={field.name}
-                                        id={field.name}
-                                        value={field.state.value ?? ''}
-                                        onChange={(e) => field.handleChange(e.target.value)}
-                                        className="flex-1 p-[8px] bg-primary rounded-lg border border-secondary"
-                                        placeholder={`Entrez le nom de l'armure ${index + 1}`}
-                                    />
-                                )}
-                            </form.Field>
-
-                            {/* Supprimer une armure */}
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    const updatedArmors = [...form.state.values.armors]
-                                    updatedArmors.splice(index, 1)
-                                    form.setFieldValue('armors', updatedArmors)
-                                    setArmorCount((c) => c - 1)
-                                }}
-                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
-                            >
-                                <i className="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    ))}
-
-                    {/* Ajouter un champ d’armure */}
-                    <button
-                        type="button"
-                        onClick={() => {
-                            const currentArmors = form.state.values.armors ?? []
-                            form.setFieldValue('armors', [...currentArmors, ''])
-                            setArmorCount((c) => c + 1)
-                        }}
-                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
-                    >
-                        <i className="fa-solid fa-plus text-2xl"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div className="w-full mt-[40px]">
+            {/* Armes */}
+            <div className="w-full my-[40px]">
                 <label className="block text-xl font-uncial-antiqua mb-[8px]">Armes</label>
 
                 <div className="w-full flex flex-col gap-4">
                     {form.state.values.weapons.map((_, index) => (
                         <div key={index} className="flex flex-wrap gap-[8px]">
                             {/* ID */}
-                            <form.Field name={`weapons[${index}].id`}>
-                                {(field) => (
-                                    <input
-                                        type="text"
-                                        name={field.name}
-                                        id={field.name}
-                                        value={index + 1}
-                                        onChange={(e) => field.handleChange(e.target.value)}
-                                        className="size-[40px] text-center text-xl bg-primary rounded-lg border border-secondary cursor-not-allowed"
-                                        disabled
-                                    />
-                                )}
-                            </form.Field>
+                            <div className="size-[40px] text-center text-xl bg-primary rounded-lg border border-secondary cursor-not-allowed">
+                                {index}
+                            </div>
 
                             <div className="flex flex-wrap flex-1 gap-[8px]">
                                 {/* Nom */}
-                                <form.Field name={`weapons[${index}].name`}>
+                                <form.Field name={`weapons[${index}].label`}>
                                     {(field) => (
                                         <input
                                             type="text"
@@ -903,8 +1154,7 @@ export function L5rFormComponent() {
                             form.setFieldValue('weapons', [
                                 ...current,
                                 {
-                                    id: '',
-                                    name: '',
+                                    label: '',
                                     damage: '',
                                     notes: '',
                                 },
@@ -918,7 +1168,7 @@ export function L5rFormComponent() {
                 </div>
             </div>
 
-            <div className='w-full flex flex-wrap justify-between mt-[40px] gap-[40px]'>
+            <div className='w-full flex flex-wrap justify-between my-[40px] gap-[40px]'>
                 {/* Choix des koku */}
                 <form.Field name="koku">
                     {(field) => (
@@ -930,7 +1180,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos koku"
                             />
@@ -949,7 +1200,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos bu"
                             />
@@ -968,7 +1220,8 @@ export function L5rFormComponent() {
                                 type="number"
                                 name={field.name}
                                 id={field.name}
-                                onChange={(e) => field.handleChange(e.target.value)}
+                                value={field.state.value ?? 0}
+                                onChange={(e) => field.handleChange(Number(e.target.value))}
                                 className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
                                 placeholder="Entrez vos zeni"
                             />
@@ -977,14 +1230,146 @@ export function L5rFormComponent() {
                 </form.Field>
             </div>
 
+            {/* Items */}
+            <div className="w-full my-[40px]">
+                <label className="block text-xl font-uncial-antiqua mb-[8px]">Objets de l'inventaire</label>
+
+                <div className="w-full flex flex-col gap-4">
+                    {form.state.values.items.map((_, index) => (
+                        <div key={index} className="flex flex-wrap gap-[8px]">
+                            <div className="flex flex-wrap flex-1 gap-[8px]">
+                                {/* ID */}
+                                <div className="size-[40px] text-center text-xl bg-primary rounded-lg border border-secondary cursor-not-allowed">
+                                    {index}
+                                </div>
+
+                                {/* Nom */}
+                                <form.Field name={`items[${index}].label`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? ''}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Nom de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Quantité */}
+                                <form.Field name={`items[${index}].quantity`}>
+                                    {(field) => (
+                                        <input
+                                            type="number"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? 1}
+                                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Quantité de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Poids */}
+                                <form.Field name={`items[${index}].weight`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? 0}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Poids de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Description */}
+                                <form.Field name={`items[${index}].description`}>
+                                    {(field) => (
+                                        <input
+                                            type="text"
+                                            name={field.name}
+                                            id={field.name}
+                                            value={field.state.value ?? 0}
+                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                            placeholder={`Description de l'item ${index + 1}`}
+                                        />
+                                    )}
+                                </form.Field>
+
+                                {/* Supprimer un item */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updatedItems = [...form.state.values.items]
+                                        updatedItems.splice(index, 1)
+                                        form.setFieldValue('items', updatedItems)
+                                        setItemsCount((i) => i - 1)
+                                    }}
+                                    className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                                >
+                                    <i className="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Ajouter un nouvel item */}
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const current = form.state.values.items ?? []
+                            form.setFieldValue('items', [
+                                ...current,
+                                {
+                                    label: '',
+                                    quantity: 1,
+                                    weight: '',
+                                    description: '',
+                                },
+                            ])
+                            setItemsCount((i) => i + 1)
+                        }}
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
+                    >
+                        <i className="fa-solid fa-plus text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            {/* Notes */}
+            <form.Field name="notes">
+                {(field) => (
+                    <div className='my-[40px] w-full'>
+                        <label htmlFor={field.name} className="block text-xl font-uncial-antiqua mb-[8px]">
+                            Notes
+                        </label>
+                        <textarea
+                            name={field.name}
+                            id={field.name}
+                            value={field.state.value ?? ''}
+                            onChange={(e) => field.handleChange(e.target.value)}
+                            className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                            placeholder="Entrez votre personnalité, habitudes et manies"
+                        />
+                    </div>
+                )}
+            </form.Field>
+
             {/* Bouton de soumission */}
             <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
                 {([canSubmit, isSubmitting]) => (
-                    <button type="submit" disabled={!canSubmit} className="btn btn-text mt-[40px]">
-                        {isSubmitting ? '...' : 'Créer la fiche de cet aventurier'}
+                    <button type="submit" disabled={!canSubmit} className="btn btn-text my-[40px]">
+                        {isSubmitting ? '...' : 'Mettre à jour la fiche'}
                     </button>
                 )}
             </form.Subscribe>
-        </form>
+        </form >
     )
 }

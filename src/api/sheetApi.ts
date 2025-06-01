@@ -251,7 +251,7 @@ export type SheetResponse = {
     weapons: Weapon[];
     items: Item[];
     spells_slot: SpellSlot[];
-    feat: Feat[];
+    feats: Feat[];
     details: Sheet["details"];
     saving_throw: SavingThrows[];
     skills: SkillSheet[];

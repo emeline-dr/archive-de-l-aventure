@@ -42,7 +42,7 @@ export function CharactersOwnedPage() {
 
     if (isLoading || !data) return <div>Chargement...</div>;
 
-    const { sheet, details, weapons, feat, items, abilities, saving_throw, spells, spells_slot, fellowInvestigators } = data;
+    const { sheet, details, weapons, feats, items, abilities, saving_throw, spells, spells_slot, fellowInvestigators } = data;
 
     const handleToggleShared = () => {
         mutate({ sheet: { ...sheet, shared: !sheet.shared } });
@@ -171,7 +171,7 @@ export function CharactersOwnedPage() {
                                 />
 
                                 <FeatSheet
-                                    feats={feat}
+                                    feats={feats}
                                 />
                             </>
                         }

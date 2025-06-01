@@ -91,7 +91,7 @@ export function OthersCharactersPage() {
 
     if (isLoading || !data) return <div>Chargement...</div>;
 
-    const { sheet, details, weapons, feat, items, abilities, saving_throw, spells, spells_slot, fellowInvestigators } = data;
+    const { sheet, details, weapons, feats, items, abilities, saving_throw, spells, spells_slot, fellowInvestigators } = data;
 
     return (
         <div className='pageContenant flex flex-wrap h-full'>
@@ -230,7 +230,7 @@ export function OthersCharactersPage() {
                             />
 
                             <FeatSheet
-                                feats={feat}
+                                feats={feats}
                             />
                         </>
                     }
