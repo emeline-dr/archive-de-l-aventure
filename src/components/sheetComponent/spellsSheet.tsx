@@ -83,7 +83,7 @@ export default function SpellsSheet(props: SpellsSheetProps) {
                         const isSelected = selectedSpellId === spell.id.toString();
                         return (
                             <div key={spell.id}
-                                className={`relative spell-wrapper cursor-pointer 
+                                className={`w-fit relative spell-wrapper cursor-pointer 
                     ${isSelected ? "px-[8px] bg-text text-background rounded-sm" : ""}
                     hover:px-[8px] hover:bg-text hover:text-background hover:rounded-sm`}
                                 onClick={() => setSelectedSpellId(spell.id.toString())}>
@@ -91,17 +91,17 @@ export default function SpellsSheet(props: SpellsSheetProps) {
 
                                 {isSelected && (
                                     <div className="absolute popover bottom-full text-text left-1/2 -translate-x-1/2 mb-2 z-10 flex flex-col items-center">
-                                        <div className="w-[250px] flex flex-row gap-y-[40px] p-[32px] bg-text shadow-lg rounded-[3px]">
+                                        <div className="w-[350px] flex flex-row gap-y-[40px] p-[32px] bg-text shadow-lg rounded-[3px]">
                                             <span className="text-background w-full">
                                                 <span className="font-uncial-antiqua text-lg pe-[8px]">École :</span> {spell.school} <br />
                                                 <span className="font-uncial-antiqua text-lg pe-[8px]">Temps d'invocation :</span> {spell.casting_time} <br />
-                                                <span className="font-uncial-antiqua text-lg pe-[8px]">Portée :</span> {spell.casting_time || '/'} <br />
+                                                <span className="font-uncial-antiqua text-lg pe-[8px]">Portée :</span> {spell.range || '/'} <br />
                                                 <span className="font-uncial-antiqua text-lg pe-[8px]">Composant(s) :</span> {spell.components || '/'} <br />
                                                 <span className="font-uncial-antiqua text-lg pe-[8px]">Durée :</span> {spell.duration || '/'} <br />
-                                                <span className="font-uncial-antiqua text-lg pe-[8px]">Description :</span> {spell.duration || '/'} <br />
+                                                <span className="font-uncial-antiqua text-lg pe-[8px]">Description :</span> {spell.description || '/'} <br />
                                                 {spell.prepared === true ? (<p>Préparé.</p>) : (<p>Pas préparé.</p>)}
                                                 {spell.known === true ? (<p>Connu.</p>) : (<p>Pas connu.</p>)}
-                                                {spell.isRitual === true ? (<p>Demande un rituel.</p>) : (<p>Ne demande pas de rituel.</p>)}
+                                                {spell.is_ritual === true ? (<p>Demande un rituel.</p>) : (<p>Ne demande pas de rituel.</p>)}
                                             </span>
                                         </div>
                                         <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-text"></div>
@@ -121,7 +121,7 @@ export default function SpellsSheet(props: SpellsSheetProps) {
                 const levelKey = `level${levelNumber}Spells`;
                 const levelSpellsList = levelSpells[levelKey];
 
-                const slotUsed = slots[levelNumber - 1]?.used - slots[levelNumber - 1]?.total;
+                const slotUsed = slots[levelNumber - 1]?.used;
                 const slotTotal = slots[levelNumber - 1]?.total;
 
                 return levelSpellsList.length > 0 && (
@@ -145,17 +145,17 @@ export default function SpellsSheet(props: SpellsSheetProps) {
 
                                     {isSelected && (
                                         <div className="absolute popover bottom-full text-text left-1/2 -translate-x-1/2 mb-2 z-10 flex flex-col items-center">
-                                            <div className="w-[250px] flex flex-row gap-y-[40px] p-[32px] bg-text shadow-lg rounded-[3px]">
+                                            <div className="w-[450px] flex flex-row gap-y-[40px] p-[32px] bg-text shadow-lg rounded-[3px]">
                                                 <span className="text-background w-full">
                                                     <span className="font-uncial-antiqua text-lg pe-[8px]">École :</span> {spell.school} <br />
                                                     <span className="font-uncial-antiqua text-lg pe-[8px]">Temps d'invocation :</span> {spell.casting_time} <br />
-                                                    <span className="font-uncial-antiqua text-lg pe-[8px]">Portée :</span> {spell.casting_time || '/'} <br />
+                                                    <span className="font-uncial-antiqua text-lg pe-[8px]">Portée :</span> {spell.range || '/'} <br />
                                                     <span className="font-uncial-antiqua text-lg pe-[8px]">Composant(s) :</span> {spell.components || '/'} <br />
                                                     <span className="font-uncial-antiqua text-lg pe-[8px]">Durée :</span> {spell.duration || '/'} <br />
-                                                    <span className="font-uncial-antiqua text-lg pe-[8px]">Description :</span> {spell.duration || '/'} <br />
+                                                    <span className="font-uncial-antiqua text-lg pe-[8px]">Description :</span> {spell.description || '/'} <br />
                                                     {spell.prepared === true ? (<p>Préparé.</p>) : (<p>Pas préparé.</p>)}
                                                     {spell.known === true ? (<p>Connu.</p>) : (<p>Pas connu.</p>)}
-                                                    {spell.isRitual === true ? (<p>Demande un rituel.</p>) : (<p>Ne demande pas de rituel.</p>)}
+                                                    {spell.is_ritual === true ? (<p>Demande un rituel.</p>) : (<p>Ne demande pas de rituel.</p>)}
                                                 </span>
                                             </div>
                                             <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-text"></div>

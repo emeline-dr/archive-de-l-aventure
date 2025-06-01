@@ -23,7 +23,7 @@ export type Spell = {
     description: string | null;
     prepared: boolean;
     known: boolean;
-    isRitual: boolean;
+    is_ritual: boolean;
 };
 
 export type Weapon = {

@@ -413,6 +413,8 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                     console.log('POST des armes effectué')
                 }
 
+                window.location.href = `/myCharacters/${data.sheet.id}`;
+
             } catch (err) {
                 console.error('Erreur API :', err);
             }

@@ -52,7 +52,7 @@ export default function FeatSheet(props: FeatSheetProps) {
 
                         {isSelected && (
                             <div className="absolute popover bottom-full text-text left-1/2 -translate-x-1/2 mb-2 z-10 flex flex-col items-center">
-                                <div className="w-[250px] flex flex-row gap-y-[40px] p-[32px] bg-text shadow-lg rounded-[3px]">
+                                <div className="w-[350px] flex flex-row gap-y-[40px] p-[32px] bg-text shadow-lg rounded-[3px]">
                                     <span className="text-background w-full">
                                         <span className="font-uncial-antiqua text-lg pe-[8px]">Acquis au lvl :</span> {feat.level_acquired}<br />
                                         <span className="font-uncial-antiqua text-lg pe-[8px]">Description :</span> {feat.description ? feat.description : '/'}

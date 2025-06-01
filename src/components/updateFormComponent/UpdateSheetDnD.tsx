@@ -27,6 +27,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
     const [, setWeaponCount] = useState(1);
     const [, setItemsCount] = useState(1);
     const [, setSpellsCount] = useState(1);
+    const [, setFeatsCount] = useState(1);
 
     const form = useForm({
         defaultValues: {
@@ -124,7 +125,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 description: spell.description,
                 prepared: spell.prepared,
                 known: spell.known,
-                isRitual: spell.isRitual,
+                is_ritual: spell.is_ritual,
             })),
             dd_spell: data?.details.dd_spell,
             spell_bonus_attack: data?.details.spell_bonus_attack,
@@ -133,9 +134,54 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
             characterTraits: data?.details.caractere,
             allies: data?.details.allies,
             enemies: data?.details.enemies,
+            feat: (data?.feat ?? []).map((feat) => ({
+                id: feat.id,
+                sheet_id: data?.sheet.id,
+                label: feat.label,
+                description: feat.description,
+                level_acquired: feat.level_acquired,
+            })),
+            spells_slot: [{
+                id: data?.spells_slot?.[0]?.id ?? null,
+                sheet_id: data?.spells_slot?.[0]?.sheet_id ?? null,
+                slots_1_total: data?.spells_slot?.[0]?.slots_1_total ?? 0,
+                slots_1_used: data?.spells_slot?.[0]?.slots_1_used ?? 0,
+                slots_2_total: data?.spells_slot?.[0]?.slots_2_total ?? 0,
+                slots_2_used: data?.spells_slot?.[0]?.slots_2_used ?? 0,
+                slots_3_total: data?.spells_slot?.[0]?.slots_3_total ?? 0,
+                slots_3_used: data?.spells_slot?.[0]?.slots_3_used ?? 0,
+                slots_4_total: data?.spells_slot?.[0]?.slots_4_total ?? 0,
+                slots_4_used: data?.spells_slot?.[0]?.slots_4_used ?? 0,
+                slots_5_total: data?.spells_slot?.[0]?.slots_5_total ?? 0,
+                slots_5_used: data?.spells_slot?.[0]?.slots_5_used ?? 0,
+                slots_6_total: data?.spells_slot?.[0]?.slots_6_total ?? 0,
+                slots_6_used: data?.spells_slot?.[0]?.slots_6_used ?? 0,
+                slots_7_total: data?.spells_slot?.[0]?.slots_7_total ?? 0,
+                slots_7_used: data?.spells_slot?.[0]?.slots_7_used ?? 0,
+                slots_8_total: data?.spells_slot?.[0]?.slots_8_total ?? 0,
+                slots_8_used: data?.spells_slot?.[0]?.slots_8_used ?? 0,
+                slots_9_total: data?.spells_slot?.[0]?.slots_9_total ?? 0,
+                slots_9_used: data?.spells_slot?.[0]?.slots_9_used ?? 0
+            }]
         },
         onSubmit: async ({ value }) => {
             if (!data) return;
+
+            const existingLanguages = data.language ?? [];
+            const validLanguages = (value.language ?? []).filter(
+                (lang) => lang && !isNaN(lang.language_id)
+            )
+
+            const langToPatch = validLanguages.filter(lang =>
+                existingLanguages.some(existing => existing.id === lang.id)
+            )
+
+            const langToPost = validLanguages.filter(lang =>
+                !existingLanguages.some(existing => existing.id === lang.id) &&
+                !existingLanguages.some(existing =>
+                    existing.language_id === lang.language_id && existing.sheet_id === data.sheet.id
+                )
+            );
 
             const existingAbilities = data.abilities ?? [];
             const validAbilities = (value.abilities ?? []).filter(
@@ -200,6 +246,22 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 !existingWeapons.some(existing => existing.id === weapon.id) &&
                 !existingWeapons.some(
                     existing => existing.sheet_id === data.sheet.id && existing.label === weapon.label
+                )
+            );
+
+            const existingFeats = data.feat ?? [];
+            const validFeats = (value.feat ?? []).filter(
+                (feats) => feats.label.trim() !== ''
+            );
+
+            const featsToPatch = validFeats.filter(feat =>
+                existingFeats.some(existing => existing.id === feat.id)
+            )
+
+            const featsToPost = validFeats.filter(feat =>
+                !existingFeats.some(existing => existing.id === feat.id) &&
+                !existingFeats.some(
+                    existing => existing.sheet_id === data.sheet.id && existing.label === feat.label
                 )
             );
 
@@ -282,7 +344,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     description: string;
                     prepared: boolean;
                     known: boolean;
-                    isRitual: boolean;
+                    is_ritual: boolean;
                 }>;
             } = {
                 sheet: {
@@ -293,11 +355,6 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     avatar_src: value.avatar,
                     lvl: value.lvl,
                 },
-                language: (form.state.values.language ?? []).map((lang) => ({
-                    id: lang.id,
-                    sheet_id: data.sheet.id,
-                    language_id: lang.language_id,
-                })),
             };
 
             payload.details = {
@@ -338,8 +395,31 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 histoire: value.lore,
                 caractere: value.characterTraits,
                 apparence: value.appareance,
-                /* allies: value.allies,
-                enemies: value.enemies, */
+                allies: value.allies,
+                enemies: value.enemies,
+            };
+
+            const spellSlot = {
+                id: value.spells_slot[0]?.id,
+                sheet_id: data.sheet.id,
+                slots_1_total: value.spells_slot[0]?.slots_1_total ?? 0,
+                slots_1_used: value.spells_slot[0]?.slots_1_used ?? 0,
+                slots_2_total: value.spells_slot[0]?.slots_2_total ?? 0,
+                slots_2_used: value.spells_slot[0]?.slots_2_used ?? 0,
+                slots_3_total: value.spells_slot[0]?.slots_3_total ?? 0,
+                slots_3_used: value.spells_slot[0]?.slots_3_used ?? 0,
+                slots_4_total: value.spells_slot[0]?.slots_4_total ?? 0,
+                slots_4_used: value.spells_slot[0]?.slots_4_used ?? 0,
+                slots_5_total: value.spells_slot[0]?.slots_5_total ?? 0,
+                slots_5_used: value.spells_slot[0]?.slots_5_used ?? 0,
+                slots_6_total: value.spells_slot[0]?.slots_6_total ?? 0,
+                slots_6_used: value.spells_slot[0]?.slots_6_used ?? 0,
+                slots_7_total: value.spells_slot[0]?.slots_7_total ?? 0,
+                slots_7_used: value.spells_slot[0]?.slots_7_used ?? 0,
+                slots_8_total: value.spells_slot[0]?.slots_8_total ?? 0,
+                slots_8_used: value.spells_slot[0]?.slots_8_used ?? 0,
+                slots_9_total: value.spells_slot[0]?.slots_9_total ?? 0,
+                slots_9_used: value.spells_slot[0]?.slots_9_used ?? 0,
             };
 
             try {
@@ -353,6 +433,55 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 if (!patchRes.ok) throw new Error('Erreur lors du PATCH');
 
                 console.log('PATCH réussi : fiche mise à jour');
+
+                const spellSlotRes = await fetch(`https://apidnd.up.railway.app/api/spellSlot/${spellSlot.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(spellSlot),
+                });
+
+                if (!spellSlotRes.ok) throw new Error('Erreur lors du PATCH des emplacements de sorts');
+
+                // PATCH des langues existantes
+                if (langToPatch.length > 0) {
+                    for (const lang of langToPatch) {
+                        const bodyContent = {
+                            id: lang.id,
+                            language_id: lang.language_id,
+                            sheet_id: data.sheet.id,
+                        };
+
+                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/languageSheet/${lang.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchRes.ok) throw new Error(`Erreur lors du PATCH de la langue avec id ${lang.id}`);
+                    }
+
+                    console.log('PATCH des langues effectué');
+                }
+
+                // POST si la langue est nouvelle
+                if (langToPost.length > 0) {
+                    const url = `https://apidnd.up.railway.app/api/languageSheet/multiple`;
+
+                    const bodyContent = langToPost.map(lang => ({
+                        language_id: lang.language_id,
+                        sheet_id: data.sheet.id,
+                    }));
+
+                    const postRes = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyContent),
+                    });
+
+                    if (!postRes.ok) throw new Error('Erreur lors du POST des langues');
+
+                    console.log('POST des langues effectué');
+                }
 
                 // PATCH des caractéristique existantes
                 if (abilitiesToPatch.length > 0) {
@@ -571,7 +700,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             description: spell.description,
                             prepared: spell.prepared,
                             known: spell.known,
-                            isRitual: spell.isRitual,
+                            is_ritual: spell.is_ritual,
                         };
 
                         const patchRes = await fetch(`https://apidnd.up.railway.app/api/spellSheet/${spell.id}`, {
@@ -602,7 +731,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                         description: spell.description,
                         prepared: spell.prepared,
                         known: spell.known,
-                        isRitual: spell.isRitual,
+                        is_ritual: spell.is_ritual,
                     }))
 
                     const postSpellsRes = await fetch(url, {
@@ -615,6 +744,53 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
 
                     console.log('POST des sorts effectué')
                 }
+
+                // PATCH des feats existants
+                if (featsToPatch.length > 0) {
+                    for (const feat of featsToPatch) {
+                        const bodyContent = {
+                            id: feat.id,
+                            sheet_id: data.sheet.id,
+                            label: feat.label,
+                            description: feat.description,
+                            level_acquired: feat.level_acquired,
+                        };
+
+                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/featSheet/${feat.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!patchRes.ok) throw new Error(`Erreur lors du PATCH du feat avec id ${feat.id}`);
+                    }
+
+                    console.log('PATCH des feats effectué');
+                }
+
+                // POST si le feat est nouveau
+                if (featsToPost.length > 0) {
+                    for (const feat of featsToPost) {
+                        const bodyContent = {
+                            sheet_id: data.sheet.id,
+                            label: feat.label,
+                            description: feat.description,
+                            level_acquired: feat.level_acquired,
+                        };
+
+                        const postRes = await fetch(`https://apidnd.up.railway.app/api/featSheet`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bodyContent),
+                        });
+
+                        if (!postRes.ok) throw new Error(`Erreur lors du POST du feat ${feat.label}`);
+                    }
+
+                    console.log('POST des nouveaux feats effectué');
+                }
+
+                window.location.href = `/myCharacters/${data.sheet.id}`;
 
             } catch (err) {
                 console.error('Erreur API :', err);
@@ -1700,6 +1876,102 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 </form.Field>
             </div>
 
+            {/* Compétences */}
+            <div className="w-full my-[40px]">
+                <label className="block text-xl font-uncial-antiqua mb-[8px]">
+                    Capacités et traits
+                </label>
+
+                <div className="w-full flex flex-col gap-4">
+                    {form.state.values.feat.map((_, index) => (
+                        <div key={index} className="flex flex-wrap gap-[8px]">
+                            {/* Nom */}
+                            <form.Field name={`feat[${index}].label`}>
+                                {(field) => (
+                                    <input
+                                        type="text"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder={`Nom de la capacité ${index + 1}`}
+                                    />
+                                )}
+                            </form.Field>
+
+                            {/* Description */}
+                            <form.Field name={`feat[${index}].description`}>
+                                {(field) => (
+                                    <input
+                                        type="text"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder={`Description de la capacité ${index + 1}`}
+                                    />
+                                )}
+                            </form.Field>
+
+                            {/* Acquis au niveau */}
+                            <form.Field name={`feat[${index}].level_acquired`}>
+                                {(field) => (
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-[240px] p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder={`Capacité ${index + 1} acquise au niveau :`}
+                                    />
+                                )}
+                            </form.Field>
+
+                            {/* Supprimer un feat */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const updatedFeats = [...form.state.values.feat]
+                                    updatedFeats.splice(index, 1)
+                                    form.setFieldValue('feat', updatedFeats)
+                                    setFeatsCount((f) => f + 1)
+                                }}
+                                className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    ))}
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const current = form.state.values.feat ?? [];
+                            const maxId = current.reduce((max, feats) => Math.max(max, feats.id ?? 0), 0);
+
+                            form.setFieldValue('feat', [
+                                ...current,
+                                {
+                                    id: maxId + 1,
+                                    label: '',
+                                    level_acquired: 1,
+                                    sheet_id: 1,
+                                    description: '',
+                                }
+                            ]);
+
+                            setFeatsCount((f) => f + 1)
+                        }}
+                        className="size-[40px] bg-text text-background hover:bg-background hover:border-2 hover:border-text hover:text-text rounded flex justify-center items-center cursor-pointer"
+                    >
+                        <i className="fa-solid fa-plus text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
             <div className="w-full flex flex-wrap justify-between my-[40px] gap-[40px]">
                 {/* Pièces de cuivre */}
                 <form.Field name="copper">
@@ -2107,7 +2379,468 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     Sorts
                 </label>
 
-                <div className="w-full flex flex-wrap justify-between mb-[32px]">
+                <div className="w-full flex flex-wrap justify-between mb-[32px] gap-[40px]">
+                    <div className="flex-1 rounded-sm flex flex-wrap bg-primary justify-between p-[8px] gap-x-[40px] gap-y-[16px]">
+                        <label className="block w-full text-lg font-uncial-antiqua mb-[8px] ">
+                            Niveau 1
+                        </label>
+                        {/* Emplacement 1 - Total */}
+                        <form.Field name="spells_slot[0].slots_1_total">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Total
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre total d’emplacements niveau 1"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+
+                        {/* Emplacement 1 - Utilisé */}
+                        <form.Field name="spells_slot[0].slots_1_used">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Utilisés
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre utilisés d’emplacements niveau 1"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+                    </div>
+
+                    <div className="flex-1 rounded-sm flex flex-wrap bg-primary justify-between p-[8px] gap-x-[40px] gap-y-[16px]">
+                        <label className="block w-full text-lg font-uncial-antiqua mb-[8px] ">
+                            Niveau 2
+                        </label>
+                        {/* Emplacement 2 - Total */}
+                        <form.Field name="spells_slot[0].slots_2_total">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Total
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre total d’emplacements niveau 2"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+
+                        {/* Emplacement 2 - Utilisé */}
+                        <form.Field name="spells_slot[0].slots_2_used">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Utilisés
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre utilisés d’emplacements niveau 2"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+                    </div>
+
+                    <div className="flex-1 rounded-sm flex flex-wrap bg-primary justify-between p-[8px] gap-x-[40px] gap-y-[16px]">
+                        <label className="block w-full text-lg font-uncial-antiqua mb-[8px] ">
+                            Niveau 3
+                        </label>
+                        {/* Emplacement 3 - Total */}
+                        <form.Field name="spells_slot[0].slots_3_total">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Total
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre total d’emplacements niveau 3"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+
+                        {/* Emplacement 3 - Utilisé */}
+                        <form.Field name="spells_slot[0].slots_3_used">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Utilisés
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre utilisés d’emplacements niveau 3"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+                    </div>
+
+                    <div className="flex-1 rounded-sm flex flex-wrap bg-primary justify-between p-[8px] gap-x-[40px] gap-y-[16px]">
+                        <label className="block w-full text-lg font-uncial-antiqua mb-[8px] ">
+                            Niveau 4
+                        </label>
+                        {/* Emplacement 4 - Total */}
+                        <form.Field name="spells_slot[0].slots_4_total">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Total
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre total d’emplacements niveau 4"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+
+                        {/* Emplacement 4 - Utilisé */}
+                        <form.Field name="spells_slot[0].slots_4_used">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Utilisés
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre utilisés d’emplacements niveau 4"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+                    </div>
+
+                    <div className="flex-1 rounded-sm flex flex-wrap bg-primary justify-between p-[8px] gap-x-[40px] gap-y-[16px]">
+                        <label className="block w-full text-lg font-uncial-antiqua mb-[8px] ">
+                            Niveau 5
+                        </label>
+                        {/* Emplacement 5 - Total */}
+                        <form.Field name="spells_slot[0].slots_5_total">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Total
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre total d’emplacements niveau 5"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+
+                        {/* Emplacement 5 - Utilisé */}
+                        <form.Field name="spells_slot[0].slots_5_used">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Utilisés
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre utilisés d’emplacements niveau 5"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+                    </div>
+
+                    <div className="flex-1 rounded-sm flex flex-wrap bg-primary justify-between p-[8px] gap-x-[40px] gap-y-[16px]">
+                        <label className="block w-full text-lg font-uncial-antiqua mb-[8px] ">
+                            Niveau 6
+                        </label>
+                        {/* Emplacement 6 - Total */}
+                        <form.Field name="spells_slot[0].slots_6_total">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Total
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre total d’emplacements niveau 6"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+
+                        {/* Emplacement 6 - Utilisé */}
+                        <form.Field name="spells_slot[0].slots_6_used">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Utilisés
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre utilisés d’emplacements niveau 6"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+                    </div>
+
+                    <div className="flex-1 rounded-sm flex flex-wrap bg-primary justify-between p-[8px] gap-x-[40px] gap-y-[16px]">
+                        <label className="block w-full text-lg font-uncial-antiqua mb-[8px] ">
+                            Niveau 7
+                        </label>
+                        {/* Emplacement 7 - Total */}
+                        <form.Field name="spells_slot[0].slots_7_total">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Total
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre total d’emplacements niveau 7"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+
+                        {/* Emplacement 7 - Utilisé */}
+                        <form.Field name="spells_slot[0].slots_7_used">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Utilisés
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre utilisés d’emplacements niveau 7"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+                    </div>
+
+                    <div className="flex-1 rounded-sm flex flex-wrap bg-primary justify-between p-[8px] gap-x-[40px] gap-y-[16px]">
+                        <label className="block w-full text-lg font-uncial-antiqua mb-[8px] ">
+                            Niveau 8
+                        </label>
+                        {/* Emplacement 8 - Total */}
+                        <form.Field name="spells_slot[0].slots_8_total">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Total
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre total d’emplacements niveau 8"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+
+                        {/* Emplacement 8 - Utilisé */}
+                        <form.Field name="spells_slot[0].slots_8_used">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Utilisés
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre utilisés d’emplacements niveau 8"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+                    </div>
+
+                    <div className="flex-1 rounded-sm flex flex-wrap bg-primary justify-between p-[8px] gap-x-[40px] gap-y-[16px]">
+                        <label className="block w-full text-lg font-uncial-antiqua mb-[8px] ">
+                            Niveau 9
+                        </label>
+                        {/* Emplacement 9 - Total */}
+                        <form.Field name="spells_slot[0].slots_9_total">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Total
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre total d’emplacements niveau 9"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+
+                        {/* Emplacement 9 - Utilisé */}
+                        <form.Field name="spells_slot[0].slots_9_used">
+                            {(field) => (
+                                <div className="flex-1">
+                                    <label
+                                        htmlFor={field.name}
+                                        className="block text-md font-uncial-antiqua mb-[8px]"
+                                    >
+                                        Utilisés
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name={field.name}
+                                        id={field.name}
+                                        value={field.state.value ?? ''}
+                                        onChange={(e) => field.handleChange(Number(e.target.value))}
+                                        className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                                        placeholder="Entrez le nombre utilisés d’emplacements niveau 9"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
+                    </div>
+                </div>
+
+                <div className="w-full flex flex-wrap justify-between mb-[32px] gap-[40px]">
                     {/* DD de sauvegarde de sort */}
                     <form.Field name="dd_spell">
                         {(field) => (
@@ -2339,7 +3072,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                                 </form.Field>
 
                                 {/* Demande un rituel ou pas */}
-                                <form.Field name={`spells[${index}].isRitual`}>
+                                <form.Field name={`spells[${index}].is_ritual`}>
                                     {(field) => (
                                         <label className="flex items-center text-lg gap-[8px] mx-[16px]">
                                             <input
@@ -2398,7 +3131,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                                     duration: '',
                                     prepared: false,
                                     known: false,
-                                    isRitual: false,
+                                    is_ritual: false,
                                 },
                             ])
                             setSpellsCount((i) => i + 1)
