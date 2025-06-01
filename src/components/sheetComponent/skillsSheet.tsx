@@ -31,7 +31,7 @@ export default function SkillsSheet(props: SkillsSheetProps) {
                 if (!sheetL5R) return <p>Fiche L5R introuvable.</p>;
                 return (
                     <SkillsSheetL5R
-                        skills={sheetL5R.skill}
+                        skills={sheetL5R.skills}
                     />
                 )
             }
@@ -40,7 +40,7 @@ export default function SkillsSheet(props: SkillsSheetProps) {
                 if (!sheetDnD) return <p>Fiche DnD introuvable.</p>;
                 return (
                     <SkillsSheetDnD
-                        skills={sheetDnD.skill}
+                        skills={sheetDnD.skills}
                     />
                 )
             }
@@ -49,7 +49,7 @@ export default function SkillsSheet(props: SkillsSheetProps) {
                 if (!sheetCoC) return <p>Fiche CoC introuvable.</p>;
                 return (
                     <SkillsSheetCoC
-                        skills={sheetCoC.skill}
+                        skills={sheetCoC.skills}
                     />
                 )
             }

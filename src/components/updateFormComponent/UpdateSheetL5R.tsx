@@ -54,7 +54,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 modifier: ability.modifier,
                 label: ability.label,
             })),
-            skills: (data?.skill ?? []).map((skill) => ({
+            skills: (data?.skills ?? []).map((skill) => ({
                 id: skill.id,
                 skill_id: skill.skill_id,
                 sheet_id: data?.sheet.id ?? 1,
@@ -65,7 +65,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             koku: data?.details.koku ?? 0,
             zeni: data?.details.zeni ?? 0,
             bu: data?.details.bu ?? 0,
-            items: (data?.item ?? []).map((item) => ({
+            items: (data?.items ?? []).map((item) => ({
                 id: item.id,
                 sheet_id: item.sheet_id,
                 label: item.label,
@@ -81,7 +81,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
             techniquesNewActions: data?.details.techniques_new_actions ?? '',
             techniquesNewFlower: data?.details.techniques_new_flower ?? '',
             armors: [''],
-            weapons: (data?.weapon ?? []).map((weapon) => ({
+            weapons: (data?.weapons ?? []).map((weapon) => ({
                 id: weapon.id,
                 sheet_id: weapon.sheet_id,
                 label: weapon.label,
@@ -101,7 +101,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 existingAbilities.some(existing => existing.id === ability.id)
             )
 
-            const existingItems = data.item ?? [];
+            const existingItems = data.items ?? [];
             const validItems = (value.items ?? []).filter(
                 (item) => item.label.trim() !== ''
             )
@@ -117,7 +117,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 )
             )
 
-            const existingSkills = data.skill ?? [];
+            const existingSkills = data.skills ?? [];
             const validSkills = (value.skills ?? []).filter(
                 (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
             );
@@ -133,7 +133,7 @@ export default function UpdateSheetL5R(props: { sheetId: number }) {
                 )
             );
 
-            const existingWeapons = data.weapon ?? [];
+            const existingWeapons = data.weapons ?? [];
             const validWeapons = (value.weapons ?? []).filter(
                 (weapon) => weapon.label.trim() !== '' && weapon.damage?.trim() !== ''
             );

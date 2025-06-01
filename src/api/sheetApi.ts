@@ -248,13 +248,13 @@ export type SheetResponse = {
     sheet: Sheet;
     abilities: Ability[];
     spells: Spell[];
-    weapon: Weapon[];
-    item: Item[];
+    weapons: Weapon[];
+    items: Item[];
     spells_slot: SpellSlot[];
     feat: Feat[];
     details: Sheet["details"];
     saving_throw: SavingThrows[];
-    skill: SkillSheet[];
+    skills: SkillSheet[];
     fellowInvestigators?: FellowInvestigators[];
     language?: Languages[];
     classeDnD?: { label: string };

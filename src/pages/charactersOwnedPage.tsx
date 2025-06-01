@@ -42,7 +42,7 @@ export function CharactersOwnedPage() {
 
     if (isLoading || !data) return <div>Chargement...</div>;
 
-    const { sheet, details, weapon, feat, item, abilities, saving_throw, spells, spells_slot, fellowInvestigators } = data;
+    const { sheet, details, weapons, feat, items, abilities, saving_throw, spells, spells_slot, fellowInvestigators } = data;
 
     const handleToggleShared = () => {
         mutate({ sheet: { ...sheet, shared: !sheet.shared } });
@@ -180,7 +180,7 @@ export function CharactersOwnedPage() {
                     <div className='flex flex-wrap w-full justify-between gap-[40px]'>
                         <WeaponsSheet
                             system_id={sheet.system_id}
-                            weapons={weapon}
+                            weapons={weapons}
                         />
                     </div>
 
@@ -191,7 +191,7 @@ export function CharactersOwnedPage() {
                                 koku={details.koku ?? 0}
                                 zeni={details.zeni ?? 0}
                                 bu={details.bu ?? 0}
-                                items={item}
+                                items={items}
                             />
                         }
 
@@ -203,7 +203,7 @@ export function CharactersOwnedPage() {
                                 electrum={details.electrum ?? 0}
                                 gold={details.gold ?? 0}
                                 platinum={details.platinum ?? 0}
-                                items={item}
+                                items={items}
                             />
                         }
 
@@ -212,7 +212,7 @@ export function CharactersOwnedPage() {
                                 system_id={sheet.system_id}
                                 cash={details.cash}
                                 spending_lvl={details.spending_lvl}
-                                items={item}
+                                items={items}
                             />
                         }
                     </div>

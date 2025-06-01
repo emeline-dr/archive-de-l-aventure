@@ -39,7 +39,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
             dodge: data?.details.dodge ?? 0,
             spending_lvl: data?.details.spending_lvl ?? 0,
             cash: data?.details.cash ?? 0,
-            items: (data?.item ?? []).map((item) => ({
+            items: (data?.items ?? []).map((item) => ({
                 id: item.id,
                 sheet_id: item.sheet_id,
                 label: item.label,
@@ -56,7 +56,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 modifier: ability.modifier,
                 label: ability.label,
             })),
-            skills: (data?.skill ?? []).map((skill) => ({
+            skills: (data?.skills ?? []).map((skill) => ({
                 id: skill.id,
                 skill_id: skill.skill_id,
                 sheet_id: data?.sheet.id ?? 1,
@@ -64,7 +64,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 value: skill.value,
                 proficient: skill.proficient,
             })),
-            weapons: (data?.weapon ?? []).map((weapon) => ({
+            weapons: (data?.weapons ?? []).map((weapon) => ({
                 id: weapon.id,
                 sheet_id: weapon.sheet_id,
                 label: weapon.label,
@@ -101,7 +101,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 existingAbilities.some(existing => existing.id === ability.id)
             )
 
-            const existingItems = data.item ?? [];
+            const existingItems = data.items ?? [];
             const validItems = (value.items ?? []).filter(
                 (item) => item.label.trim() !== ''
             )
@@ -117,7 +117,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 )
             )
 
-            const existingSkills = data.skill ?? [];
+            const existingSkills = data.skills ?? [];
             const validSkills = (value.skills ?? []).filter(
                 (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
             );
@@ -133,7 +133,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                 )
             );
 
-            const existingWeapons = data.weapon ?? [];
+            const existingWeapons = data.weapons ?? [];
             const validWeapons = (value.weapons ?? []).filter(
                 (weapon) => weapon.label.trim() !== '' && weapon.damage?.trim() !== ''
             );

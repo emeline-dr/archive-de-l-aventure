@@ -86,7 +86,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 abilities_id: saveThrow.abilities_id,
                 label: saveThrow.label,
             })),
-            skills: (data?.skill ?? []).map((skill) => ({
+            skills: (data?.skills ?? []).map((skill) => ({
                 id: skill.id,
                 skill_id: skill.skill_id,
                 sheet_id: data?.sheet.id,
@@ -94,7 +94,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 value: skill.value,
                 proficient: skill.proficient,
             })),
-            items: (data?.item ?? []).map((item) => ({
+            items: (data?.items ?? []).map((item) => ({
                 id: item.id,
                 sheet_id: item.sheet_id,
                 label: item.label,
@@ -102,7 +102,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 weight: item.weight,
                 description: item.description,
             })),
-            weapons: (data?.weapon ?? []).map((weapon) => ({
+            weapons: (data?.weapons ?? []).map((weapon) => ({
                 id: weapon.id,
                 sheet_id: weapon.sheet_id,
                 label: weapon.label,
@@ -192,7 +192,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 existingAbilities.some(existing => existing.id === ability.id)
             )
 
-            const existingSkills = data.skill ?? [];
+            const existingSkills = data.skills ?? [];
             const validSkills = (value.skills ?? []).filter(
                 (skill) => skill.label.trim() !== '' && !isNaN(skill.value)
             );
@@ -217,7 +217,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 existingSaving.some(existing => existing.id === saving.id)
             );
 
-            const existingItems = data.item ?? [];
+            const existingItems = data.items ?? [];
             const validItems = (value.items ?? []).filter(
                 (item) => item.label.trim() !== ''
             )
@@ -233,7 +233,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 )
             )
 
-            const existingWeapons = data.weapon ?? [];
+            const existingWeapons = data.weapons ?? [];
             const validWeapons = (value.weapons ?? []).filter(
                 (weapon) => weapon.label.trim() !== '' && weapon.damage?.trim() !== ''
             );
