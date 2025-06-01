@@ -25,6 +25,8 @@ export default function CommentsComponent() {
   const handleAddComment = async () => {
     if (!comment.trim()) return;
 
+    const sanitizedComment = DOMPurify.sanitize(comment);
+
     try {
       const response = await fetchWithAuth("https://apidnd.up.railway.app/api/comment", {
         method: "POST",
@@ -32,7 +34,7 @@ export default function CommentsComponent() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text: comment,
+          text: sanitizedComment,
           user_id: userId,
           sheet_id: Number(sheetId),
         }),
@@ -41,13 +43,13 @@ export default function CommentsComponent() {
       if (!response.ok) throw new Error("Erreur lors de l'envoi du commentaire");
 
       comments.refetch?.();
-
-      setComment("");
+      setComment(""); // Vide le champ
     } catch (error) {
       console.error(error);
       alert("Une erreur est survenue.");
     }
   };
+
 
   if (comments.isLoading || !comments.data) return <div>Chargement...</div>;
   if (isLoading || !data) return <div>Chargement...</div>;
