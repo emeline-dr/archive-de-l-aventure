@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import Placeholder from "@tiptap/extension-placeholder";
 import StarterKit from '@tiptap/starter-kit';
 import Link from "@tiptap/extension-link";
-import Underline from "@tiptap/extension-underline";
 import Superscript from "@tiptap/extension-superscript";
 import Subscript from "@tiptap/extension-subscript";
 import TextAlign from "@tiptap/extension-text-align";
@@ -20,7 +19,6 @@ export function TiptapEditor({
     extensions: [
       StarterKit,
       Link,
-      Underline,
       Superscript,
       Subscript,
       TextAlign.configure({
@@ -61,7 +59,6 @@ export function TiptapEditor({
         >
           <span className="cursor-pointer">B</span>
         </button>
-
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={
@@ -71,16 +68,6 @@ export function TiptapEditor({
           }
         >
           <span className="cursor-pointer">I</span>
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={
-            editor.isActive("underline")
-              ? "underline bg-gray-200 px-2 rounded"
-              : "px-2"
-          }
-        >
-          <span className="cursor-pointer">U</span>
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}

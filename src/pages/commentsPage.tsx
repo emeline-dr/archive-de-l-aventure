@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
 import DOMPurify from 'dompurify';
+import TurndownService from 'turndown';
 
 import { useSheets } from "../api/sheetApi";
 import { useCommentsBySheetId } from "../api/commentApi";
@@ -11,21 +12,24 @@ import { fetchWithAuth } from "../utils/fetchWithAuth";
 import Sidebar from "../components/sidebar";
 import BackgroundIcon from "../components/backgroundIcon";
 import { TiptapEditor } from "../components/texteditor/texteditor";
+import ReactMarkdown from 'react-markdown';
 
 export default function CommentsComponent() {
   const [comment, setComment] = useState("");
   const { sheetId } = useParams({ from: '/registers/$sheetId/comments' });
   const decodedToken = getDecodedJwt();
-  const userId = decodedToken?.id
+  const userId = decodedToken?.id;
 
-  const comments = useCommentsBySheetId(Number(sheetId))
-
+  const comments = useCommentsBySheetId(Number(sheetId));
   const { data, isLoading } = useSheets(Number(sheetId));
+
+  const turndownService = new TurndownService();
 
   const handleAddComment = async () => {
     if (!comment.trim()) return;
 
-    const sanitizedComment = DOMPurify.sanitize(comment);
+    const sanitizedHtml = DOMPurify.sanitize(comment);
+    const markdown = turndownService.turndown(sanitizedHtml);
 
     try {
       const response = await fetchWithAuth("https://apidnd.up.railway.app/api/comment", {
@@ -34,7 +38,7 @@ export default function CommentsComponent() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text: sanitizedComment,
+          text: markdown,
           user_id: userId,
           sheet_id: Number(sheetId),
         }),
@@ -43,13 +47,12 @@ export default function CommentsComponent() {
       if (!response.ok) throw new Error("Erreur lors de l'envoi du commentaire");
 
       comments.refetch?.();
-      setComment(""); // Vide le champ
+      setComment(""); // Vide le champ après soumission
     } catch (error) {
       console.error(error);
       alert("Une erreur est survenue.");
     }
   };
-
 
   if (comments.isLoading || !comments.data) return <div>Chargement...</div>;
   if (isLoading || !data) return <div>Chargement...</div>;
@@ -82,16 +85,16 @@ export default function CommentsComponent() {
 
           <div className="mt-[40px] mb-[80px] w-full flex flex-wrap gap-[40px]">
             {comments.data.map((comment) => (
-              <div className="w-full">
+              <div className="w-full" key={comment.id}>
                 <div className="flex flex-wrap justify-between w-full font-uncial-antiqua tracking-[10%]">
                   <h3 className="text-2xl mb-[8px]">{comment.username}</h3>
                   <span className="text-base">
                     Le {dayjs(comment.create_at).format('DD/MM/YYYY, HH:mm')}
                   </span>
                 </div>
-                <div
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(comment.text) }}
-                  className="bg-primary p-[8px] rounded-[5px] text-base w-full tracking-[10%]">
+
+                <div className="bg-primary p-[8px] rounded-[5px] text-base w-full tracking-[10%]">
+                  <ReactMarkdown>{comment.text}</ReactMarkdown>
                 </div>
               </div>
             ))}
