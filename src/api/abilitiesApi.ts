@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../utils/fetchWithAuth";
 
 export type Abilities = {
     id: number;
@@ -7,7 +8,7 @@ export type Abilities = {
 };
 
 export async function fetchAbilities(): Promise<Abilities[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/abilities');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/abilities');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des habilités');

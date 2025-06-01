@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 type Entity = {
     id: number;
@@ -60,7 +61,7 @@ export type SheetL5R = {
 };
 
 async function fetchJSON<T>(url: string): Promise<T> {
-    const res = await fetch(url);
+    const res = await fetchWithAuth(url);
     if (!res.ok) throw new Error(`Échec de chargement depuis ${url}`);
     return res.json();
 }

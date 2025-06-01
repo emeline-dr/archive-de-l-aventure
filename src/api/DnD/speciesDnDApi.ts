@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type Species = {
     id: number;
@@ -14,7 +15,7 @@ export type SubSpecies = {
 
 /* Appel des espèces */
 export async function fetchSpecies(): Promise<Species[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/speciesDnD');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/speciesDnD');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des espèces');
@@ -32,7 +33,7 @@ export function useSpecies() {
 
 /* Appel des sous-espèces */
 export async function fetchSubSpecies(): Promise<SubSpecies[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/subSpeciesDnD');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/subSpeciesDnD');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des sous-espèces');

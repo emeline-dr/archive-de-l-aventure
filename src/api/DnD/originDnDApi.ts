@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type Origin = {
     id: number,
@@ -6,7 +7,7 @@ export type Origin = {
 }
 
 export async function fetchOrigin(): Promise<Origin[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/origineDnD');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/origineDnD');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des origines');

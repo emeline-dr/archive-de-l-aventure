@@ -7,6 +7,7 @@ import { useSchool } from "../../api/L5R/schoolL5RApi"
 import { useSkillL5RFiltered } from "../../api/L5R/skillL5RApi"
 import { useAbilitiesL5R } from "../../api/L5R/abilitiesL5RApi"
 import { getDecodedJwt } from "../../utils/AuthUtils";
+import { fetchWithAuth } from "../../utils/fetchWithAuth"
 
 export function L5rFormComponent() {
     const decodedToken = getDecodedJwt();
@@ -143,7 +144,7 @@ export function L5rFormComponent() {
                     }))
                 }
 
-                const response = await fetch("https://apidnd.up.railway.app/api/sheet/l5r", {
+                const response = await fetchWithAuth("https://apidnd.up.railway.app/api/sheet/l5r", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

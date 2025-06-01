@@ -10,6 +10,7 @@ import { useOrigin } from "../../api/DnD/originDnDApi"
 import { useLanguage } from "../../api/DnD/languageDnDApi"
 import { useSkillDnDFiltered } from "../../api/DnD/skillDnDApi"
 import { useAbilitiesDnD } from "../../api/DnD/abilitiesDnDApi"
+import { fetchWithAuth } from "../../utils/fetchWithAuth"
 
 export default function UpdateSheetDnD(props: { sheetId: number }) {
     const { data, isLoading } = useSheets(props.sheetId)
@@ -167,7 +168,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
         onSubmit: async ({ value }) => {
             if (!data) return;
 
-            const existingLanguages = data.language ?? [];
+            const existingLanguages = data.languages ?? [];
             const validLanguages = (value.language ?? []).filter(
                 (lang) => lang && !isNaN(lang.language_id)
             )
@@ -424,7 +425,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
 
             try {
                 // PATCH sans les skills vides
-                const patchRes = await fetch(`https://apidnd.up.railway.app/api/sheet/${data.sheet.id}`, {
+                const patchRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/sheet/${data.sheet.id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -434,7 +435,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
 
                 console.log('PATCH réussi : fiche mise à jour');
 
-                const spellSlotRes = await fetch(`https://apidnd.up.railway.app/api/spellSlot/${spellSlot.id}`, {
+                const spellSlotRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/spellSlot/${spellSlot.id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(spellSlot),
@@ -451,7 +452,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             sheet_id: data.sheet.id,
                         };
 
-                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/languageSheet/${lang.id}`, {
+                        const patchRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/languageSheet/${lang.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -472,7 +473,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                         sheet_id: data.sheet.id,
                     }));
 
-                    const postRes = await fetch(url, {
+                    const postRes = await fetchWithAuth(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bodyContent),
@@ -495,7 +496,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             label: ability.label,
                         };
 
-                        const patchAbilitiesRes = await fetch(`https://apidnd.up.railway.app/api/abilitiesSheet/${ability.id}`, {
+                        const patchAbilitiesRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/abilitiesSheet/${ability.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -518,7 +519,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             proficient: skill.proficient,
                         };
 
-                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/skillSheet/${skill.id}`, {
+                        const patchRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/skillSheet/${skill.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -541,7 +542,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                         proficient: skill.proficient,
                     }));
 
-                    const postRes = await fetch(url, {
+                    const postRes = await fetchWithAuth(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bodyContent),
@@ -574,7 +575,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             proficient: saving.proficient,
                         };
 
-                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/savingThrowSheet/${saving.id}`, {
+                        const patchRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/savingThrowSheet/${saving.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -598,7 +599,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             description: item.description,
                         };
 
-                        const patchItemRes = await fetch(`https://apidnd.up.railway.app/api/inventoryItem/${item.id}`, {
+                        const patchItemRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/inventoryItem/${item.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -622,7 +623,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                         description: item.description,
                     }));
 
-                    const postItemsRes = await fetch(url, {
+                    const postItemsRes = await fetchWithAuth(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bodyContent),
@@ -647,7 +648,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             notes: weapon.notes,
                         };
 
-                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/weaponSheet/${weapon.id}`, {
+                        const patchRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/weaponSheet/${weapon.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -673,7 +674,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                         notes: weapon.notes,
                     }))
 
-                    const postWeaponsRes = await fetch(url, {
+                    const postWeaponsRes = await fetchWithAuth(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bodyContent),
@@ -703,7 +704,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             is_ritual: spell.is_ritual,
                         };
 
-                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/spellSheet/${spell.id}`, {
+                        const patchRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/spellSheet/${spell.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -734,7 +735,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                         is_ritual: spell.is_ritual,
                     }))
 
-                    const postSpellsRes = await fetch(url, {
+                    const postSpellsRes = await fetchWithAuth(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bodyContent),
@@ -756,7 +757,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             level_acquired: feat.level_acquired,
                         };
 
-                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/featSheet/${feat.id}`, {
+                        const patchRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/featSheet/${feat.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -778,7 +779,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             level_acquired: feat.level_acquired,
                         };
 
-                        const postRes = await fetch(`https://apidnd.up.railway.app/api/featSheet`, {
+                        const postRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/featSheet`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),

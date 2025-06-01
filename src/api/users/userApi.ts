@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type User = {
     id: number;
@@ -9,7 +10,7 @@ export type User = {
 };
 
 export async function fetchUsers(): Promise<User[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/users');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/users');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des utilisateurs');
@@ -26,7 +27,7 @@ export function useUser() {
 }
 
 export async function fetchUserById(userId: number): Promise<User> {
-    const res = await fetch(`https://apidnd.up.railway.app/api/users/${userId}`);
+    const res = await fetchWithAuth(`https://apidnd.up.railway.app/api/users/${userId}`);
 
     if (!res.ok) {
         throw new Error('Utilisateur non trouvé');

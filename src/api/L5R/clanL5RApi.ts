@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type Clan = {
     id: number;
@@ -6,7 +7,7 @@ export type Clan = {
 };
 
 export async function fetchClan(): Promise<Clan[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/clanL5R');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/clanL5R');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des clans');

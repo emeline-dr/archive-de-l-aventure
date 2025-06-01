@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type Class = {
     id: number;
@@ -13,7 +14,7 @@ export type SubClass = {
 
 /* Appel des classes */
 export async function fetchClass(): Promise<Class[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/classeDnD');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/classeDnD');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des classes');
@@ -31,7 +32,7 @@ export function useClass() {
 
 /* Appel des sous-classes */
 export async function fetchSubClass(): Promise<SubClass[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/subClasseDnD');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/subClasseDnD');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des sous-classes');

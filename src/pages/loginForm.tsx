@@ -3,6 +3,7 @@ import { useForm } from '@tanstack/react-form';
 import Cookies from 'js-cookie';
 
 import type { AnyFieldApi } from '@tanstack/react-form';
+import { fetchWithAuth } from '../utils/fetchWithAuth';
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
     return (
@@ -30,7 +31,7 @@ export function LoginForm() {
             const API_URL = "https://apidnd.up.railway.app/api/login";
 
             try {
-                const response = await fetch(API_URL, {
+                const response = await fetchWithAuth(API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

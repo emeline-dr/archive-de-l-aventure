@@ -30,11 +30,3 @@ export const getDecodedJwt = (): DecodedToken | null => {
     }
     return null;
 };
-
-export const isJwtExpired = (token: string): boolean => {
-    const decoded = decodeJwt(token);
-    if (!decoded || !decoded.exp) return true;
-
-    const currentTime = Date.now() / 1000;
-    return decoded.exp < currentTime;
-};

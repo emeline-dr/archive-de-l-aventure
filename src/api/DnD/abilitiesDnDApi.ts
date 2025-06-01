@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type AbilitiesDnD = {
     id: number;
@@ -7,7 +8,7 @@ export type AbilitiesDnD = {
 };
 
 export async function fetchAbilitiesDnD(): Promise<AbilitiesDnD[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/abilities/system/2');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/abilities/system/2');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des habilités de DnD');

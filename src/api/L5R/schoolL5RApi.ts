@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type School = {
     id: number;
@@ -6,7 +7,7 @@ export type School = {
 };
 
 export async function fetchSchool(): Promise<School[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/schoolL5R');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/schoolL5R');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des écoles');

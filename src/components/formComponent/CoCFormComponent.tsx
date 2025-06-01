@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSkillCoCFiltered } from "../../api/CoC/skillCoCApi";
 import { useAbilitiesCoC } from "../../api/CoC/abilitiesCoC";
 import { getDecodedJwt } from "../../utils/AuthUtils";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export function CthulhuFormComponent() {
   const skillCoC = useSkillCoCFiltered();
@@ -147,7 +148,7 @@ export function CthulhuFormComponent() {
           }))
         }
 
-        const response = await fetch("https://apidnd.up.railway.app/api/sheet/coc", {
+        const response = await fetchWithAuth("https://apidnd.up.railway.app/api/sheet/coc", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -9,6 +9,7 @@ import { useSkillDnDFiltered } from "../../api/DnD/skillDnDApi";
 import { useAbilitiesDnD } from "../../api/DnD/abilitiesDnDApi";
 
 import { getDecodedJwt } from "../../utils/AuthUtils";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export function DndFormComponent() {
   const decodedToken = getDecodedJwt();
@@ -260,7 +261,7 @@ export function DndFormComponent() {
           })
         };
 
-        const response = await fetch("https://apidnd.up.railway.app/api/sheet/dnd", {
+        const response = await fetchWithAuth("https://apidnd.up.railway.app/api/sheet/dnd", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

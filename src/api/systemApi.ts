@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../utils/fetchWithAuth";
 
 export type System = {
     id: number;
@@ -6,7 +7,7 @@ export type System = {
 };
 
 export async function fetchSystems(): Promise<System[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/system');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/system');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des systèmes');

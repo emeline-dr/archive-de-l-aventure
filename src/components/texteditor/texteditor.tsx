@@ -1,4 +1,5 @@
 import { useEditor, EditorContent } from "@tiptap/react";
+import { useEffect } from "react";
 
 import Placeholder from "@tiptap/extension-placeholder";
 import StarterKit from '@tiptap/starter-kit';
@@ -37,11 +38,17 @@ export function TiptapEditor({
     },
   });
 
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value || "", false);
+    }
+  }, [value, editor]);
+
   if (!editor) return null;
 
 
   return (
-    <div className="border border-secondary rounded-md mx-auto">
+    <div className="h-[200px] border border-secondary rounded-md mx-auto">
       {/* Toolbar */}
       <div className="flex gap-[8px] p-[8px] bg-primary flex-wrap">
         <button

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../utils/fetchWithAuth";
 
 export type Ability = {
     id: number;
@@ -268,7 +269,7 @@ export type SheetResponse = {
 };
 
 export async function fetchSheets(sheet_id: number): Promise<SheetResponse> {
-    const response = await fetch(`https://apidnd.up.railway.app/api/sheet/${sheet_id}`);
+    const response = await fetchWithAuth(`https://apidnd.up.railway.app/api/sheet/${sheet_id}`);
 
     if (!response.ok) {
         throw new Error('Erreur lors du chargement de la fiche DnD');
@@ -288,7 +289,7 @@ export function useSheets(sheet_id: number) {
 }
 
 export async function updateShared(sheet: Sheet, sheet_id: number): Promise<Sheet> {
-    const response = await fetch(`https://apidnd.up.railway.app/api/sheet/${sheet_id}`, {
+    const response = await fetchWithAuth(`https://apidnd.up.railway.app/api/sheet/${sheet_id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

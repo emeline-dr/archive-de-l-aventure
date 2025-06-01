@@ -1,4 +1,5 @@
 import { useRouter } from '@tanstack/react-router';
+import { fetchWithAuth } from '../utils/fetchWithAuth';
 
 type DeleteButtonProps = {
     sheetId: number;
@@ -13,7 +14,7 @@ export default function DeleteButton({ sheetId }: DeleteButtonProps) {
         if (!confirmed) return;
 
         try {
-            const response = await fetch(`https://apidnd.up.railway.app/api/sheet/${sheetId}`, {
+            const response = await fetchWithAuth(`https://apidnd.up.railway.app/api/sheet/${sheetId}`, {
                 method: 'DELETE',
             });
 
@@ -21,10 +22,8 @@ export default function DeleteButton({ sheetId }: DeleteButtonProps) {
                 const isOnDetailPage = /^\/myCharacters\/\d+$/.test(currentPath);
 
                 if (isOnDetailPage) {
-                    // Redirige vers la liste
                     router.navigate({ to: '/myCharacters' });
                 } else {
-                    // Sinon, on peut simplement forcer un refresh
                     window.location.reload();
                 }
             } else {

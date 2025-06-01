@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type Ability = {
     id: number;
@@ -121,7 +122,7 @@ export type SheetDnD = {
 
 
 export async function fetchSheetsDnDWithDetails(sheet_id: number): Promise<SheetDnD> {
-    const response = await fetch(`https://apidnd.up.railway.app/api/sheet/${sheet_id}`);
+    const response = await fetchWithAuth(`https://apidnd.up.railway.app/api/sheet/${sheet_id}`);
 
     if (!response.ok) {
         throw new Error('Erreur lors du chargement de la fiche DnD');

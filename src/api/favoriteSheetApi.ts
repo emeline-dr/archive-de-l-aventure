@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../utils/fetchWithAuth";
 
 type FavoritesSheet = {
     id: number;
@@ -19,7 +20,7 @@ type FavoritesSheetById = {
 }
 
 export async function FetchFavoritesSheet(): Promise<FavoritesSheet[]> {
-    const response = await fetch(`https://apidnd.up.railway.app/api/favoritesSheet`);
+    const response = await fetchWithAuth(`https://apidnd.up.railway.app/api/favoritesSheet`);
 
     if (!response.ok) {
         throw new Error('Erreur lors du chargement des fiches préférées');
@@ -38,7 +39,7 @@ export function useFavoritesSheet() {
 }
 
 export async function FetchFavoritesSheetById(userId: number): Promise<FavoritesSheetById[]> {
-    const response = await fetch(`https://apidnd.up.railway.app/api/favoritesSheet/user/${userId}`);
+    const response = await fetchWithAuth(`https://apidnd.up.railway.app/api/favoritesSheet/user/${userId}`);
 
     if (!response.ok) {
         throw new Error('Erreur lors du chargement des fiches préférées de ce user');
@@ -68,7 +69,7 @@ export async function AddFavoritesSheetToUser(
     sheet_id: number,
     user_id: number
 ): Promise<FavoritesSheet> {
-    const response = await fetch(`https://apidnd.up.railway.app/api/favoritesSheet`, {
+    const response = await fetchWithAuth(`https://apidnd.up.railway.app/api/favoritesSheet`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -89,7 +90,7 @@ export async function AddFavoritesSheetToUser(
 }
 
 export async function RemoveFavoritesSheetFromUser(favoriteId: number): Promise<void> {
-    const response = await fetch(`https://apidnd.up.railway.app/api/favoritesSheet/${favoriteId}`, {
+    const response = await fetchWithAuth(`https://apidnd.up.railway.app/api/favoritesSheet/${favoriteId}`, {
         method: 'DELETE',
     });
 

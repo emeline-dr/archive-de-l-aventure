@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type SkillCoC = {
     id: number;
@@ -7,7 +8,7 @@ export type SkillCoC = {
 };
 
 export async function fetchSkillCoC(): Promise<SkillCoC[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/skill/system/3');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/skill/system/3');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des compétences de CoC');

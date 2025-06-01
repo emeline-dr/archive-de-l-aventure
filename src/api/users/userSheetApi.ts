@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type SheetByUser = {
     id: number;
@@ -12,7 +13,7 @@ export type SheetByUser = {
 };
 
 export async function fetchSheets(): Promise<SheetByUser[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/sheet');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/sheet');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des fiches');
@@ -29,7 +30,7 @@ export function useSheetsForAllUsers() {
 }
 
 export async function fetchSheetsShared(): Promise<SheetByUser[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/sheet/shared');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/sheet/shared');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des fiches partagées');
@@ -47,7 +48,7 @@ export function useSheetsShared() {
 
 
 export async function fetchSheetsByUsers(user_id: number): Promise<SheetByUser[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/sheet/user/' + user_id);
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/sheet/user/' + user_id);
 
     if (!res.ok) {
         throw new Error('Échec du chargement des fiches par utilisateur');

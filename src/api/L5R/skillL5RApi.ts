@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 export type SkillL5R = {
     id: number;
@@ -9,7 +10,7 @@ export type SkillL5R = {
 };
 
 export async function fetchSkillL5R(): Promise<SkillL5R[]> {
-    const res = await fetch('https://apidnd.up.railway.app/api/skill/system/1');
+    const res = await fetchWithAuth('https://apidnd.up.railway.app/api/skill/system/1');
 
     if (!res.ok) {
         throw new Error('Échec du chargement des compétences de L5R');

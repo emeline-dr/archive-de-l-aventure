@@ -5,6 +5,7 @@ import type { Sheet } from "../../api/sheetApi"
 
 import { useSheets } from "../../api/sheetApi"
 import { useSkillCoCFiltered } from "../../api/CoC/skillCoCApi"
+import { fetchWithAuth } from "../../utils/fetchWithAuth"
 
 export default function UpdateSheetCoC(props: { sheetId: number }) {
     const { data, isLoading } = useSheets(props.sheetId)
@@ -247,7 +248,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
 
             try {
                 // PATCH sans les skills vides
-                const patchRes = await fetch(`https://apidnd.up.railway.app/api/sheet/${data.sheet.id}`, {
+                const patchRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/sheet/${data.sheet.id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -269,7 +270,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                             label: ability.label,
                         };
 
-                        const patchAbilitiesRes = await fetch(`https://apidnd.up.railway.app/api/abilitiesSheet/${ability.id}`, {
+                        const patchAbilitiesRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/abilitiesSheet/${ability.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -293,7 +294,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                             description: item.description,
                         };
 
-                        const patchItemRes = await fetch(`https://apidnd.up.railway.app/api/inventoryItem/${item.id}`, {
+                        const patchItemRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/inventoryItem/${item.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -317,7 +318,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                         description: item.description,
                     }));
 
-                    const postItemsRes = await fetch(url, {
+                    const postItemsRes = await fetchWithAuth(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bodyContent),
@@ -339,7 +340,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                             proficient: skill.proficient,
                         };
 
-                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/skillSheet/${skill.id}`, {
+                        const patchRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/skillSheet/${skill.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -362,7 +363,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                         proficient: skill.proficient,
                     }));
 
-                    const postRes = await fetch(url, {
+                    const postRes = await fetchWithAuth(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bodyContent),
@@ -385,7 +386,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                             notes: weapon.notes,
                         };
 
-                        const patchRes = await fetch(`https://apidnd.up.railway.app/api/weaponSheet/${weapon.id}`, {
+                        const patchRes = await fetchWithAuth(`https://apidnd.up.railway.app/api/weaponSheet/${weapon.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(bodyContent),
@@ -409,7 +410,7 @@ export default function UpdateSheetCoC(props: { sheetId: number }) {
                         notes: weapon.notes,
                     }))
 
-                    const postWeaponsRes = await fetch(url, {
+                    const postWeaponsRes = await fetchWithAuth(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(bodyContent),

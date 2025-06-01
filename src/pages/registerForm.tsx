@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import type { AnyFieldApi } from '@tanstack/react-form'
+import { fetchWithAuth } from '../utils/fetchWithAuth';
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
     return (
@@ -32,7 +33,7 @@ export function RegisterForm() {
             const API_URL = "https://apidnd.up.railway.app/api/users";
 
             try {
-                const response = await fetch(API_URL, {
+                const response = await fetchWithAuth(API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
