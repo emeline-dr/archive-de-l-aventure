@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
+import DeleteButton from "./deleteButton";
+
 import { useFavoritesSheet, AddFavoritesSheetToUser, RemoveFavoritesSheetFromUser } from "../api/favoriteSheetApi";
 import { useUserById } from "../api/users/userApi";
 
@@ -106,6 +108,11 @@ function SheetSnippet(props: SheetSnippetProps) {
                     <span className="w-[150px] md:w-full lg:w-[100px] xl:w-full truncate">Appartient à : {props.username || authorInfos.data?.username}</span>
                 }
             </div>
+            {props.authorId === props.myId &&
+                <div className="absolute bottom-[8px] end-[143px]">
+                    <DeleteButton sheetId={props.id} />
+                </div>
+            }
             {props.authorId != props.myId &&
                 <button
                     onClick={() => {

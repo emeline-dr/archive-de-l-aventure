@@ -8,6 +8,7 @@ import { useSheets, updateShared } from '../api/sheetApi';
 import Sidebar from "../components/sidebar"
 import BackgroundIcon from "../components/backgroundIcon"
 import { OllamaChatModal } from '../components/ollama/ollamaChatModal';
+import DeleteButton from '../components/deleteButton';
 
 import HeaderSheet from "../components/sheetComponent/headerSheet";
 import AbilitiesSheet from "../components/sheetComponent/abilitiesSheet";
@@ -62,7 +63,8 @@ export function CharactersOwnedPage() {
                 <div className="flex flex-wrap justify-between mt-[40px]">
                     <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline mb-[40px]'>{sheet.firstname ? sheet.firstname : 'Arlahne'} {sheet.lastname ? sheet.lastname : ''}</h2>
 
-                    <div className='flex flex-wrap gap-[16px] mb-[40px]'>
+                    <div className='flex flex-wrap content-center gap-[16px] mb-[40px]'>
+                        <DeleteButton sheetId={sheet.id} />
                         <button
                             className='btn btn-text flex-1'
                             onClick={handleToggleShared} disabled={isPending}
