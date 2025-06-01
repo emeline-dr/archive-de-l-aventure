@@ -134,7 +134,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
             characterTraits: data?.details.caractere,
             allies: data?.details.allies,
             enemies: data?.details.enemies,
-            feat: (data?.feat ?? []).map((feat) => ({
+            feats: (data?.feats ?? []).map((feat) => ({
                 id: feat.id,
                 sheet_id: data?.sheet.id,
                 label: feat.label,
@@ -249,9 +249,9 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 )
             );
 
-            const existingFeats = data.feat ?? [];
-            const validFeats = (value.feat ?? []).filter(
-                (feats) => feats.label.trim() !== ''
+            const existingFeats = data.feats ?? [];
+            const validFeats = (value.feats ?? []).filter(
+                (feat) => feat.label.trim() !== ''
             );
 
             const featsToPatch = validFeats.filter(feat =>
@@ -1883,10 +1883,10 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                 </label>
 
                 <div className="w-full flex flex-col gap-4">
-                    {form.state.values.feat.map((_, index) => (
+                    {form.state.values.feats.map((_, index) => (
                         <div key={index} className="flex flex-wrap gap-[8px]">
                             {/* Nom */}
-                            <form.Field name={`feat[${index}].label`}>
+                            <form.Field name={`feats[${index}].label`}>
                                 {(field) => (
                                     <input
                                         type="text"
@@ -1901,7 +1901,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             </form.Field>
 
                             {/* Description */}
-                            <form.Field name={`feat[${index}].description`}>
+                            <form.Field name={`feats[${index}].description`}>
                                 {(field) => (
                                     <input
                                         type="text"
@@ -1916,7 +1916,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             </form.Field>
 
                             {/* Acquis au niveau */}
-                            <form.Field name={`feat[${index}].level_acquired`}>
+                            <form.Field name={`feats[${index}].level_acquired`}>
                                 {(field) => (
                                     <input
                                         type="number"
@@ -1934,9 +1934,9 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                             <button
                                 type="button"
                                 onClick={() => {
-                                    const updatedFeats = [...form.state.values.feat]
+                                    const updatedFeats = [...form.state.values.feats]
                                     updatedFeats.splice(index, 1)
-                                    form.setFieldValue('feat', updatedFeats)
+                                    form.setFieldValue('feats', updatedFeats)
                                     setFeatsCount((f) => f + 1)
                                 }}
                                 className="size-[40px] text-background bg-red-600 hover:bg-background hover:text-red-600 hover:outline-2 hover:outline-red-600 p-2 rounded text-lg cursor-pointer"
@@ -1949,10 +1949,10 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
                     <button
                         type="button"
                         onClick={() => {
-                            const current = form.state.values.feat ?? [];
-                            const maxId = current.reduce((max, feats) => Math.max(max, feats.id ?? 0), 0);
+                            const current = form.state.values.feats ?? [];
+                            const maxId = current.reduce((max, feat) => Math.max(max, feat.id ?? 0), 0);
 
-                            form.setFieldValue('feat', [
+                            form.setFieldValue('feats', [
                                 ...current,
                                 {
                                     id: maxId + 1,

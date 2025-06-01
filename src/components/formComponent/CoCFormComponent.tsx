@@ -495,9 +495,14 @@ export function CthulhuFormComponent() {
                 name={field.name}
                 id={field.name}
                 checked={field.state.value ?? false}
-                onChange={(e) => field.handleChange(e.target.checked ? true : false)}
-                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                onChange={(e) => field.handleChange(e.target.checked)}
+                className="hidden"
               />
+              <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                {field.state.value && (
+                  <i className="fa-solid fa-check text-accent text-lg"></i>
+                )}
+              </span>
             </div>
           )}
         </form.Field>
@@ -517,9 +522,14 @@ export function CthulhuFormComponent() {
                 name={field.name}
                 id={field.name}
                 checked={field.state.value ?? false}
-                onChange={(e) => field.handleChange(e.target.checked ? true : false)}
-                className="w-full p-[8px] bg-primary rounded-lg border border-secondary"
+                onChange={(e) => field.handleChange(e.target.checked)}
+                className="hidden"
               />
+              <span className="flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text">
+                {field.state.value && (
+                  <i className="fa-solid fa-check text-accent text-lg"></i>
+                )}
+              </span>
             </div>
           )}
         </form.Field>
@@ -744,7 +754,7 @@ export function CthulhuFormComponent() {
           {form.state.values.weapons.map((_, index) => (
             <div key={index} className="flex flex-wrap gap-[8px]">
               {/* ID */}
-              <div className="size-[40px] text-center text-xl bg-primary rounded-lg border border-secondary cursor-not-allowed">
+              <div className="size-[40px] font-uncial-antiqua flex flex-wrap justify-center content-center text-center text-2xl bg-primary rounded-lg border border-secondary cursor-not-allowed">
                 {index}
               </div>
 

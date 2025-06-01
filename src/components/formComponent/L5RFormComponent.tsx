@@ -1079,7 +1079,7 @@ export function L5rFormComponent() {
                     {form.state.values.weapons.map((_, index) => (
                         <div key={index} className="flex flex-wrap gap-[8px]">
                             {/* ID */}
-                            <div className="size-[40px] text-center text-xl bg-primary rounded-lg border border-secondary cursor-not-allowed">
+                            <div className="size-[40px] font-uncial-antiqua flex flex-wrap justify-center content-center text-center text-2xl bg-primary rounded-lg border border-secondary cursor-not-allowed">
                                 {index}
                             </div>
 

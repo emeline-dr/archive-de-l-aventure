@@ -73,9 +73,9 @@ function HeaderSheet(props: HeaderSheetProps) {
                         alignment={sheet.details?.alignment ?? ''}
                         lvl={sheet.sheet.lvl}
                         exp={sheet.details?.exp ?? 0}
-                        language={Array.isArray(sheet.language)
-                            ? sheet.language.map(lang => lang.label).join(', ')
-                            : sheet.language?.label || 'Aucune langue'}
+                        languages={Array.isArray(sheet.languages)
+                            ? sheet.languages.map(lang => lang.label).join(', ')
+                            : sheet.languages?.label || 'Aucune langue'}
                     />
                 );
             }

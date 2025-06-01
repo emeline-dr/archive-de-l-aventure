@@ -256,7 +256,7 @@ export type SheetResponse = {
     saving_throw: SavingThrows[];
     skills: SkillSheet[];
     fellowInvestigators?: FellowInvestigators[];
-    language?: Languages[];
+    languages?: Languages[];
     classeDnD?: { label: string };
     subClasseDnD?: { label: string };
     speciesDnD?: { label: string };

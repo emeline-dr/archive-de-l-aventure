@@ -1,5 +1,5 @@
 export type HeaderSheetDnDProps = {
-    language: string;
+    languages: string;
     lvl: number;
     exp: number;
     sheet_id: number;
@@ -20,7 +20,7 @@ export default function HeaderSheetDnD(props: HeaderSheetDnDProps) {
                 <div><span className='font-uncial-antiqua text-2xl'>Race :</span> {props.species} {props.subSpecies ? '(' + props.subSpecies + ')' : ''}</div>
                 <div><span className='font-uncial-antiqua text-2xl'>Historique :</span> {props.originDetails}</div>
                 <div><span className='font-uncial-antiqua text-2xl'>Alignement :</span> {props.alignment}</div>
-                <div><span className='font-uncial-antiqua text-2xl'>Langue(s) :</span> {props.language}</div>
+                <div><span className='font-uncial-antiqua text-2xl'>Langue(s) :</span> {props.languages}</div>
             </div>
 
             <div className='absolute flex flex-col justify-between end-[40px] w-[150px] h-[250px] z-1'>
