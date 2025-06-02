@@ -5,7 +5,6 @@ import { Link } from "@tanstack/react-router";
 import banner from "../assets/images/banner.jpg";
 import logoHome from "../assets/images/logo-home.png";
 import indexBanner from "../assets/images/index-banner.jpg";
-import { OllamaDemo } from "../components/ollama/ollamaDemo";
 
 export const homeRoute = createRoute({
   path: "/",
@@ -83,7 +82,6 @@ export const homeRoute = createRoute({
             </span>
           </div>
         </div>
-        <OllamaDemo />
       </div>
     </>
   ),
