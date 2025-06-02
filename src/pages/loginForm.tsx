@@ -17,7 +17,6 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 }
 
 export function LoginForm() {
-    const [checked, setChecked] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const form = useForm({
@@ -127,23 +126,6 @@ export function LoginForm() {
 
                             {/* Message d'erreur */}
                             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-
-                            {/* Remember me */}
-                            <input
-                                type='checkbox'
-                                id="rememberMe"
-                                name="rememberMe"
-                                onChange={(e) => {
-                                    setChecked(e.target.checked);
-                                }}
-                                className='hidden'
-                            />
-                            <label htmlFor="rememberMe" className='flex cursor-pointer'>
-                                <span className='flex justify-center self-center size-[16px] me-[8px] rounded-sm bg-text'>
-                                    {checked && <i className="fa-solid fa-check text-accent"></i>}
-                                </span>
-                                Se souvenir de moi
-                            </label>
                         </div>
                         <form.Subscribe
                             selector={(state) => [state.canSubmit, state.isSubmitting]}

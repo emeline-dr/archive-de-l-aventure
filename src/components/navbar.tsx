@@ -42,7 +42,7 @@ function Navbar() {
                             <button className="btn btn-accent">S'inscrire</button>
                         </Link>
                     }
-                    {decodedToken &&
+                    {!location.pathname.includes('signIn') && !location.pathname.includes('login') && decodedToken &&
                         <div className="self-center text-center">
                             <Link to="/index" activeProps={{ className: 'underline' }} className="font-uncial-antiqua block lg:inline-block text-2xl tracking-[5%] text-accent h-fit hover:underline">
                                 Accueil

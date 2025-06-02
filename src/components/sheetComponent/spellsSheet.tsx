@@ -99,9 +99,9 @@ export default function SpellsSheet(props: SpellsSheetProps) {
                                                 <span className="font-uncial-antiqua text-lg pe-[8px]">Composant(s) :</span> {spell.components || '/'} <br />
                                                 <span className="font-uncial-antiqua text-lg pe-[8px]">Durée :</span> {spell.duration || '/'} <br />
                                                 <span className="font-uncial-antiqua text-lg pe-[8px]">Description :</span> {spell.description || '/'} <br />
-                                                {spell.prepared === true ? (<p>Préparé.</p>) : (<p>Pas préparé.</p>)}
-                                                {spell.known === true ? (<p>Connu.</p>) : (<p>Pas connu.</p>)}
-                                                {spell.is_ritual === true ? (<p>Demande un rituel.</p>) : (<p>Ne demande pas de rituel.</p>)}
+                                                {spell.prepared === true ? (<p className="w-full text-center my-[8px] p-[8px] bg-green-600 rounded-sm">Préparé.</p>) : (<p className="w-full text-center my-[8px] p-[8px] bg-red-700 rounded-sm">Pas préparé.</p>)}
+                                                {spell.known === true ? (<p className="w-full text-center my-[8px] p-[8px] bg-green-600 rounded-sm">Connu.</p>) : (<p className="w-full text-center my-[8px] p-[8px] bg-red-700 rounded-sm">Inconnu.</p>)}
+                                                {spell.is_ritual === true ? (<p className="w-full text-center my-[8px] p-[8px] bg-green-600 rounded-sm">Demande un rituel.</p>) : (<p className="w-full text-center my-[8px] p-[8px] bg-red-700 rounded-sm">Ne demande pas de rituel.</p>)}
                                             </span>
                                         </div>
                                         <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-text"></div>
@@ -153,9 +153,9 @@ export default function SpellsSheet(props: SpellsSheetProps) {
                                                     <span className="font-uncial-antiqua text-lg pe-[8px]">Composant(s) :</span> {spell.components || '/'} <br />
                                                     <span className="font-uncial-antiqua text-lg pe-[8px]">Durée :</span> {spell.duration || '/'} <br />
                                                     <span className="font-uncial-antiqua text-lg pe-[8px]">Description :</span> {spell.description || '/'} <br />
-                                                    {spell.prepared === true ? (<p>Préparé.</p>) : (<p>Pas préparé.</p>)}
-                                                    {spell.known === true ? (<p>Connu.</p>) : (<p>Pas connu.</p>)}
-                                                    {spell.is_ritual === true ? (<p>Demande un rituel.</p>) : (<p>Ne demande pas de rituel.</p>)}
+                                                    {spell.prepared === true ? (<p className="w-full text-center my-[8px] p-[8px] bg-green-600 rounded-sm">Préparé.</p>) : (<p className="w-full text-center my-[8px] p-[8px] bg-red-700 rounded-sm">Pas préparé.</p>)}
+                                                    {spell.known === true ? (<p className="w-full text-center my-[8px] p-[8px] bg-green-600 rounded-sm">Connu.</p>) : (<p className="w-full text-center my-[8px] p-[8px] bg-red-700 rounded-sm">Inconnu.</p>)}
+                                                    {spell.is_ritual === true ? (<p className="w-full text-center my-[8px] p-[8px] bg-green-600 rounded-sm">Demande un rituel.</p>) : (<p className="w-full text-center my-[8px] p-[8px] bg-red-700 rounded-sm">Ne demande pas de rituel.</p>)}
                                                 </span>
                                             </div>
                                             <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-text"></div>
