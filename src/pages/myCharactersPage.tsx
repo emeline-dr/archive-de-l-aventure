@@ -17,6 +17,7 @@ export function MyCharactersComponent() {
     const { data, isLoading, isError } = useSheetsByUsers(userId);
 
     const [selectedSystem, setSelectedSystem] = useState(0);
+    const [sortOption, setSortOption] = useState('az');
 
     if (isSystemsLoading) return <div>Chargement des systèmes...</div>;
     if (isSystemsError) return <div>Erreur de chargement des systèmes.</div>;
@@ -25,9 +26,24 @@ export function MyCharactersComponent() {
         return <div>Aucune fiche trouvée.</div>;
     }
 
-    const filteredSheets = selectedSystem === 0
+    let filteredSheets = selectedSystem === 0
         ? data
         : data.filter(sheet => sheet.system_id === selectedSystem);
+
+    filteredSheets = [...filteredSheets].sort((a, b) => {
+        switch (sortOption) {
+            case 'az':
+                return a.firstname.localeCompare(b.firstname);
+            case 'za':
+                return b.firstname.localeCompare(a.firstname);
+            case 'newest':
+                return b.id - a.id;
+            case 'oldest':
+                return a.id - b.id;
+            default:
+                return 0;
+        }
+    });
 
     if (isLoading) {
         return <div>Chargement des fiches...</div>;
@@ -50,6 +66,17 @@ export function MyCharactersComponent() {
                     <h2 className='text-[32px] font-uncial-antiqua tracking-[10%] underline my-[40px]'>Mes aventuriers</h2>
 
                     <div className='h-fit self-center'>
+                        <select
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                            className="p-[8px] me-[16px] bg-primary rounded-lg border border-secondary"
+                        >
+                            <option value="az">Par ordre alphabétique croissant (A à Z)</option>
+                            <option value="za">Par ordre alphabétique décroissant (Z à A)</option>
+                            <option value="newest">Du plus récent au plus vieux</option>
+                            <option value="oldest">Du plus ancien au plus récent</option>
+                        </select>
+
                         <select
                             value={selectedSystem}
                             onChange={(e) => setSelectedSystem(Number(e.target.value))}

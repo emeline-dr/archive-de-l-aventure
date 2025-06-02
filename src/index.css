@@ -148,6 +148,20 @@
     min-height: calc(100vh - 124px);
 }
 
+.notFoundBg {
+    height: calc(100vh - 124px);
+}
+.notFoundImg {
+    background-color: var(--color-background);
+    background-image: url('assets/images/bg-notfound.jpg');
+    background-blend-mode: luminosity;
+}
+
+.notFoundGradient {
+    background: var(--color-accent);
+    opacity: .5;
+}
+
 .ProseMirror p.is-empty::before {
     content: attr(data-placeholder);
     float: left;
