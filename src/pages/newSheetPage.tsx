@@ -6,8 +6,6 @@ import { CthulhuFormComponent } from "../components/formComponent/CoCFormCompone
 
 import { useSystems } from "../api/systemApi";
 
-import { OllamaChatModal } from "../components/ollama/ollamaChatModal";
-
 export function NewSheetPage() {
   const systems = useSystems();
 
@@ -54,7 +52,6 @@ export function NewSheetPage() {
         </div>
         {renderComponent()}
 
-        <OllamaChatModal />
       </div>
     </>
   );

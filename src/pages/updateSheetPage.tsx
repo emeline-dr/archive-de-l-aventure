@@ -7,7 +7,6 @@ import UpdateSheetL5R from "../components/updateFormComponent/UpdateSheetL5R";
 import UpdateSheetDnD from "../components/updateFormComponent/UpdateSheetDnD";
 import UpdateSheetCoC from "../components/updateFormComponent/UpdateSheetCoC";
 import BackgroundIcon from "../components/backgroundIcon"
-import { OllamaChatModal } from "../components/ollama/ollamaChatModal";
 
 export default function UpdateSheetPage() {
     const { sheetId } = useParams({ from: '/myCharacters/$sheetId/updateSheet' });
@@ -68,8 +67,6 @@ export default function UpdateSheetPage() {
                 </div>
             </div>
 
-
-            <OllamaChatModal />
             <BackgroundIcon></BackgroundIcon>
         </div>
     )

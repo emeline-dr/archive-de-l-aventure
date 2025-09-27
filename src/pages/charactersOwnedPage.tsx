@@ -7,7 +7,6 @@ import { useSheets, updateShared } from '../api/sheetApi';
 
 import Sidebar from "../components/sidebar"
 import BackgroundIcon from "../components/backgroundIcon"
-import { OllamaChatModal } from '../components/ollama/ollamaChatModal';
 import DeleteButton from '../components/deleteButton';
 
 import HeaderSheet from "../components/sheetComponent/headerSheet";
@@ -274,7 +273,6 @@ export function CharactersOwnedPage() {
                 </div>
             </div>
 
-            <OllamaChatModal />
             <BackgroundIcon></BackgroundIcon>
         </div>
     )
