@@ -1,4 +1,4 @@
-import { useSheets } from '../../api/sheetApi';
+import { useSheets, type Languages } from '../../api/sheetApi';
 import { useRouter } from '@tanstack/react-router';
 
 import HeaderSheetL5R from './headerSheetComponent/headerSheetL5R';
@@ -73,9 +73,11 @@ function HeaderSheet(props: HeaderSheetProps) {
                         alignment={sheet.details?.alignment ?? ''}
                         lvl={sheet.sheet.lvl}
                         exp={sheet.details?.exp ?? 0}
-                        languages={Array.isArray(sheet.languages)
-                            ? sheet.languages.map(lang => lang.label).join(', ')
-                            : sheet.languages?.label || 'Aucune langue'}
+                        languages={
+                            Array.isArray(sheet.languages) && sheet.languages.length > 0
+                                ? sheet.languages.map((lang: Languages) => lang.label).join(', ')
+                                : 'Aucune langue'
+                        }
                     />
                 );
             }

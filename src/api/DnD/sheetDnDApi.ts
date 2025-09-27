@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchWithAuth } from "../../utils/fetchWithAuth";
+import type { Languages } from "../sheetApi";
 
 export type Ability = {
     id: number;
@@ -113,7 +114,7 @@ export type SheetDnD = {
     spell_slots: SpellSlot[];
     weapon: Weapon[];
     items: Item[];
-    language: { label: string };
+    language: Languages[];
     classeDnD: { label: string };
     subClasseDnD: { label: string };
     speciesDnD: { label: string };
