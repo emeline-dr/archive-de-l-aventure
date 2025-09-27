@@ -65,7 +65,7 @@ export default function UpdateSheetDnD(props: { sheetId: number }) {
             electrum: data?.details.electrum,
             gold: data?.details.gold,
             platinum: data?.details.platinum,
-            language: (data?.language ?? []).map((lang) => ({
+            language: (data?.languages ?? []).map((lang) => ({
                 id: lang.id,
                 sheet_id: data?.sheet.id,
                 language_id: lang.language_id,
