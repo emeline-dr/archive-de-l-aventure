@@ -69,7 +69,8 @@ export default function CommentsComponent() {
             <Link to="/registers">Les registres</Link>
           </div>
           <div className="breadcrumb pe-[16px] underline text-accent">
-            <Link to={`/registers/${sheet.id}`}>
+            <Link to="/registers/$sheetId"
+              params={{ sheetId: String(sheet.id) }}>
               Fiche de {sheet.firstname} {sheet.lastname ? sheet.lastname : ''}
             </Link>
           </div>

@@ -76,7 +76,10 @@ export function CharactersOwnedPage() {
                             }
                         </button>
 
-                        <Link to={`/myCharacters/${sheet.id}/updateSheet`}>
+                        <Link
+                            to="/myCharacters/$sheetId/updateSheet"
+                            params={{ sheetId: String(sheet.id) }}
+                        >
                             <button className="btn btn-text flex-1">Modifier la fiche</button>
                         </Link>
                     </div>

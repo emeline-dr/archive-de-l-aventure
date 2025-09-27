@@ -98,7 +98,8 @@ function SheetSnippet(props: SheetSnippetProps) {
             <div className="flex flex-wrap flex-col justify-center ms-[8px]">
                 <span className="w-[150px] md:w-full lg:w-[100px] xl:w-[250px] font-uncial-antiqua text-2xl truncate">
                     <Link
-                        to={`${isMyCharactersPage ? '/myCharacters' : '/registers'}/${props.id}`}
+                        to={isMyCharactersPage ? "/myCharacters/$sheetId" : "/registers/$sheetId"}
+                        params={{ sheetId: String(props.id) }}
                     >
                         {props.name}
                     </Link>

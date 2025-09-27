@@ -51,7 +51,8 @@ export default function UpdateSheetPage() {
                         <Link to="/myCharacters">Mes aventuriers</Link>
                     </div>
                     <div className="breadcrumb pe-[16px] underline text-accent">
-                        <Link to={`/myCharacters/${sheet.id}`}>
+                        <Link to="/myCharacters/$sheetId"
+                            params={{ sheetId: String(sheet.id) }}>
                             Fiche de {sheet.firstname} {sheet.lastname ? sheet.lastname : ''}
                         </Link>
                     </div>

@@ -19,7 +19,7 @@ function Sidebar() {
             {Array.isArray(sheets) && sheets.length > 0 && sheets.map((sheet) => (
                 <Link
                     key={sheet.id}
-                    to={`/myCharacters/${sheet.id}`}
+                    to="/myCharacters/$sheetId" params={{ sheetId: String(sheet.id) }}
                     className="w-full flex flex-col items-center"
                 >
                     <img

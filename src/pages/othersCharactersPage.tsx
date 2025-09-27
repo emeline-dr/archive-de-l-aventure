@@ -128,7 +128,10 @@ export function OthersCharactersPage() {
                             }
                         </button>
 
-                        <Link to={`/registers/${sheet.id}/comments`}>
+                        <Link
+                            to="/registers/$sheetId/comments"
+                            params={{ sheetId: String(sheet.id) }}
+                        >
                             <button className="btn btn-text flex-1"
                                 style={{ padding: '16px' }}>
                                 Commentaires
